@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightPro Carteira - Gestão de Carteira de Clientes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80' fill='%231E40AF'>IP</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <script>
+        (function() {
+            if (!sessionStorage.getItem('auth')) {
+                window.location.href = 'login.html';
+                return;
+            }
+        })();
+    </script>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="logo-icon">IP</span>
+                    <span class="logo-text">Filtros</span>
+                </div>
+                <button class="toggle-btn" id="sidebarToggle">✕</button>
+            </div>
+            
+            <div class="filter-section">
+                <label class="form-label">Cliente <span id="clienteCount">(0)</span></label>
+                <select id="clienteSelect" class="form-control">
+                    <option value="">Todos os clientes</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label class="form-label">Cultura</label>
+                <select id="culturaSelect" class="form-control">
+                    <option value="">Todas as culturas</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label class="form-label">Região</label>
+                <select id="regiaoSelect" class="form-control">
+                    <option value="">Todas as regiões</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label class="form-label">Status</label>
+                <select id="statusSelect" class="form-control">
+                    <option value="">Todos os status</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <label class="form-label">Produtos</label>
+                <select id="productSelect" class="form-control">
+                    <option value="">Todos os produtos</option>
+                </select>
+            </div>
+
+            <button class="btn btn--primary btn--full-width" id="applyFilters">Aplicar Filtros</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰ Menu</button>
+            
+            <header class="app-header">
+                <div class="header-content">
+                    <div class="header-logo">
+                        <div class="logo-badge">IP</div>
+                        <div class="header-titles">
+                            <h1>InsightPro Carteira</h1>
+                            <p class="subtitle">Gestão e Análise de Portfólio de Clientes</p>
+                        </div>
+                    </div>
+                    <button class="btn btn--secondary" id="logoutBtn" style="height: fit-content;">🚪 Sair</button>
+                </div>
+            </header>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="upload"><span class="tab-icon">📁</span><span class="tab-label">Upload</span></button>
+                <button class="tab-btn" data-tab="overview"><span class="tab-icon">🛍️</span><span class="tab-label">Visão Geral</span></button>
+                <button class="tab-btn" data-tab="penetracao"><span class="tab-icon">📊</span><span class="tab-label">Penetração</span></button>
+                <button class="tab-btn" data-tab="abc"><span class="tab-icon">💼</span><span class="tab-label">Análise ABC</span></button>
+                <button class="tab-btn" data-tab="cultura"><span class="tab-icon">🌾</span><span class="tab-label">Cultura</span></button>
+                <button class="tab-btn" data-tab="oportunidades"><span class="tab-icon">🎯</span><span class="tab-label">Oportunidades</span></button>
+                <button class="tab-btn" data-tab="territorial"><span class="tab-icon">🗺️</span><span class="tab-label">Territorial</span></button>
+                <button class="tab-btn" data-tab="gaps"><span class="tab-icon">📈</span><span class="tab-label">Gaps</span></button>
+                <button class="tab-btn" data-tab="swot"><span class="tab-icon">🎨</span><span class="tab-label">SWOT</span></button>
+                <button class="tab-btn" data-tab="gut"><span class="tab-icon">🔴</span><span class="tab-label">Matriz GUT</span></button>
+                <button class="tab-btn" data-tab="fidelizacao"><span class="tab-icon">💝</span><span class="tab-label">Fidelização</span></button>
+                <button class="tab-btn" data-tab="relatorio"><span class="tab-icon">📋</span><span class="tab-label">Relatório</span></button>
+                <button class="tab-btn" data-tab="contatos"><span class="tab-icon">👥</span><span class="tab-label">Contatos</span></button>
+                <button class="tab-btn" data-tab="cadastro"><span class="tab-icon">📝</span><span class="tab-label">Cadastro</span></button>
+                <button class="tab-btn" data-tab="produtos"><span class="tab-icon">🌱</span><span class="tab-label">Produtos</span></button>
+            </div>
+
+            <!-- Tab Contents -->
+            <!-- Tab Contents -->
+            <div class="tab-content active" id="upload">
+                <div class="upload-section">
+                    <div class="card">
+                        <div class="card__body">
+                            <h2>📤 Carregar Dados da Carteira</h2>
+                            <p>Faça upload de um arquivo CSV ou Excel contendo os dados dos clientes e produtos.</p>
+                            
+                            <div class="format-info">
+                                <h3>Formato Esperado:</h3>
+                                <ul>
+                                    <li><strong>ID_Cliente:</strong> identificador único</li>
+                                    <li><strong>Nome_Cliente:</strong> nome do cliente</li>
+                                    <li><strong>Cultura:</strong> tipo de cultura (Uva, Manga, Café...)</li>
+                                    <li><strong>Area_Hectares:</strong> área em hectares (numérico)</li>
+                                    <li><strong>Amino_Plus, Amino_Arginine, Amino_Proline, Amino_Fort, Amino_Reten, Amiorgan, Ajipower, Ajifol_Kmg, Ajifol_Premium_Plus, Ajifol_SM_Boro, Algen_Max, Bokashi:</strong> 1=usa, 0=não usa (12 produtos)</li>
+                                    <li><strong>Status_Cliente:</strong> Ativo, Inativo, Potencial (opcional)</li>
+                                    <li><strong>Regiao:</strong> região geográfica (opcional)</li>
+                                </ul>
+                            </div>
+
+                            <div class="upload-area" id="uploadArea">
+                                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" hidden>
+                                <label for="fileInput" class="upload-label">
+                                    <div class="upload-icon">📂</div>
+                                    <p>Clique para selecionar ou arraste o arquivo aqui</p>
+                                    <small>Formatos aceitos: CSV, XLSX, XLS</small>
+                                </label>
+                            </div>
+
+                            <button class="btn btn--secondary" id="downloadTemplate">⬇️ Baixar Template de Exemplo</button>
+
+                            <div id="fileStatus" class="file-status" style="display: none;"></div>
+                            
+                            <div id="dataPreview" style="display: none;">
+                                <h3>Preview dos Dados</h3>
+                                <div class="table-container">
+                                    <table id="previewTable" class="data-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="overview">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Filtros Aplicados</h2>
+                        <div id="activeFilters" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                            <span class="status status--info">Todos os dados</span>
+                        </div>
+                        
+                        <h3>📅 Período de Vendas</h3>
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; flex-wrap: wrap;">
+                            <button class="btn btn--secondary" id="periodWeek">Semana</button>
+                            <button class="btn btn--secondary" id="periodMonth">Mês</button>
+                            <button class="btn btn--primary" id="periodYear">Ano</button>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <label class="form-label" style="margin: 0; font-size: 12px;">De:</label>
+                                <input type="date" id="startDate" class="form-control" style="width: 140px; padding: 6px;">
+                                <label class="form-label" style="margin: 0; font-size: 12px;">Até:</label>
+                                <input type="date" id="endDate" class="form-control" style="width: 140px; padding: 6px;">
+                                <button class="btn btn--secondary" id="applyDateRange" style="padding: 6px 12px;">Aplicar</button>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="salesPeriodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="background-color: var(--color-bg-1);">
+                        <div class="kpi-label">Total de Clientes</div>
+                        <div class="kpi-value" id="kpiTotalClientes">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-2);">
+                        <div class="kpi-label">Culturas Diferentes</div>
+                        <div class="kpi-value" id="kpiCulturas">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-3);">
+                        <div class="kpi-label">Área Total (ha)</div>
+                        <div class="kpi-value" id="kpiAreaTotal">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-4);">
+                        <div class="kpi-label">Média Área/Cliente</div>
+                        <div class="kpi-value" id="kpiMediaArea">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-5);">
+                        <div class="kpi-label">Produtos no Portfólio</div>
+                        <div class="kpi-value" id="kpiProdutos">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-6);">
+                        <div class="kpi-label">Maior Penetração</div>
+                        <div class="kpi-value" id="kpiMaiorPenetracao" style="font-size: 20px;">-</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Resumo da Carteira</h2>
+                        <div class="table-container">
+                            <table id="clienteSummaryTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Estatísticas por Cultura</h2>
+                        <div class="table-container">
+                            <table id="culturaSummaryTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📋 Relatório de Dados Cadastrados</h2>
+                        
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-label">Produtos Cadastrados</div>
+                                <div class="kpi-value" id="kpiProdutosCadastrados">-</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Contatos Registrados</div>
+                                <div class="kpi-value" id="kpiContatosRegistrados">-</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-label">Diagnósticos</div>
+                                <div class="kpi-value" id="kpiDiagnosticos">-</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Produtos por Categoria</h3>
+                        <div class="table-container">
+                            <table id="produtosCategoriaTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th>Quantidade</th>
+                                        <th>Custo Médio</th>
+                                        <th>Cultura Principal</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        
+                        <h3>Últimos Produtos Cadastrados</h3>
+                        <div class="table-container">
+                            <table id="ultimosProdutosTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Categoria</th>
+                                        <th>Cultura</th>
+                                        <th>Custo</th>
+                                        <th>Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <button class="btn btn--primary" id="overviewPDF">📄 Gerar PDF - Visão Geral</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="penetracao">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Penetração de Produtos</h2>
+                        <div class="chart-container">
+                            <canvas id="penetracaoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Análise Detalhada de Produtos</h2>
+                        <div class="table-container">
+                            <table id="penetracaoTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🎯 Oportunidades por Produto</h2>
+                        <div id="produtoOportunidades"></div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <button class="btn btn--primary" id="penetracaoPDF">📄 Gerar PDF - Penetração</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="abc">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>💼 Classificação ABC de Clientes</h2>
+                        <p>Baseado em quantidade de produtos utilizados e área em hectares</p>
+                        <div class="chart-container">
+                            <canvas id="abcParetoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Classificação de Clientes</h2>
+                        <div class="abc-legend">
+                            <div class="abc-item">
+                                <span class="abc-badge abc-a">A</span>
+                                <span>Clientes TOP - Alta participação</span>
+                            </div>
+                            <div class="abc-item">
+                                <span class="abc-badge abc-b">B</span>
+                                <span>Clientes MÉDIOS - Participação moderada</span>
+                            </div>
+                            <div class="abc-item">
+                                <span class="abc-badge abc-c">C</span>
+                                <span>Clientes BAIXOS - Baixa participação</span>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="clienteAbcTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Matriz: Área vs Quantidade de Produtos</h2>
+                        <div class="chart-container">
+                            <canvas id="matrizAreaProdutos"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <button class="btn btn--primary" id="abcPDF">📄 Gerar PDF - Análise ABC</button>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content" id="cultura">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🌾 Análise por Cultura</h2>
+                        <div class="table-container">
+                            <table id="culturaAnaliseTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Clientes por Cultura</h3>
+                        <div class="chart-container-small">
+                            <canvas id="culturaClientesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Área por Cultura</h3>
+                        <div class="chart-container-small">
+                            <canvas id="culturaAreaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Heatmap: Produto × Cultura</h2>
+                        <div id="heatmapProdutoCultura"></div>
+                    </div>
+                </div>
+                
+                <div class="pdf-section">
+                    <button class="btn btn--primary" id="culturaPDF">📄 Gerar PDF - Cultura</button>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content" id="oportunidades">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🎯 Matriz de Oportunidades</h2>
+                        <div class="chart-container">
+                            <canvas id="matrizOportunidadesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swot-grid">
+                    <div class="strategy-card" style="background-color: var(--color-bg-3);">
+                        <h4>⭐ Estrelas</h4>
+                        <p>Alta penetração em clientes grandes</p>
+                        <div id="quadranteEstrelas" class="strategy-content"></div>
+                    </div>
+                    <div class="strategy-card" style="background-color: var(--color-bg-1);">
+                        <h4>🚀 Oportunidades</h4>
+                        <p>Baixa penetração em clientes grandes</p>
+                        <div id="quadranteOportunidades" class="strategy-content"></div>
+                    </div>
+                    <div class="strategy-card" style="background-color: var(--color-bg-2);">
+                        <h4>🎯 Nicho</h4>
+                        <p>Alta penetração em clientes pequenos</p>
+                        <div id="quadranteNicho" class="strategy-content"></div>
+                    </div>
+                    <div class="strategy-card" style="background-color: var(--color-bg-4);">
+                        <h4>⚠️ Evitar</h4>
+                        <p>Baixa penetração em clientes pequenos</p>
+                        <div id="quadranteEvitar" class="strategy-content"></div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content" id="territorial">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🗺️ Análise Territorial</h2>
+                        <div class="table-container">
+                            <table id="territorialTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Clientes por Região</h3>
+                        <div class="chart-container-small">
+                            <canvas id="regiaoClientesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Área por Região</h3>
+                        <div class="chart-container-small">
+                            <canvas id="regiaoAreaChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content" id="gaps">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📈 Análise de Gaps (Oportunidades de Crescimento)</h2>
+                        <p>Identifique produtos não utilizados em clientes-alvo</p>
+                        <div class="table-container">
+                            <table id="gapsTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Ranking de Clientes com Maior Potencial</h2>
+                        <div class="chart-container">
+                            <canvas id="potencialChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="fidelizacao">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Volume Total Mensal</h3>
+                        <div class="chart-container-small">
+                            <canvas id="dashChart1"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Top 5 Produtos</h3>
+                        <div class="chart-container-small">
+                            <canvas id="dashChart2"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Distribuição ABC</h3>
+                        <div class="chart-container-small">
+                            <canvas id="dashChart3"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Sazonalidade</h3>
+                        <div class="chart-container-small">
+                            <canvas id="dashChart4"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <button class="btn btn--primary" id="exportData">📥 Exportar Dados Filtrados</button>
+                    <button class="btn btn--secondary" id="exportReport">📄 Exportar Relatório</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="fidelizacao">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>💝 Análise de Fidelização</h2>
+                        <p>Calcule o "Basket Size" por cliente</p>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="background-color: var(--color-bg-3);">
+                        <div class="kpi-label">Basket Médio</div>
+                        <div class="kpi-value" id="kpiBasketMedio">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-4);">
+                        <div class="kpi-label">Clientes com 1 Produto</div>
+                        <div class="kpi-value" id="kpiClientesRisco">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-1);">
+                        <div class="kpi-label">Clientes TOP (5+ produtos)</div>
+                        <div class="kpi-value" id="kpiClientesTop">-</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Distribuição de Basket Size</h2>
+                        <div class="chart-container">
+                            <canvas id="basketDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Clientes por Quantidade de Produtos</h2>
+                        <div class="table-container">
+                            <table id="basketTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="relatorio">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🔍 Diagrama de Ishikawa - Diagnóstico de Causas</h2>
+                        <p>O Diagrama de Ishikawa (ou Espinha de Peixe) ajuda a identificar as possíveis causas de problemas identificados na análise dos dados de escoamento.</p>
+                        
+                        <div class="ishikawa-form">
+                            <div class="form-group">
+                                <label class="form-label">Problema Identificado</label>
+                                <textarea id="problemDescription" class="form-control" rows="3" placeholder="Descreva o problema (ex: Queda de 30% no volume do Produto A em Março/2023)"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Produto Afetado</label>
+                                <select id="affectedProduct" class="form-control"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Período</label>
+                                <input type="text" id="affectedPeriod" class="form-control" placeholder="Ex: Janeiro/2023">
+                            </div>
+
+                            <h3>Possíveis Causas (6M)</h3>
+                            <div class="causes-grid">
+                                <div class="cause-item">
+                                    <label class="form-label">🔧 Máquina</label>
+                                    <textarea class="form-control cause-input" data-category="Máquina" rows="2" placeholder="Problemas com equipamentos..."></textarea>
+                                </div>
+                                <div class="cause-item">
+                                    <label class="form-label">📋 Método</label>
+                                    <textarea class="form-control cause-input" data-category="Método" rows="2" placeholder="Mudanças de processo..."></textarea>
+                                </div>
+                                <div class="cause-item">
+                                    <label class="form-label">📏 Medida</label>
+                                    <textarea class="form-control cause-input" data-category="Medida" rows="2" placeholder="Erros de medição..."></textarea>
+                                </div>
+                                <div class="cause-item">
+                                    <label class="form-label">👷 Mão de obra</label>
+                                    <textarea class="form-control cause-input" data-category="Mão de obra" rows="2" placeholder="Questões de pessoal..."></textarea>
+                                </div>
+                                <div class="cause-item">
+                                    <label class="form-label">🌍 Meio ambiente</label>
+                                    <textarea class="form-control cause-input" data-category="Meio ambiente" rows="2" placeholder="Fatores ambientais..."></textarea>
+                                </div>
+                                <div class="cause-item">
+                                    <label class="form-label">📦 Material</label>
+                                    <textarea class="form-control cause-input" data-category="Material" rows="2" placeholder="Problemas com matéria-prima..."></textarea>
+                                </div>
+                            </div>
+
+                            <button class="btn btn--primary" id="saveDiagnosis">💾 Salvar Diagnóstico</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📝 Histórico de Diagnósticos</h2>
+                        <div id="diagnosisHistory"></div>
+                        <button class="btn btn--secondary" id="exportDiagnosis">📥 Exportar Diagnósticos</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="relatorio">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📋 Relatório Executivo</h2>
+                        <div id="relatorioExecutivo"></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Top 5 Clientes</h3>
+                        <div class="chart-container-small">
+                            <canvas id="top5ClientesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Top 5 Produtos</h3>
+                        <div class="chart-container-small">
+                            <canvas id="top5ProdutosChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <button class="btn btn--primary" id="exportCarteira">📥 Exportar Carteira Completa</button>
+                    <button class="btn btn--secondary" id="exportABC">📥 Exportar ABC</button>
+                    <button class="btn btn--secondary" id="exportOportunidades">📥 Exportar Oportunidades</button>
+                </div>
+            </div>
+
+
+
+            <div class="tab-content" id="contatos">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>👥 Gestão de Contatos</h2>
+                        <div class="cs-form">
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Cliente</label>
+                                    <select id="contatoCliente" class="form-control"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Responsável</label>
+                                    <input type="text" id="contatoResponsavel" class="form-control" placeholder="Nome do responsável">
+                                </div>
+                            </div>
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Telefone</label>
+                                    <input type="tel" id="contatoTelefone" class="form-control" placeholder="(00) 00000-0000">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="contatoEmail" class="form-control" placeholder="email@exemplo.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Última Visita</label>
+                                    <input type="date" id="contatoVisita" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Anotações</label>
+                                <textarea id="contatoNotas" class="form-control" rows="3" placeholder="Observações sobre o cliente..."></textarea>
+                            </div>
+                            <button class="btn btn--primary" id="addContato">➕ Adicionar/Atualizar Contato</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Lista de Contatos</h2>
+                        <div class="table-container">
+                            <table id="contatosTable" class="data-table"></table>
+                        </div>
+                        <button class="btn btn--secondary" id="exportContatos" style="margin-top: 16px;">📥 Exportar Contatos</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="gut">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🎯 Matriz GUT - Gravidade, Urgência e Tendência</h2>
+                        <p>Priorize problemas e desafios baseado em três critérios: Gravidade (impacto), Urgência (tempo) e Tendência (evolução).</p>
+                        
+                        <div class="gut-form">
+                            <div class="form-group">
+                                <label class="form-label">Problema/Desafio</label>
+                                <input type="text" id="gutProblem" class="form-control" placeholder="Descreva o problema identificado">
+                            </div>
+                            
+                            <div class="gut-scales">
+                                <div class="form-group">
+                                    <label class="form-label">Gravidade (1-5)</label>
+                                    <select id="gutGravity" class="form-control">
+                                        <option value="1">1 - Sem gravidade</option>
+                                        <option value="2">2 - Pouco grave</option>
+                                        <option value="3">3 - Grave</option>
+                                        <option value="4">4 - Muito grave</option>
+                                        <option value="5">5 - Extremamente grave</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Urgência (1-5)</label>
+                                    <select id="gutUrgency" class="form-control">
+                                        <option value="1">1 - Pode esperar</option>
+                                        <option value="2">2 - Pouco urgente</option>
+                                        <option value="3">3 - Urgente</option>
+                                        <option value="4">4 - Muito urgente</option>
+                                        <option value="5">5 - Ação imediata</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Tendência (1-5)</label>
+                                    <select id="gutTrend" class="form-control">
+                                        <option value="1">1 - Não vai piorar</option>
+                                        <option value="2">2 - Piora a longo prazo</option>
+                                        <option value="3">3 - Piora a médio prazo</option>
+                                        <option value="4">4 - Piora a curto prazo</option>
+                                        <option value="5">5 - Piora rapidamente</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn--primary" id="addGutItem">➕ Adicionar à Matriz</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📋 Matriz de Priorização</h2>
+                        <div class="table-container">
+                            <table id="gutTable" class="data-table"></table>
+                        </div>
+                        <button class="btn btn--secondary" id="exportGut" style="margin-top: 16px;">📥 Exportar Matriz GUT</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Visualização: Urgência vs Gravidade</h2>
+                        <div class="chart-container">
+                            <canvas id="gutChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="swot">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🔄 Análise SWOT</h2>
+                        <p>Análise estratégica dos ambientes interno (Forças/Fraquezas) e externo (Oportunidades/Ameaças).</p>
+                        
+                        <div class="swot-grid">
+                            <div class="swot-quadrant" style="background-color: var(--color-bg-3);">
+                                <h3>💪 Forças (Strengths)</h3>
+                                <p class="swot-description">Interno • Positivo</p>
+                                <textarea id="swotStrengths" class="form-control" rows="5" placeholder="Liste as forças internas da organização...&#10;Ex: Equipe qualificada, tecnologia moderna, boa reputação"></textarea>
+                            </div>
+                            
+                            <div class="swot-quadrant" style="background-color: var(--color-bg-2);">
+                                <h3>⚠️ Fraquezas (Weaknesses)</h3>
+                                <p class="swot-description">Interno • Negativo</p>
+                                <textarea id="swotWeaknesses" class="form-control" rows="5" placeholder="Liste as fraquezas internas...&#10;Ex: Custos elevados, processos lentos, dependência de fornecedores"></textarea>
+                            </div>
+                            
+                            <div class="swot-quadrant" style="background-color: var(--color-bg-1);">
+                                <h3>🎯 Oportunidades (Opportunities)</h3>
+                                <p class="swot-description">Externo • Positivo</p>
+                                <textarea id="swotOpportunities" class="form-control" rows="5" placeholder="Liste as oportunidades externas...&#10;Ex: Novo mercado, mudança regulatória favorável, tendências positivas"></textarea>
+                            </div>
+                            
+                            <div class="swot-quadrant" style="background-color: var(--color-bg-4);">
+                                <h3>⛔ Ameaças (Threats)</h3>
+                                <p class="swot-description">Externo • Negativo</p>
+                                <textarea id="swotThreats" class="form-control" rows="5" placeholder="Liste as ameaças externas...&#10;Ex: Concorrência, crise econômica, mudanças tecnológicas"></textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn--primary btn--full-width" id="saveSWOT" style="margin-top: 24px;">💾 Salvar Análise SWOT</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🎯 Matriz de Cruzamento SWOT</h2>
+                        <p>Estratégias derivadas do cruzamento dos quadrantes</p>
+                        <div class="swot-strategies">
+                            <div class="strategy-card" style="background-color: var(--color-bg-3);">
+                                <h4>🚀 Estratégia Ofensiva (Forças × Oportunidades)</h4>
+                                <p>Use forças para aproveitar oportunidades</p>
+                                <div id="swotFO" class="strategy-content"></div>
+                            </div>
+                            <div class="strategy-card" style="background-color: var(--color-bg-1);">
+                                <h4>🔧 Estratégia de Reforço (Fraquezas × Oportunidades)</h4>
+                                <p>Supere fraquezas para aproveitar oportunidades</p>
+                                <div id="swotWO" class="strategy-content"></div>
+                            </div>
+                            <div class="strategy-card" style="background-color: var(--color-bg-2);">
+                                <h4>🛡️ Estratégia de Defesa (Forças × Ameaças)</h4>
+                                <p>Use forças para mitigar ameaças</p>
+                                <div id="swotFT" class="strategy-content"></div>
+                            </div>
+                            <div class="strategy-card" style="background-color: var(--color-bg-4);">
+                                <h4>⚡ Estratégia de Sobrevivência (Fraquezas × Ameaças)</h4>
+                                <p>Minimize fraquezas e evite ameaças</p>
+                                <div id="swotWT" class="strategy-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="pest">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🌍 Análise PEST</h2>
+                        <p>Análise dos fatores externos macro-ambientais: Político, Econômico, Social e Tecnológico.</p>
+                        
+                        <div class="pest-grid">
+                            <div class="pest-factor" style="background-color: var(--color-bg-4);">
+                                <h3>🏛️ Político</h3>
+                                <p class="pest-description">Legislação, regulação, políticas governamentais, impostos</p>
+                                <textarea id="pestPolitical" class="form-control" rows="4" placeholder="Ex: Mudanças na legislação ambiental, incentivos fiscais..."></textarea>
+                            </div>
+                            
+                            <div class="pest-factor" style="background-color: var(--color-bg-2);">
+                                <h3>💹 Econômico</h3>
+                                <p class="pest-description">Inflação, câmbio, juros, crescimento econômico, custos</p>
+                                <textarea id="pestEconomic" class="form-control" rows="4" placeholder="Ex: Alta do dólar impactando importações, inflação..."></textarea>
+                            </div>
+                            
+                            <div class="pest-factor" style="background-color: var(--color-bg-5);">
+                                <h3>👥 Social</h3>
+                                <p class="pest-description">Demografia, cultura, comportamento, tendências sociais</p>
+                                <textarea id="pestSocial" class="form-control" rows="4" placeholder="Ex: Crescimento de agricultura orgânica, conscientização..."></textarea>
+                            </div>
+                            
+                            <div class="pest-factor" style="background-color: var(--color-bg-8);">
+                                <h3>⚙️ Tecnológico</h3>
+                                <p class="pest-description">Inovação, automação, digitalização, P&amp;D</p>
+                                <textarea id="pestTechnology" class="form-control" rows="4" placeholder="Ex: Agricultura de precisão, drones, IoT no campo..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn--primary btn--full-width" id="savePEST" style="margin-top: 24px;">💾 Salvar Análise PEST</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Matriz de Impacto PEST</h2>
+                        <div class="table-container">
+                            <table id="pestTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="cs">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>😊 Análise de Satisfação do Cliente (CS)</h2>
+                        <p>Registre e analise o feedback dos clientes para calcular métricas de satisfação.</p>
+                        
+                        <div class="cs-form">
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Cliente/Segmento</label>
+                                    <input type="text" id="csClient" class="form-control" placeholder="Nome do cliente ou segmento">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Produto Avaliado</label>
+                                    <select id="csProduct" class="form-control"></select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Nota de Satisfação (1-10)</label>
+                                    <input type="number" id="csScore" class="form-control" min="1" max="10" placeholder="1 a 10">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Data</label>
+                                    <input type="date" id="csDate" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Comentário</label>
+                                <textarea id="csComment" class="form-control" rows="3" placeholder="Feedback do cliente..."></textarea>
+                            </div>
+                            
+                            <button class="btn btn--primary" id="addCSRecord">➕ Adicionar Avaliação</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="background-color: var(--color-bg-3);">
+                        <div class="kpi-label">CSAT Médio</div>
+                        <div class="kpi-value" id="csatAverage">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-1);">
+                        <div class="kpi-label">Taxa Satisfação</div>
+                        <div class="kpi-value" id="csatSatisfied">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-4);">
+                        <div class="kpi-label">Detratores</div>
+                        <div class="kpi-value" id="csatDetractors">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-2);">
+                        <div class="kpi-label">Total Avaliações</div>
+                        <div class="kpi-value" id="csatTotal">-</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📋 Histórico de Avaliações</h2>
+                        <div class="table-container">
+                            <table id="csTable" class="data-table"></table>
+                        </div>
+                        <button class="btn btn--secondary" id="exportCS" style="margin-top: 16px;">📥 Exportar Avaliações</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Satisfação por Produto</h3>
+                        <div class="chart-container-small">
+                            <canvas id="csProductChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Distribuição de Notas</h3>
+                        <div class="chart-container-small">
+                            <canvas id="csDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="mks">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Análise de Mercado e Competitividade (MkS)</h2>
+                        <p>Compare sua posição competitiva com concorrentes em diferentes variáveis.</p>
+                        
+                        <div class="mks-form">
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Concorrente</label>
+                                    <input type="text" id="mksCompetitor" class="form-control" placeholder="Nome do concorrente">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Variável</label>
+                                    <select id="mksVariable" class="form-control">
+                                        <option value="Preço">Preço</option>
+                                        <option value="Qualidade">Qualidade</option>
+                                        <option value="Inovação">Inovação</option>
+                                        <option value="Distribuição">Distribuição</option>
+                                        <option value="Marca">Força da Marca</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Score (1-5)</label>
+                                    <select id="mksScore" class="form-control">
+                                        <option value="1">1 - Muito fraco</option>
+                                        <option value="2">2 - Fraco</option>
+                                        <option value="3">3 - Médio</option>
+                                        <option value="4">4 - Forte</option>
+                                        <option value="5">5 - Muito forte</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn--primary" id="addMksRecord">➕ Adicionar Avaliação</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🎯 Matriz Comparativa</h2>
+                        <div class="table-container">
+                            <table id="mksTable" class="data-table"></table>
+                        </div>
+                        <button class="btn btn--secondary" id="exportMks" style="margin-top: 16px;">📥 Exportar Análise</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🕸️ Gráfico Radar Competitivo</h2>
+                        <div class="chart-container">
+                            <canvas id="mksRadarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="vpm">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>💰 Análise VPM - Volume, Preço e Margem</h2>
+                        <p>Análise integrada de volume, preço e margem para identificar estratégias de crescimento.</p>
+                        
+                        <div class="vpm-form">
+                            <h3>Dados Complementares (Opcional)</h3>
+                            <p class="subtitle">Adicione dados de preço e custo para análise completa de margem</p>
+                            
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label">Produto</label>
+                                    <select id="vpmProduct" class="form-control"></select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Preço Médio</label>
+                                    <input type="number" id="vpmPrice" class="form-control" placeholder="Preço unitário" step="0.01">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Custo Unitário</label>
+                                    <input type="number" id="vpmCost" class="form-control" placeholder="Custo unitário" step="0.01">
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn--primary" id="addVpmData">➕ Adicionar Dados VPM</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card" style="background-color: var(--color-bg-1);">
+                        <div class="kpi-label">Volume Total</div>
+                        <div class="kpi-value" id="vpmVolume">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-2);">
+                        <div class="kpi-label">Preço Médio</div>
+                        <div class="kpi-value" id="vpmAvgPrice">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-3);">
+                        <div class="kpi-label">Margem Média</div>
+                        <div class="kpi-value" id="vpmAvgMargin">-</div>
+                    </div>
+                    <div class="kpi-card" style="background-color: var(--color-bg-6);">
+                        <div class="kpi-label">Receita Estimada</div>
+                        <div class="kpi-value" id="vpmRevenue">-</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📊 Análise por Produto</h2>
+                        <div class="table-container">
+                            <table id="vpmTable" class="data-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Volume vs Preço</h3>
+                        <div class="chart-container-small">
+                            <canvas id="vpmScatterChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Contribuição por Produto</h3>
+                        <div class="chart-container-small">
+                            <canvas id="vpmContributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="cadastro">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>📝 Cadastro e Filtros</h2>
+                        
+                        <div class="filter-section">
+                            <label class="form-label">ID do Cliente</label>
+                            <input type="text" id="cadastroClienteId" class="form-control" placeholder="Será gerado automaticamente" readonly>
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Nome do Cliente</label>
+                            <input type="text" id="cadastroClienteNome" class="form-control" placeholder="Digite o nome completo do cliente">
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Cultura</label>
+                            <input type="text" id="cadastroCulturaInput" class="form-control" placeholder="Digite a cultura (ex: Uva, Manga, Café)">
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Região</label>
+                            <input type="text" id="cadastroRegiaoInput" class="form-control" placeholder="Digite a região">
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Status do Cliente</label>
+                            <input type="text" id="cadastroStatusInput" class="form-control" placeholder="Digite o status (Ativo, Inativo, Potencial)">
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Área (Hectares)</label>
+                            <input type="number" id="cadastroAreaInput" class="form-control" placeholder="Digite a área em hectares" step="0.1">
+                        </div>
+
+                        <div class="filter-section">
+                            <label class="form-label">Produtos Utilizados <span id="selectedProductsCount">(0/30)</span></label>
+                            <div class="form-group">
+                                <input type="text" id="productSearch" class="form-control" placeholder="Buscar produto..." style="margin-bottom: 12px;">
+                            </div>
+                            <div id="cadastroProductFilters" class="checkbox-group" style="max-height: 200px; overflow-y: auto; display: none;"></div>
+                            <div style="margin-top: 8px;">
+                                <button type="button" class="btn btn--secondary" id="selectAllProducts" style="margin-right: 8px;">Selecionar Todos</button>
+                                <button type="button" class="btn btn--secondary" id="clearAllProducts">Limpar Todos</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn--primary btn--full-width" id="addClienteData">Adicionar Cliente</button>
+                        <button class="btn btn--secondary btn--full-width" id="resetCadastroForm" style="margin-top: 12px;">Limpar Formulário</button>
+                        
+                        <div class="pdf-section">
+                            <label class="form-label">Backup dos Dados</label>
+                            <button class="btn btn--primary" id="exportBackup" style="margin-bottom: 8px;">📥 Fazer Backup</button>
+                            <input type="file" id="importBackup" accept=".json,.csv,.xlsx,.xls,.txt" style="display: none;">
+                            <button class="btn btn--primary" id="importBackupBtn">📤 Restaurar Backup</button>
+                            <div id="dbStats" style="margin-top: 12px; font-size: 12px; color: #00d4ff;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="produtos">
+                <div class="card">
+                    <div class="card__body">
+                        <h2>🍇 Cadastro de Produtos Agrícolas - Uva & Manga</h2>
+                        
+                        <!-- Identificação do Produto -->
+                        <h3 style="color: #00d4ff; margin: 20px 0 15px 0; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">🏷️ Identificação</h3>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;">
+                            <div class="filter-section">
+                                <label class="form-label">Nome do Produto *</label>
+                                <input type="text" id="produtoNome" class="form-control" placeholder="Ex: Mancozeb 800 WP" required>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Fornecedor/Marca *</label>
+                                <input type="text" id="produtoFornecedor" class="form-control" placeholder="Ex: Bayer, Syngenta" required>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Custo (R$/L ou R$/kg) *</label>
+                                <input type="number" id="produtoCusto" class="form-control" placeholder="Ex: 45.50" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Classificação Técnica -->
+                        <h3 style="color: #00d4ff; margin: 20px 0 15px 0; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">🧪 Classificação</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                            <div class="filter-section">
+                                <label class="form-label">Categoria *</label>
+                                <select id="produtoCategoria" class="form-control" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Fungicida">Fungicida</option>
+                                    <option value="Inseticida">Inseticida</option>
+                                    <option value="Acaricida">Acaricida</option>
+                                    <option value="Herbicida">Herbicida</option>
+                                    <option value="Fertilizante">Fertilizante</option>
+                                    <option value="Nutricao_Foliar">Nutrição Foliar</option>
+                                    <option value="Bioestimulante">Bioestimulante</option>
+                                    <option value="Regulador_Crescimento">Regulador de Crescimento</option>
+                                    <option value="Oleo_Mineral">Óleo Mineral</option>
+                                    <option value="Adjuvante">Adjuvante</option>
+                                </select>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Cultura Aplicada *</label>
+                                <select id="produtoCultura" class="form-control" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Uva">Uva</option>
+                                    <option value="Manga">Manga</option>
+                                    <option value="Ambas">Uva e Manga</option>
+                                </select>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Modo de Ação</label>
+                                <select id="produtoModoAcao" class="form-control">
+                                    <option value="">Selecione</option>
+                                    <option value="Sistemico">Sistêmico</option>
+                                    <option value="Contato">Contato</option>
+                                    <option value="Translaminar">Translaminar</option>
+                                    <option value="Penetrante">Penetrante</option>
+                                    <option value="Vapor">Ação de Vapor</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Composição e Finalidade -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                            <div class="filter-section">
+                                <label class="form-label">Ingrediente Ativo/Composição *</label>
+                                <textarea id="produtoIngrediente" class="form-control" rows="2" placeholder="Ex: Mancozeb 800 g/kg" required></textarea>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Finalidade *</label>
+                                <textarea id="produtoFinalidade" class="form-control" rows="2" placeholder="Ex: Controle de antracnose, oídio, míldio" required></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Aplicação -->
+                        <h3 style="color: #00d4ff; margin: 20px 0 15px 0; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">💧 Aplicação</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                            <div class="filter-section">
+                                <label class="form-label">Tipo de Aplicação *</label>
+                                <select id="produtoTipoAplicacao" class="form-control" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Foliar">Pulverização Foliar</option>
+                                    <option value="Solo">Aplicação no Solo</option>
+                                    <option value="Fertirrigacao">Fertirrigação</option>
+                                    <option value="Pincelamento">Pincelamento</option>
+                                    <option value="Injeção">Injeção no Tronco</option>
+                                </select>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Dose Recomendada *</label>
+                                <input type="text" id="produtoDose" class="form-control" placeholder="Ex: 2,5 L/ha ou 300 g/100L" required>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Intervalo de Segurança (dias) *</label>
+                                <input type="number" id="produtoIntervalo" class="form-control" placeholder="Ex: 14" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Época de Aplicação -->
+                        <div class="filter-section" style="margin-top: 16px;">
+                            <label class="form-label">Época de Aplicação *</label>
+                            <select id="produtoEpoca" class="form-control" required>
+                                <option value="">Selecione</option>
+                                <option value="Pre_Poda">Pré-poda</option>
+                                <option value="Brotacao">Brotação</option>
+                                <option value="Crescimento">Crescimento Vegetativo</option>
+                                <option value="Pre_Floracao">Pré-floração</option>
+                                <option value="Floracao">Floração</option>
+                                <option value="Pegamento">Pegamento de Frutos</option>
+                                <option value="Desenvolvimento">Desenvolvimento de Frutos</option>
+                                <option value="Maturacao">Maturação</option>
+                                <option value="Pre_Colheita">Pré-colheita</option>
+                                <option value="Pos_Colheita">Pós-colheita</option>
+                                <option value="Todo_Ciclo">Todo o Ciclo</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Compatibilidade e Restrições -->
+                        <h3 style="color: #00d4ff; margin: 20px 0 15px 0; border-bottom: 1px solid #00d4ff; padding-bottom: 5px;">⚠️ Segurança e Compatibilidade</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="filter-section">
+                                <label class="form-label">Compatibilidade com Outros Produtos</label>
+                                <textarea id="produtoCompatibilidade" class="form-control" rows="3" placeholder="Ex: Compatível com óleos minerais. Não misturar com produtos alcalinos."></textarea>
+                            </div>
+                            <div class="filter-section">
+                                <label class="form-label">Restrições e Cuidados</label>
+                                <textarea id="produtoRestricoes" class="form-control" rows="3" placeholder="Ex: Não aplicar em temperaturas acima de 30°C. Evitar deriva para culturas sensíveis."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Observações Técnicas -->
+                        <div class="filter-section" style="margin-top: 16px;">
+                            <label class="form-label">Observações Técnicas</label>
+                            <textarea id="produtoObservacoes" class="form-control" rows="3" placeholder="Ex: Produto com ação preventiva. Aplicar com pH da calda entre 6,0-7,0. Adicionar espalhante adesivo."></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 24px;">
+                            <button class="btn btn--primary" id="salvarProduto" style="flex: 2;">💾 Salvar Produto</button>
+                            <button class="btn btn--secondary" id="limparProduto" style="flex: 1;">Limpar</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <h2>Produtos Cadastrados</h2>
+                        <div class="table-container">
+                            <table id="produtosCadastradosTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Categoria</th>
+                                        <th>Cultura</th>
+                                        <th>Dose</th>
+                                        <th>Intervalo</th>
+                                        <th>Custo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn--secondary" id="exportProdutos" style="margin-top: 16px;">📄 Exportar Produtos</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+    
+    <footer style="text-align: center; padding: 20px; color: #00d4ff; font-size: 12px; border-top: 1px solid rgba(0, 212, 255, 0.3); margin-top: 40px;">
+        <p>Copyright © Narciso Neto</p>
+    </footer>
+</body>
+</html>

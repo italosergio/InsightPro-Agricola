@@ -1,0 +1,16 @@
+ID_Cliente,Nome_Cliente,Cultura,Area_Hectares,Amino_Plus,Amino_Arginine,Amino_Proline,Amino_Fort,Amino_Reten,Amiorgan,Ajipower,Ajifol_Kmg,Ajifol_Premium_Plus,Ajifol_SM_Boro,Algen_Max,Bokashi,Status_Cliente,Regiao
+CLI001,Fazenda São João,Uva,150,1,1,0,1,0,1,0,1,1,0,0,1,Ativo,Sul
+CLI002,Sítio Boa Vista,Manga,80,1,0,1,1,1,0,1,0,1,1,1,0,Ativo,Nordeste
+CLI003,Agrícola Vale Verde,Uva,200,0,1,1,0,1,1,1,1,0,0,1,1,Ativo,Sul
+CLI004,Fazenda Horizonte,Manga,120,1,1,1,0,0,1,1,0,1,0,0,0,Potencial,Norte
+CLI005,Rancho Alegre,Uva,300,1,1,1,1,1,1,0,1,1,1,1,1,Ativo,Sul
+CLI006,Sítio Esperança,Manga,60,0,0,1,1,0,0,1,1,0,1,0,1,Ativo,Nordeste
+CLI007,Fazenda Progresso,Uva,180,1,0,0,1,1,0,1,0,1,1,0,0,Ativo,Sudeste
+CLI008,Agrícola Futuro,Manga,90,0,1,1,0,0,1,0,1,0,0,1,1,Potencial,Centro-Oeste
+CLI009,Fazenda Vitória,Uva,250,1,1,0,1,1,1,1,0,1,0,1,0,Ativo,Sul
+CLI010,Sítio Prosperidade,Manga,110,1,0,1,0,1,0,1,1,0,1,0,1,Ativo,Nordeste
+CLI011,Fazenda Sucesso,Uva,170,0,1,1,1,0,1,0,1,1,0,0,1,Ativo,Sudeste
+CLI012,Rancho Bonança,Manga,140,1,1,0,0,1,1,1,0,0,1,1,0,Potencial,Norte
+CLI013,Agrícola Esperança,Uva,220,1,0,1,1,0,0,1,1,1,0,1,1,Ativo,Sul
+CLI014,Fazenda Harmonia,Manga,75,0,1,0,1,1,1,0,0,1,1,0,0,Ativo,Nordeste
+CLI015,Sítio Abundância,Uva,190,1,1,1,0,1,0,1,1,0,0,1,1,Ativo,Sudeste
