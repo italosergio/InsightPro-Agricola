@@ -22,7 +22,7 @@ export function AppLayout({ children, title, subtitle }: { children: ReactNode; 
       />
       <main className="main-content">
         <Header title={title} subtitle={subtitle} onMenuToggle={() => setSidebarOpen(true)} />
-        <div className="content" style={{ paddingTop: 'var(--space-10)' }}>
+        <div className="content">
           {children}
         </div>
       </main>

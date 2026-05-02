@@ -135,12 +135,10 @@ export function Sidebar({ isOpen, onClose, minimized, onToggleMinimized }: {
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
       <aside className={`sidebar ${isOpen ? 'open' : ''} ${minimized ? 'minimized' : ''}`} role="navigation" aria-label="Menu principal">
         <div className="sidebar-header">
-          {!minimized && (
-            <div className="sidebar-logo">
-              <div className="logo-icon">IP</div>
-              <span className="logo-text">InsightPro</span>
-            </div>
-          )}
+          <div className="sidebar-logo">
+            <div className="logo-icon">IP</div>
+            {!minimized && <span className="logo-text">InsightPro</span>}
+          </div>
           <button className="sidebar-collapse-btn" onClick={onToggleMinimized} aria-label={minimized ? 'Expandir menu' : 'Minimizar menu'}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               {minimized

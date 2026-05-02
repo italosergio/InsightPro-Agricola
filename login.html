@@ -50,11 +50,10 @@
             line-height: 1.5;
         }
 
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #0c0a09;
-                color: #fafaf9;
-            }
+        [data-theme="dark"] body,
+        [data-theme="dark"] {
+            background: #0c0a09;
+            color: #fafaf9;
         }
 
         .login-wrapper {
@@ -94,10 +93,8 @@
             font-size: 0.875rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .login-header p {
-                color: #a8a29e;
-            }
+        [data-theme="dark"] .login-header p {
+            color: #a8a29e;
         }
 
         .login-card {
@@ -108,11 +105,9 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        @media (prefers-color-scheme: dark) {
-            .login-card {
-                background: #1c1917;
-                border-color: #292524;
-            }
+        [data-theme="dark"] .login-card {
+            background: #1c1917;
+            border-color: #292524;
         }
 
         .form-group {
@@ -138,12 +133,10 @@
             transition: border-color 150ms, box-shadow 150ms;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .form-input {
-                background: #292524;
-                border-color: #44403c;
-                color: #fafaf9;
-            }
+        [data-theme="dark"] .form-input {
+            background: #292524;
+            border-color: #44403c;
+            color: #fafaf9;
         }
 
         .form-input:focus {
@@ -189,11 +182,9 @@
             display: none;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .error-message {
-                background: rgba(239, 68, 68, 0.1);
-                color: #f87171;
-            }
+        [data-theme="dark"] .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
         }
 
         .login-footer {
@@ -203,14 +194,21 @@
             color: var(--stone-400);
         }
 
-        @media (prefers-color-scheme: dark) {
-            .login-footer {
-                color: #78716c;
-            }
+        [data-theme="dark"] .login-footer {
+            color: #78716c;
         }
     </style>
 </head>
 <body>
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme');
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <main class="login-wrapper" role="main">
         <header class="login-header">
             <div class="login-logo" aria-hidden="true">IP</div>

@@ -245,9 +245,11 @@
   border-right-color: var(--border-primary);
 }
 
-/* Header in dark: slightly lighter than page bg */
+/* Header in dark: transparent with blur */
 [data-theme="dark"] .app-header {
-  background: #0d1710;
+  background: color-mix(in srgb, #060c08 75%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom-color: var(--border-primary);
 }
 
@@ -436,8 +438,8 @@ textarea:focus-visible {
 /* === Layout === */
 .app-container {
   display: flex;
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* === Sidebar === */
@@ -475,8 +477,20 @@ textarea:focus-visible {
 }
 
 .sidebar.minimized .sidebar-header {
+  flex-direction: column;
   justify-content: center;
-  padding: 0;
+  padding: var(--space-2) 0;
+  gap: var(--space-1);
+  min-height: 80px;
+  height: auto;
+}
+
+.sidebar.minimized .sidebar-logo {
+  justify-content: center;
+}
+
+.sidebar.minimized .logo-text {
+  display: none;
 }
 
 .sidebar-logo {
@@ -538,7 +552,7 @@ textarea:focus-visible {
 }
 
 .sidebar.minimized .sidebar-collapse-btn {
-  margin: 0 auto;
+  margin: 0;
 }
 
 .sidebar-toggle {
@@ -736,11 +750,12 @@ textarea:focus-visible {
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   transition: margin-left var(--transition-slow);
   min-width: 0;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
