@@ -414,7 +414,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── ROW 1: ESTADO + STATUS ───────────────────────────────────── */}
-      <div className="chart-grid" style={{ gridTemplateColumns: '1.4fr 1fr', marginBottom: 'var(--space-6)' }}>
+      <div className="chart-grid" style={{ marginBottom: 'var(--space-6)' }}>
         <div className="card" style={{ marginBottom: 0 }}>
           <div className="card-header"><SectionHeader title="Faturamento por Estado" sub="Top 10 estados" link="/analise-abc" linkLabel="Análise ABC →" /></div>
           <div className="card-body">
