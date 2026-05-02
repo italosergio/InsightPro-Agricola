@@ -1603,6 +1603,7 @@ textarea.form-control {
   .sidebar {
     transform: translateX(-100%);
     width: var(--sidebar-width) !important; /* override minimized on mobile */
+    height: 100dvh;
   }
 
   .sidebar.open {
@@ -1622,6 +1623,10 @@ textarea.form-control {
 
   .header-menu-mobile {
     display: flex !important;
+  }
+
+  .sidebar-collapse-btn {
+    display: none;
   }
 
   .app-header {
