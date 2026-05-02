@@ -4,7 +4,7 @@ import type { AuthContextType } from '@/types'
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const VALID_CREDENTIALS: Record<string, string> = {
-  'narciso neto': 'narcisoo',
+  'narcisoneto': 'narcisoo',
   'admin': 'admin',
 }
 
