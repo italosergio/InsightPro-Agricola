@@ -3,8 +3,10 @@ import type { AuthContextType } from '@/types'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const VALID_USERNAME = 'narcisoneto'
-const VALID_PASSWORD = 'admin'
+const VALID_CREDENTIALS: Record<string, string> = {
+  'narciso neto': 'narcisoo',
+  'admin': 'admin',
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -12,7 +14,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   })
 
   const login = (username: string, password: string): boolean => {
-    if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+    if (VALID_CREDENTIALS[username] === password) {
       setIsAuthenticated(true)
       sessionStorage.setItem('insightpro_auth', 'true')
       return true

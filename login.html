@@ -247,8 +247,10 @@
         (function() {
             'use strict';
 
-            const VALID_USER = 'narcisoneto';
-            const VALID_PASS = 'admin';
+            const VALID_CREDENTIALS = {
+                'narciso neto': 'narcisoo',
+                'admin': 'admin'
+            };
 
             const form = document.getElementById('loginForm');
             const errorEl = document.getElementById('errorMessage');
@@ -259,7 +261,7 @@
                 const user = document.getElementById('username').value.trim();
                 const pass = document.getElementById('password').value;
 
-                if (user === VALID_USER && pass === VALID_PASS) {
+                if (VALID_CREDENTIALS[user] === pass) {
                     sessionStorage.setItem('auth', btoa(Date.now().toString()));
                     window.location.href = 'index.html';
                 } else {
