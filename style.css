@@ -524,6 +524,20 @@ textarea:focus-visible {
   letter-spacing: -0.02em;
 }
 
+.sidebar-logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.logo-subtitle {
+  font-size: 9px;
+  font-weight: var(--font-semibold);
+  color: var(--color-primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 /* Collapse button (desktop only) */
 .sidebar-collapse-btn {
   display: flex;
