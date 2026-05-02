@@ -4,6 +4,7 @@ import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { LazyChart } from '@/components/LazyChart'
 
 function buildHCTheme(theme: 'light' | 'dark') {
   const isDark = theme === 'dark'
@@ -287,7 +288,7 @@ export function MetasPage() {
               </div>
               <div className="card-body">
                 <div className="chart-container">
-                  <HighchartsReact highcharts={Highcharts} options={progressChartOptions} />
+                  <LazyChart options={progressChartOptions} />
                 </div>
               </div>
             </div>

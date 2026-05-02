@@ -17,10 +17,13 @@ import { CampanhasPage } from '@/pages/CampanhasPage'
 import { PipelinePage } from '@/pages/PipelinePage'
 import { RelatoriosPage } from '@/pages/RelatoriosPage'
 import { ExportarPage } from '@/pages/ExportarPage'
+import { HomePage } from '@/pages/HomePage'
+import { ScrollToTop } from '@/components/ScrollToTop'
 
 export function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ThemeProvider>
         <AuthProvider>
           <DataProvider>
@@ -28,6 +31,7 @@ export function App() {
               <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
 
               <Route path="/" element={<AuthRoute><DashboardPage /></AuthRoute>} />
+              <Route path="/inicio" element={<AuthRoute><HomePage /></AuthRoute>} />
               <Route path="/upload" element={<AuthRoute><UploadPage /></AuthRoute>} />
               <Route path="/clientes" element={<AuthRoute><ClientesPage /></AuthRoute>} />
               <Route path="/analise-abc" element={<AuthRoute><AnaliseABCPage /></AuthRoute>} />

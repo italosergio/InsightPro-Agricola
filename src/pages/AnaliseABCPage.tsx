@@ -5,6 +5,7 @@ import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { LazyChart } from '@/components/LazyChart'
 
 function buildHCTheme(theme: 'light' | 'dark') {
   const isDark = theme === 'dark'
@@ -264,7 +265,7 @@ export function AnaliseABCPage() {
           </div>
           <div className="card-body">
             <div className="chart-container">
-              <HighchartsReact highcharts={Highcharts} options={barOpts} ref={barChartRef} />
+              <LazyChart options={barOpts} />
             </div>
           </div>
         </div>
@@ -275,7 +276,7 @@ export function AnaliseABCPage() {
           </div>
           <div className="card-body">
             <div className="chart-container">
-              <HighchartsReact highcharts={Highcharts} options={donutOpts} ref={donutChartRef} />
+              <LazyChart options={donutOpts} />
             </div>
           </div>
         </div>

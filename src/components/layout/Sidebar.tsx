@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import { type ReactNode } from 'react'
 import { useAuth } from '@/store/AuthContext'
 
 interface NavSection {
@@ -10,6 +11,7 @@ const navSections: NavSection[] = [
   {
     title: 'Principal',
     items: [
+      { path: '/inicio', label: 'Início', icon: 'home' },
       { path: '/', label: 'Dashboard', icon: 'dashboard' },
       { path: '/upload', label: 'Upload de Dados', icon: 'upload' },
       { path: '/clientes', label: 'Clientes', icon: 'clientes' },
@@ -42,9 +44,12 @@ const navSections: NavSection[] = [
   },
 ]
 
-import { type ReactNode } from 'react'
-
 const icons: Record<string, ReactNode> = {
+  home: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  ),
   dashboard: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
@@ -117,33 +122,49 @@ const icons: Record<string, ReactNode> = {
   ),
 }
 
-export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export function Sidebar({ isOpen, onClose, minimized, onToggleMinimized }: {
+  isOpen: boolean
+  onClose: () => void
+  minimized: boolean
+  onToggleMinimized: () => void
+}) {
   const { logout } = useAuth()
 
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`} role="navigation" aria-label="Menu principal">
+      <aside className={`sidebar ${isOpen ? 'open' : ''} ${minimized ? 'minimized' : ''}`} role="navigation" aria-label="Menu principal">
         <div className="sidebar-header">
-          <div className="sidebar-logo">
-            <div className="logo-icon">IP</div>
-            <span className="logo-text">InsightPro</span>
-          </div>
+          {!minimized && (
+            <div className="sidebar-logo">
+              <div className="logo-icon">IP</div>
+              <span className="logo-text">InsightPro</span>
+            </div>
+          )}
+          <button className="sidebar-collapse-btn" onClick={onToggleMinimized} aria-label={minimized ? 'Expandir menu' : 'Minimizar menu'}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {minimized
+                ? <polyline points="9 18 15 12 9 6" />
+                : <polyline points="15 18 9 12 15 6" />
+              }
+            </svg>
+          </button>
         </div>
 
         <nav className="sidebar-nav">
           {navSections.map(section => (
             <div key={section.title} className="nav-section">
-              <div className="nav-section-title">{section.title}</div>
+              {!minimized && <div className="nav-section-title">{section.title}</div>}
               {section.items.map(item => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
                   onClick={onClose}
+                  data-label={item.label}
                 >
                   {icons[item.icon]}
-                  <span>{item.label}</span>
+                  {!minimized && <span>{item.label}</span>}
                 </NavLink>
               ))}
             </div>
@@ -151,11 +172,11 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
         </nav>
 
         <div className="sidebar-footer">
-          <button className="btn btn--ghost btn--full-width" onClick={logout}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 18, height: 18 }}>
+          <button className="sidebar-logout-btn" onClick={logout} data-label="Sair">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-            Sair
+            {!minimized && <span>Sair</span>}
           </button>
         </div>
       </aside>
