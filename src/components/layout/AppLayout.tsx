@@ -20,8 +20,8 @@ export function AppLayout({ children, title, subtitle }: { children: ReactNode; 
         minimized={minimized}
         onToggleMinimized={handleToggleMinimized}
       />
+      <Header title={title} subtitle={subtitle} onMenuToggle={() => setSidebarOpen(true)} />
       <main className="main-content">
-        <Header title={title} subtitle={subtitle} onMenuToggle={() => setSidebarOpen(true)} />
         <div className="content">
           {children}
         </div>
