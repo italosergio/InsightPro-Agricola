@@ -19,8 +19,12 @@ const navSections: NavSection[] = [
   {
     title: 'Analises',
     items: [
-      { path: '/analise-abc', label: 'Analise ABC', icon: 'abc' },
       { path: '/penetracao', label: 'Penetracao', icon: 'penetracao' },
+      { path: '/analise-abc', label: 'Analise ABC', icon: 'abc' },
+      { path: '/cultura', label: 'Cultura', icon: 'cultura' },
+      { path: '/oportunidades', label: 'Oportunidades', icon: 'oportunidades' },
+      { path: '/territorial', label: 'Territorial', icon: 'territorial' },
+      { path: '/gaps', label: 'Gaps', icon: 'gaps' },
       { path: '/swot', label: 'Analise SWOT', icon: 'swot' },
       { path: '/gut', label: 'Matriz GUT', icon: 'gut' },
       { path: '/pest', label: 'Analise PEST', icon: 'pest' },
@@ -32,6 +36,7 @@ const navSections: NavSection[] = [
       { path: '/metas', label: 'Metas & KPIs', icon: 'metas' },
       { path: '/campanhas', label: 'Campanhas', icon: 'campanhas' },
       { path: '/pipeline', label: 'Pipeline', icon: 'pipeline' },
+      { path: '/fidelizacao', label: 'Fidelizacao', icon: 'fidelizacao' },
     ],
   },
   {
@@ -39,6 +44,12 @@ const navSections: NavSection[] = [
     items: [
       { path: '/relatorios', label: 'Relatorios', icon: 'relatorios' },
       { path: '/exportar', label: 'Exportar', icon: 'exportar' },
+    ],
+  },
+  {
+    title: 'Cadastros',
+    items: [
+      { path: '/produtos', label: 'Produtos', icon: 'produtos' },
     ],
   },
 ]
@@ -112,6 +123,40 @@ const icons: Record<string, ReactNode> = {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
       <line x1="12" y1="18" x2="12" y2="12" /><polyline points="9 15 12 12 15 15" />
+    </svg>
+  ),
+  cultura: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 20h10" /><path d="M12 20v-6" /><path d="M8 8c0-2.21 1.79-4 4-4s4 1.79 4 4" />
+      <path d="M6 14c0-2.21 1.79-4 4-4s4 1.79 4 4" /><circle cx="12" cy="8" r="1" />
+    </svg>
+  ),
+  oportunidades: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="5" /><line x1="12" y1="2" x2="12" y2="7" />
+      <line x1="12" y1="17" x2="12" y2="22" /><line x1="2" y1="12" x2="7" y2="12" /><line x1="17" y1="12" x2="22" y2="12" />
+    </svg>
+  ),
+  territorial: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 22 8 12 14 2 8" /><polyline points="2 8 2 16 12 22 22 16 22 8" />
+      <line x1="12" y1="14" x2="12" y2="22" />
+    </svg>
+  ),
+  gaps: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="2" y1="22" x2="22" y2="2" /><path d="M17 14l-3 3 3 3" /><path d="M7 10l3-3-3-3" />
+    </svg>
+  ),
+  fidelizacao: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+  produtos: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect x="2" y="8" width="20" height="12" rx="2" />
+      <line x1="6" y1="12" x2="10" y2="12" /><line x1="6" y1="16" x2="10" y2="16" />
     </svg>
   ),
 }

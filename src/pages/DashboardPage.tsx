@@ -492,12 +492,12 @@ export function DashboardPage() {
                     <td>{v.count}</td>
                     <td>{fmt.number(Math.round(v.area))}</td>
                     <td>{fmt.short(v.fat)}</td>
-                    <td>
+                    <td style={{ width: '100%' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 6, background: 'var(--bg-tertiary)', borderRadius: 4, overflow: 'hidden' }}>
+                        <div style={{ flex: 1, height: 8, background: 'var(--bg-tertiary)', borderRadius: 4, overflow: 'hidden', minWidth: 80 }}>
                           <div style={{ height: '100%', width: `${totalFaturamento > 0 ? (v.fat / totalFaturamento) * 100 : 0}%`, background: 'var(--color-primary)', borderRadius: 4 }} />
                         </div>
-                        <span style={{ fontSize: 11, color: 'var(--text-tertiary)', minWidth: 34 }}>
+                        <span style={{ fontSize: 12, color: 'var(--text-secondary)', minWidth: 42, textAlign: 'right', fontWeight: 600 }}>
                           {totalFaturamento > 0 ? ((v.fat / totalFaturamento) * 100).toFixed(1) : '0'}%
                         </span>
                       </div>

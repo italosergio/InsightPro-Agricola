@@ -8,6 +8,11 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { ClientesPage } from '@/pages/ClientesPage'
 import { AnaliseABCPage } from '@/pages/AnaliseABCPage'
 import { PenetracaoPage } from '@/pages/PenetracaoPage'
+import { CulturaPage } from '@/pages/CulturaPage'
+import { OportunidadesPage } from '@/pages/OportunidadesPage'
+import { TerritorialPage } from '@/pages/TerritorialPage'
+import { GapsPage } from '@/pages/GapsPage'
+import { FidelizacaoPage } from '@/pages/FidelizacaoPage'
 import { SWOTPage } from '@/pages/SWOTPage'
 import { GUTPage } from '@/pages/GUTPage'
 import { PESTPage } from '@/pages/PESTPage'
@@ -16,6 +21,7 @@ import { CampanhasPage } from '@/pages/CampanhasPage'
 import { PipelinePage } from '@/pages/PipelinePage'
 import { RelatoriosPage } from '@/pages/RelatoriosPage'
 import { ExportarPage } from '@/pages/ExportarPage'
+import { ProdutosPage } from '@/pages/ProdutosPage'
 import { HomePage } from '@/pages/HomePage'
 import { ScrollToTop } from '@/components/ScrollToTop'
 
@@ -34,6 +40,12 @@ export function App() {
               <Route path="/clientes" element={<AuthRoute><ClientesPage /></AuthRoute>} />
               <Route path="/analise-abc" element={<AuthRoute><AnaliseABCPage /></AuthRoute>} />
               <Route path="/penetracao" element={<AuthRoute><PenetracaoPage /></AuthRoute>} />
+              <Route path="/cultura" element={<AuthRoute><CulturaPage /></AuthRoute>} />
+              <Route path="/oportunidades" element={<AuthRoute><OportunidadesPage /></AuthRoute>} />
+              <Route path="/territorial" element={<AuthRoute><TerritorialPage /></AuthRoute>} />
+              <Route path="/gaps" element={<AuthRoute><GapsPage /></AuthRoute>} />
+              <Route path="/fidelizacao" element={<AuthRoute><FidelizacaoPage /></AuthRoute>} />
+              <Route path="/produtos" element={<AuthRoute><ProdutosPage /></AuthRoute>} />
               <Route path="/swot" element={<AuthRoute><SWOTPage /></AuthRoute>} />
               <Route path="/gut" element={<AuthRoute><GUTPage /></AuthRoute>} />
               <Route path="/pest" element={<AuthRoute><PESTPage /></AuthRoute>} />
