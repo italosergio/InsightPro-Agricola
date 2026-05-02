@@ -3,8 +3,8 @@ import type { AuthContextType } from '@/types'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const VALID_USERNAME = 'naricisoneto'
-const VALID_PASSWORD = 'narcisoo'
+const VALID_USERNAME = 'narcisoneto'
+const VALID_PASSWORD = 'admin'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
