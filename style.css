@@ -247,7 +247,7 @@
 
 /* Header in dark: transparent with blur */
 [data-theme="dark"] .app-header {
-  background: rgba(6, 12, 8, 0.4);
+  background: rgba(6, 12, 8, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-bottom-color: var(--border-primary);
@@ -774,7 +774,7 @@ textarea:focus-visible {
   left: var(--sidebar-width);
   right: 0;
   z-index: var(--z-sticky);
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.8);
   border-bottom: 1px solid var(--border-primary);
   padding: 0 var(--space-6);
   display: flex;
