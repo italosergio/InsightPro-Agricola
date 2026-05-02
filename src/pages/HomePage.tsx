@@ -39,11 +39,6 @@ const tools: ToolDef[] = [
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /></svg>,
   },
   {
-    path: '/upload', label: 'Upload de Dados', desc: 'Importe sua carteira de clientes via CSV com mapeamento automático de colunas.',
-    category: 'principal',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>,
-  },
-  {
     path: '/clientes', label: 'Clientes', desc: 'Tabela completa de clientes com filtros avançados por estado, cultura e status.',
     category: 'principal',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
@@ -364,8 +359,7 @@ export function HomePage() {
           )}
           {totalClientes === 0 && (
             <div className="home-hero-cta">
-              <Link to="/upload" className="btn btn--primary btn--lg">Importar Dados CSV</Link>
-              <Link to="/" className="btn btn--secondary btn--lg">Ver Dashboard</Link>
+              <Link to="/" className="btn btn--primary btn--lg">Ver Dashboard</Link>
             </div>
           )}
         </div>

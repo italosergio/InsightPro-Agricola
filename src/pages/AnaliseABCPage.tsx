@@ -187,7 +187,6 @@ export function AnaliseABCPage() {
               </svg>
               <h3>Nenhum dado cadastrado</h3>
               <p>Importe seus dados via CSV para comecar a classificar seus clientes.</p>
-              <a href="/upload" className="btn btn--primary" style={{ marginTop: 'var(--space-4)' }}>Importar Dados</a>
             </div>
           </div>
         </div>

@@ -96,6 +96,12 @@ export function CampanhasPage() {
   }
 
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+  const fmtShort = (v: number) => {
+    if (v >= 1e9) return `R$ ${(v / 1e9).toFixed(1).replace('.', ',')} Bi`
+    if (v >= 1e6) return `R$ ${(v / 1e6).toFixed(1).replace('.', ',')} Mi`
+    if (v >= 1e3) return `R$ ${(v / 1e3).toFixed(0).replace('.', ',')} mil`
+    return fmt(v)
+  }
 
   const orcamentoTotal = campanhas.reduce((sum, c) => sum + c.orcamento, 0)
   const retornoTotal = campanhas.reduce((sum, c) => sum + c.retornoEstimado, 0)
@@ -130,7 +136,7 @@ export function CampanhasPage() {
               <span className="page-hero-kpi-label">ROI Médio</span>
             </div>
             <div className="page-hero-kpi">
-              <span className="page-hero-kpi-value">{fmt(retornoTotal)}</span>
+              <span className="page-hero-kpi-value">{fmtShort(retornoTotal)}</span>
               <span className="page-hero-kpi-label">Retorno Est.</span>
             </div>
           </div>
@@ -145,11 +151,11 @@ export function CampanhasPage() {
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Investimento Total</div>
-          <div className="kpi-value">{fmt(orcamentoTotal)}</div>
+          <div className="kpi-value">{fmtShort(orcamentoTotal)}</div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Retorno Estimado</div>
-          <div className="kpi-value" style={{ color: 'var(--color-success)' }}>{fmt(retornoTotal)}</div>
+          <div className="kpi-value" style={{ color: 'var(--color-success)' }}>{fmtShort(retornoTotal)}</div>
           <div className={`kpi-trend ${retornoTotal >= orcamentoTotal ? 'positive' : 'negative'}`}>
             {retornoTotal >= orcamentoTotal ? 'Lucro' : 'Prejuízo'}
           </div>

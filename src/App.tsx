@@ -5,7 +5,6 @@ import { DataProvider } from '@/store/DataContext'
 import { AuthRoute, PublicRoute } from '@/components/ProtectedRoute'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
-import { UploadPage } from '@/pages/UploadPage'
 import { ClientesPage } from '@/pages/ClientesPage'
 import { AnaliseABCPage } from '@/pages/AnaliseABCPage'
 import { PenetracaoPage } from '@/pages/PenetracaoPage'
@@ -32,7 +31,6 @@ export function App() {
 
               <Route path="/" element={<AuthRoute><DashboardPage /></AuthRoute>} />
               <Route path="/inicio" element={<AuthRoute><HomePage /></AuthRoute>} />
-              <Route path="/upload" element={<AuthRoute><UploadPage /></AuthRoute>} />
               <Route path="/clientes" element={<AuthRoute><ClientesPage /></AuthRoute>} />
               <Route path="/analise-abc" element={<AuthRoute><AnaliseABCPage /></AuthRoute>} />
               <Route path="/penetracao" element={<AuthRoute><PenetracaoPage /></AuthRoute>} />

@@ -330,9 +330,6 @@ export function DashboardPage() {
             </div>
             <h1 className="home-hero-title" style={{ textAlign: 'center' }}>Nenhum dado ainda</h1>
             <p className="home-hero-subtitle" style={{ textAlign: 'center' }}>Importe sua carteira de clientes via CSV para visualizar todos os indicadores e gráficos.</p>
-            <div className="home-hero-cta" style={{ justifyContent: 'center' }}>
-              <Link to="/upload" className="btn btn--primary btn--lg">Importar Dados CSV</Link>
-            </div>
           </div>
           <div className="home-hero-decoration">
             <div className="home-hero-circle home-hero-circle--1" />
