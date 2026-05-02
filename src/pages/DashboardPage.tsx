@@ -215,7 +215,7 @@ export function DashboardPage() {
 
   const statusChartOpts = useMemo<Highcharts.Options>(() => ({
     ...hcTheme,
-    chart: { ...hcTheme.chart, type: 'pie', height: 240 },
+    chart: { ...hcTheme.chart, type: 'pie', height: 300 },
     title: { text: undefined },
     tooltip: {
       ...hcTheme.tooltip,
@@ -223,9 +223,18 @@ export function DashboardPage() {
     },
     plotOptions: {
       ...hcTheme.plotOptions,
-      pie: { innerSize: '60%', borderWidth: 3, borderColor: isDark ? '#0d1710' : '#f8fafc', dataLabels: { enabled: false } },
+      pie: { innerSize: '55%', borderWidth: 3, borderColor: isDark ? '#0d1710' : '#f8fafc', dataLabels: { enabled: false } },
     },
-    legend: { ...hcTheme.legend, enabled: true, layout: 'vertical', align: 'right', verticalAlign: 'middle' },
+    legend: {
+      ...hcTheme.legend,
+      enabled: true,
+      layout: 'horizontal',
+      align: 'center',
+      verticalAlign: 'bottom',
+      itemStyle: { ...hcTheme.legend?.itemStyle, fontSize: '10px' as any },
+      itemDistance: 12,
+      padding: 4,
+    },
     colors: ['#22c55e', '#3b82f6', '#ef4444'],
     series: [{
       type: 'pie', name: 'Clientes',
