@@ -247,9 +247,9 @@
 
 /* Header in dark: transparent with blur */
 [data-theme="dark"] .app-header {
-  background: color-mix(in srgb, #060c08 75%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: color-mix(in srgb, #060c08 50%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom-color: var(--border-primary);
 }
 
@@ -768,7 +768,7 @@ textarea:focus-visible {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
   border-bottom: 1px solid var(--border-primary);
   padding: 0 var(--space-6);
   display: flex;
@@ -776,8 +776,8 @@ textarea:focus-visible {
   justify-content: space-between;
   height: var(--header-height);
   gap: var(--space-4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .header-left {
