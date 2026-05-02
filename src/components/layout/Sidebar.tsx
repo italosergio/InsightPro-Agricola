@@ -137,7 +137,12 @@ export function Sidebar({ isOpen, onClose, minimized, onToggleMinimized }: {
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <div className="logo-icon">IP</div>
-            {!minimized && <span className="logo-text">InsightPro</span>}
+            {!minimized && (
+              <div className="sidebar-logo-text">
+                <span className="logo-text">InsightPro</span>
+                <span className="logo-subtitle">AGRICULTURA</span>
+              </div>
+            )}
           </div>
           <button className="sidebar-collapse-btn" onClick={onToggleMinimized} aria-label={minimized ? 'Expandir menu' : 'Minimizar menu'}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
