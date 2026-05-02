@@ -465,7 +465,9 @@ export function DashboardPage() {
         <div className="card-header">
           <SectionHeader title="Resumo por Cultura" sub="Faturamento, área e clientes por cultura principal" />
         </div>
-        <div className="card-body" style={{ padding: 0 }}>
+
+        {/* Desktop table */}
+        <div className="card-body desktop-only" style={{ padding: 0 }}>
           <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
             <table className="data-table">
               <thead>
@@ -500,6 +502,38 @@ export function DashboardPage() {
             </table>
           </div>
         </div>
+
+        {/* Mobile cards */}
+        <div className="mobile-only" style={{ padding: 0 }}>
+          {faturamentoPorCultura.map(([cultura, v]) => {
+            const pct = totalFaturamento > 0 ? ((v.fat / totalFaturamento) * 100).toFixed(1) : '0'
+            return (
+              <div key={cultura} className="mobile-cultura-card">
+                <div className="mobile-cultura-card-header">
+                  <span className="mobile-cultura-card-name">{cultura}</span>
+                  <span className="mobile-cultura-card-pct">{pct}%</span>
+                </div>
+                <div className="mobile-cultura-card-stats">
+                  <div className="mobile-cultura-card-stat">
+                    <span className="mobile-cultura-card-stat-value">{v.count}</span>
+                    <span className="mobile-cultura-card-stat-label">Clientes</span>
+                  </div>
+                  <div className="mobile-cultura-card-stat">
+                    <span className="mobile-cultura-card-stat-value">{fmt.short(v.fat)}</span>
+                    <span className="mobile-cultura-card-stat-label">Faturamento</span>
+                  </div>
+                  <div className="mobile-cultura-card-stat">
+                    <span className="mobile-cultura-card-stat-value">{fmt.number(Math.round(v.area))} ha</span>
+                    <span className="mobile-cultura-card-stat-label">Área</span>
+                  </div>
+                </div>
+                <div className="mobile-cultura-card-bar">
+                  <div className="mobile-cultura-card-bar-fill" style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* ── TOP 10 CLIENTES ──────────────────────────────────────────── */}
@@ -507,7 +541,9 @@ export function DashboardPage() {
         <div className="card-header">
           <SectionHeader title="Top 10 Clientes" sub="Por faturamento anual" link="/clientes" linkLabel="Ver todos →" />
         </div>
-        <div className="card-body" style={{ padding: 0 }}>
+
+        {/* Desktop table */}
+        <div className="card-body desktop-only" style={{ padding: 0 }}>
           <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
             <table className="data-table">
               <thead>
@@ -535,6 +571,41 @@ export function DashboardPage() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Mobile cards */}
+        <div className="mobile-only" style={{ padding: 0 }}>
+          {topClientes.map((c, i) => {
+            const rankClass = i < 3 ? ['gold','silver','bronze'][i] : 'default'
+            return (
+              <div key={c.id} className="mobile-client-card">
+                <div>
+                  <span className={`mobile-client-card-rank mobile-client-card-rank--${rankClass}`}>{i + 1}</span>
+                  <span className="mobile-client-card-name">{c.nome}</span>
+                </div>
+                <div className="mobile-client-card-meta">{c.cidade}/{c.estado} · <span className="badge badge--neutral">{c.cultura_principal}</span></div>
+                <div className="mobile-client-card-row">
+                  <div className="mobile-client-card-stat">
+                    <span className="mobile-client-card-stat-value">{fmt.short(c.faturamento_anual)}</span>
+                    <span className="mobile-client-card-stat-label">Faturamento</span>
+                  </div>
+                  <div className="mobile-client-card-stat">
+                    <span className="mobile-client-card-stat-value">{fmt.short(c.potencial_compra)}</span>
+                    <span className="mobile-client-card-stat-label">Potencial</span>
+                  </div>
+                  <div className="mobile-client-card-stat">
+                    <span className="mobile-client-card-stat-value">{fmt.number(c.area_hectares)} ha</span>
+                    <span className="mobile-client-card-stat-label">Área</span>
+                  </div>
+                </div>
+                <div className="mobile-client-card-status">
+                  <span className={`badge badge--${c.status === 'ativo' ? 'success' : c.status === 'prospect' ? 'info' : 'error'}`}>
+                    {c.status}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 
