@@ -1592,6 +1592,7 @@ textarea.form-control {
   .sidebar.open {
     transform: translateX(0);
     box-shadow: var(--shadow-xl);
+    z-index: calc(var(--z-sticky) + 100);
   }
 
   .sidebar.minimized .nav-item::after,
@@ -1680,7 +1681,7 @@ textarea.form-control {
   position: fixed;
   inset: 0;
   background: var(--bg-overlay);
-  z-index: calc(var(--z-sticky) - 1);
+  z-index: calc(var(--z-sticky) + 99);
 }
 
 /* === Login Page === */
