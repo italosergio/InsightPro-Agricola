@@ -6,7 +6,7 @@ function easeOutCubic(t: number): number {
 
 export function useAnimatedNumber(target: number, duration = 1600): number {
   const [value, setValue] = useState(0)
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number>(0)
 
   useEffect(() => {
     const startTime = performance.now()
