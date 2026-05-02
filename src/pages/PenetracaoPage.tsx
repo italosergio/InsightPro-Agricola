@@ -22,16 +22,16 @@ function getClassification(pct: number) {
 const products = [
   { nome: 'AminoPlus® AJINOMOTO',        clientCount: 4, total: 5, pct: 80.0 },
   { nome: 'Amino Arginine® AJINOMOTO',   clientCount: 4, total: 5, pct: 80.0 },
-  { nome: 'Amino Proline® AJINOMOTO',    clientCount: 4, total: 5, pct: 80.0 },
-  { nome: 'Amiorgan® AJINOMOTO',         clientCount: 4, total: 5, pct: 80.0 },
-  { nome: 'Ajifol® Premium+ AJINOMOTO',  clientCount: 4, total: 5, pct: 80.0 },
-  { nome: 'AminoFort® AJINOMOTO',        clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'AminoReten® AJINOMOTO',       clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'AjiPower® AJINOMOTO',         clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'Ajifol® K-Mg AJINOMOTO',      clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'AlgenMax® AJINOMOTO',         clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'Bokashi® AJINOMOTO',          clientCount: 3, total: 5, pct: 60.0 },
-  { nome: 'Ajifol® SM-Boro AJINOMOTO',   clientCount: 2, total: 5, pct: 40.0 },
+  { nome: 'Amino Proline® AJINOMOTO',    clientCount: 3, total: 5, pct: 60.0 },
+  { nome: 'Amiorgan® AJINOMOTO',         clientCount: 3, total: 5, pct: 60.0 },
+  { nome: 'Ajifol® Premium+ AJINOMOTO',  clientCount: 2, total: 5, pct: 40.0 },
+  { nome: 'AminoFort® AJINOMOTO',        clientCount: 2, total: 5, pct: 40.0 },
+  { nome: 'AminoReten® AJINOMOTO',       clientCount: 2, total: 5, pct: 35.0 },
+  { nome: 'AjiPower® AJINOMOTO',         clientCount: 1, total: 5, pct: 20.0 },
+  { nome: 'Ajifol® K-Mg AJINOMOTO',      clientCount: 1, total: 5, pct: 18.0 },
+  { nome: 'AlgenMax® AJINOMOTO',         clientCount: 1, total: 5, pct: 15.0 },
+  { nome: 'Bokashi® AJINOMOTO',          clientCount: 1, total: 5, pct: 12.0 },
+  { nome: 'Ajifol® SM-Boro AJINOMOTO',   clientCount: 1, total: 5, pct: 4.0 },
 ].map(p => ({ ...p, classificacao: getClassification(p.pct) }))
 
 export function PenetracaoPage() {
