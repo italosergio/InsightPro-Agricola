@@ -114,8 +114,8 @@ export function DashboardPage() {
     new Intl.NumberFormat('pt-BR').format(value)
 
   const formatCurrencyShort = (value: number) => {
-    if (value >= 1e9) return `R$ ${(value / 1e9).toFixed(1)} bi`
-    if (value >= 1e6) return `R$ ${(value / 1e6).toFixed(0)} mi`
+    if (value >= 1e9) return `R$ ${(value / 1e9).toFixed(1).replace('.', ',')} Bi`
+    if (value >= 1e6) return `R$ ${(value / 1e6).toFixed(1).replace('.', ',')} Mi`
     return formatCurrency(value)
   }
 
@@ -298,13 +298,13 @@ export function DashboardPage() {
         <KpiCard
           label="Faturamento Total"
           value={totalFaturamento}
-          format={(v) => formatCurrency(v)}
+          format={(v) => formatCurrencyShort(v)}
           icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>'
         />
         <KpiCard
           label="Potencial de Compra"
           value={totalPotencial}
-          format={(v) => formatCurrency(v)}
+          format={(v) => formatCurrencyShort(v)}
           icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>'
         />
         <KpiCard
@@ -316,7 +316,7 @@ export function DashboardPage() {
         <KpiCard
           label="Ticket Médio"
           value={ticketMedio}
-          format={(v) => formatCurrency(v)}
+          format={(v) => formatCurrencyShort(v)}
           trend="positive"
           trendLabel="por cliente"
           icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'
