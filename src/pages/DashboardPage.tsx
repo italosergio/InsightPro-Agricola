@@ -473,9 +473,9 @@ export function DashboardPage() {
         </div>
 
         {/* Desktop table */}
-        <div className="card-body desktop-only" style={{ padding: 0 }}>
-          <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
+        <div className="card-body desktop-only" style={{ padding: 0, width: '100%' }}>
+          <div className="table-container" style={{ border: 'none', borderRadius: 0, width: '100%' }}>
+            <table className="data-table" style={{ tableLayout: 'fixed' }}>
               <thead>
                 <tr>
                   <th>Cultura</th>
@@ -492,9 +492,9 @@ export function DashboardPage() {
                     <td>{v.count}</td>
                     <td>{fmt.number(Math.round(v.area))}</td>
                     <td>{fmt.short(v.fat)}</td>
-                    <td style={{ width: '100%' }}>
+                    <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ flex: 1, height: 8, background: 'var(--bg-tertiary)', borderRadius: 4, overflow: 'hidden', minWidth: 80 }}>
+                        <div style={{ flex: 1, height: 8, background: 'var(--bg-tertiary)', borderRadius: 4, overflow: 'hidden', minWidth: 40 }}>
                           <div style={{ height: '100%', width: `${totalFaturamento > 0 ? (v.fat / totalFaturamento) * 100 : 0}%`, background: 'var(--color-primary)', borderRadius: 4 }} />
                         </div>
                         <span style={{ fontSize: 12, color: 'var(--text-secondary)', minWidth: 42, textAlign: 'right', fontWeight: 600 }}>
