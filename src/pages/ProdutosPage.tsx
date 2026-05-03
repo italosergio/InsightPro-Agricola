@@ -51,6 +51,7 @@ export function ProdutosPage() {
   })
   const [editando, setEditando] = useState<string | null>(null)
   const [form, setForm] = useState<ProdutoCadastro>({} as ProdutoCadastro)
+  const [mostrarForm, setMostrarForm] = useState(false)
 
   const saveProdutos = (data: ProdutoCadastro[]) => {
     setProdutos(data)
@@ -73,6 +74,13 @@ export function ProdutosPage() {
     if (editando === id) setEditando(null)
   }
 
+  const addProduto = () => {
+    if (!form.nome.trim() || !form.fornecedor.trim()) return
+    saveProdutos([...produtos, { ...form, id: `prod_${Date.now()}` }])
+    setForm({} as ProdutoCadastro)
+    setMostrarForm(false)
+  }
+
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
   return (
@@ -85,6 +93,22 @@ export function ProdutosPage() {
             <span className="page-hero-eyebrow">Cadastro de Produtos</span>
             <h2 className="page-hero-title">Produtos Agrícolas</h2>
             <p className="page-hero-subtitle">Cadastre e gerencie produtos para culturas como Uva, Manga e outras</p>
+            <button
+              onClick={() => setMostrarForm(!mostrarForm)}
+              style={{
+                whiteSpace: 'nowrap',
+                color: 'rgba(255,255,255,0.9)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                textDecoration: 'underline',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              + Adicionar Produto
+            </button>
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -94,6 +118,64 @@ export function ProdutosPage() {
           </div>
         </div>
       </div>
+
+      {mostrarForm && (
+        <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+          <div className="card-header">
+            <h2 className="dash-section-title">Novo Produto</h2>
+          </div>
+          <div className="card-body">
+            <div className="form-grid form-grid-3">
+              <div className="form-group">
+                <label className="form-label">Nome do Produto *</label>
+                <input className="form-control" value={form.nome || ''} onChange={e => setForm({ ...form, nome: e.target.value })} placeholder="Ex: Mancozeb 800 WP" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Fornecedor/Marca *</label>
+                <input className="form-control" value={form.fornecedor || ''} onChange={e => setForm({ ...form, fornecedor: e.target.value })} placeholder="Ex: Bayer, Syngenta" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Custo (R$/L ou R$/kg)</label>
+                <input className="form-control" type="number" value={form.custo || ''} onChange={e => setForm({ ...form, custo: Number(e.target.value) })} placeholder="45.50" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Categoria</label>
+                <select className="form-control" value={form.categoria || ''} onChange={e => setForm({ ...form, categoria: e.target.value })}>
+                  <option value="">Selecione</option>
+                  {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Cultura Aplicada</label>
+                <select className="form-control" value={form.cultura || ''} onChange={e => setForm({ ...form, cultura: e.target.value })}>
+                  <option value="">Selecione</option>
+                  {culturas.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Dose Recomendada</label>
+                <input className="form-control" value={form.doseRecomendada || ''} onChange={e => setForm({ ...form, doseRecomendada: e.target.value })} placeholder="Ex: 2,5 L/ha" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Intervalo (dias)</label>
+                <input className="form-control" value={form.intervalo || ''} onChange={e => setForm({ ...form, intervalo: e.target.value })} placeholder="Ex: 14" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Modo de Ação</label>
+                <input className="form-control" value={form.modoAcao || ''} onChange={e => setForm({ ...form, modoAcao: e.target.value })} placeholder="Ex: Sistêmico" />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Ingrediente Ativo</label>
+                <input className="form-control" value={form.ingredienteAtivo || ''} onChange={e => setForm({ ...form, ingredienteAtivo: e.target.value })} placeholder="Ex: Mancozeb 800 g/kg" />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 'var(--space-3)', marginTop: 'var(--space-4)' }}>
+              <button className="btn btn--primary" onClick={addProduto}>Salvar Produto</button>
+              <button className="btn btn--secondary" onClick={() => { setForm({} as ProdutoCadastro); setMostrarForm(false) }}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
