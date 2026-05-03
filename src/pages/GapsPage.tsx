@@ -86,7 +86,7 @@ export function GapsPage() {
         <div className="card-header"><h2 className="dash-section-title">Detalhamento de Gaps por Cliente</h2></div>
         <div className="card-body">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            {gapData.filter(g => g.gap > 0).slice(0, 10).map((g, i) => (
+            {gapData.filter(g => g.gap > 0).map((g, i) => (
               <div key={i} style={{
                 padding: 'var(--space-4)', background: 'var(--bg-secondary)',
                 borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-primary)',
@@ -109,11 +109,6 @@ export function GapsPage() {
                 </div>
               </div>
             ))}
-            {gapData.filter(g => g.gap > 0).length > 10 && (
-              <div style={{ textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>
-                +{gapData.filter(g => g.gap > 0).length - 10} clientes adicionais
-              </div>
-            )}
           </div>
         </div>
       </div>

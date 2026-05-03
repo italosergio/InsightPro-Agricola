@@ -22,6 +22,7 @@ import { PipelinePage } from '@/pages/PipelinePage'
 import { RelatoriosPage } from '@/pages/RelatoriosPage'
 import { ExportarPage } from '@/pages/ExportarPage'
 import { ProdutosPage } from '@/pages/ProdutosPage'
+import { ClientesCadastroPage } from '@/pages/ClientesCadastroPage'
 import { HomePage } from '@/pages/HomePage'
 import { ScrollToTop } from '@/components/ScrollToTop'
 
@@ -46,6 +47,7 @@ export function App() {
               <Route path="/gaps" element={<AuthRoute><GapsPage /></AuthRoute>} />
               <Route path="/fidelizacao" element={<AuthRoute><FidelizacaoPage /></AuthRoute>} />
               <Route path="/produtos" element={<AuthRoute><ProdutosPage /></AuthRoute>} />
+              <Route path="/cadastro-clientes" element={<AuthRoute><ClientesCadastroPage /></AuthRoute>} />
               <Route path="/swot" element={<AuthRoute><SWOTPage /></AuthRoute>} />
               <Route path="/gut" element={<AuthRoute><GUTPage /></AuthRoute>} />
               <Route path="/pest" element={<AuthRoute><PESTPage /></AuthRoute>} />

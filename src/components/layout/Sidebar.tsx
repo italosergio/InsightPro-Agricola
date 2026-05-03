@@ -50,6 +50,7 @@ const navSections: NavSection[] = [
     title: 'Cadastros',
     items: [
       { path: '/produtos', label: 'Produtos', icon: 'produtos' },
+      { path: '/cadastro-clientes', label: 'Cad. Clientes', icon: 'clientes' },
     ],
   },
 ]
