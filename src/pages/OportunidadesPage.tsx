@@ -2,51 +2,40 @@ import { useMemo } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { getClientProductos, getClientName } from '@/data/produtos'
 
 export function OportunidadesPage() {
-  const { filteredData, rawData } = useData()
+  const { rawData } = useData()
   usePageTitle('Oportunidades')
 
-  const data = filteredData.length > 0 ? filteredData : rawData
-
-  const sortedClients = useMemo(() =>
-    [...data].sort((a, b) => b.faturamento_anual - a.faturamento_anual),
-  [data])
-
-  const fatMedian = useMemo(() => {
-    if (sortedClients.length < 2) return 0
-    const mid = Math.floor(sortedClients.length / 2)
-    return sortedClients[mid].faturamento_anual
-  }, [sortedClients])
-
-  const penMedian = useMemo(() => {
-    const counts = sortedClients.map(c => Object.keys(c.produtos).length)
-    if (counts.length < 2) return 0
-    const sorted = [...counts].sort((a, b) => a - b)
-    return sorted[Math.floor(sorted.length / 2)]
-  }, [sortedClients])
+  const clientCount = rawData.length > 0 ? rawData.length : 45
 
   const quadrant = useMemo(() => {
-    return sortedClients.map(c => {
-      const penCount = Object.keys(c.produtos).length
-      const isLarge = c.faturamento_anual >= fatMedian
-      const isHighPen = penCount >= penMedian
-      return {
-        nome: c.nome,
-        faturamento: c.faturamento_anual,
-        penetracao: penCount,
-        isLarge,
-        isHighPen,
-      }
-    })
-  }, [sortedClients, fatMedian, penMedian])
+    const clients = Array.from({ length: clientCount }, (_, i) => {
+      const nome = rawData[i]?.nome || getClientName(i)
+      const faturamento = rawData[i]?.faturamento_anual || 0
+      const penCount = getClientProductos(i).length
+      return { nome, faturamento, penetracao: penCount }
+    }).sort((a, b) => b.faturamento - a.faturamento)
+
+    const mid = Math.floor(clients.length / 2)
+    const fatMedian = clients.length >= 2 ? clients[mid].faturamento : 0
+    const penCounts = clients.map(c => c.penetracao).sort((a, b) => a - b)
+    const penMedian = penCounts.length >= 2 ? penCounts[Math.floor(penCounts.length / 2)] : 0
+
+    return clients.map(c => ({
+      ...c,
+      isLarge: c.faturamento >= fatMedian,
+      isHighPen: c.penetracao >= penMedian,
+    }))
+  }, [clientCount, rawData])
 
   const stars = quadrant.filter(q => q.isLarge && q.isHighPen)
   const opportunities = quadrant.filter(q => q.isLarge && !q.isHighPen)
   const niche = quadrant.filter(q => !q.isLarge && q.isHighPen)
   const avoid = quadrant.filter(q => !q.isLarge && !q.isHighPen)
 
-  const quadrants = [
+  const quads = [
     { key: 'stars', label: 'Estrelas', sub: 'Alta penetração em clientes grandes', data: stars, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', action: 'Proteger e expandir' },
     { key: 'opportunities', label: 'Oportunidades', sub: 'Baixa penetração em clientes grandes', data: opportunities, color: '#3b82f6', bg: 'rgba(59,130,246,0.08)', action: 'Aumentar penetração' },
     { key: 'niche', label: 'Nicho', sub: 'Alta penetração em clientes pequenos', data: niche, color: '#a855f7', bg: 'rgba(168,85,247,0.08)', action: 'Manter relacionamento' },
@@ -85,23 +74,12 @@ export function OportunidadesPage() {
 
       <div className="home-section">
         <h2 className="home-section-title" style={{ marginBottom: 'var(--space-4)' }}>Matriz de Oportunidades</h2>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 'var(--space-4)',
-        }}>
-          {quadrants.map(q => (
-            <div key={q.key} className="card" style={{
-              marginBottom: 0,
-              borderLeft: `4px solid ${q.color}`,
-            }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-4)' }}>
+          {quads.map(q => (
+            <div key={q.key} className="card" style={{ marginBottom: 0, borderLeft: `4px solid ${q.color}` }}>
               <div className="card-body" style={{ padding: 'var(--space-4)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 'var(--space-3)' }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 8, background: q.bg,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 16, color: q.color,
-                  }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: q.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: q.color }}>
                     {q.key === 'stars' ? '⭐' : q.key === 'opportunities' ? '🚀' : q.key === 'niche' ? '🎯' : '⚠️'}
                   </div>
                   <div>
@@ -115,14 +93,9 @@ export function OportunidadesPage() {
                 {q.data.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                     {q.data.slice(0, 5).map(c => (
-                      <span key={c.nome} style={{
-                        display: 'inline-block', padding: '2px 8px', borderRadius: 4,
-                        fontSize: 11, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)',
-                      }}>{c.nome}</span>
+                      <span key={c.nome} style={{ display: 'inline-block', padding: '2px 8px', borderRadius: 4, fontSize: 11, background: 'var(--bg-tertiary)', color: 'var(--text-secondary)' }}>{c.nome}</span>
                     ))}
-                    {q.data.length > 5 && (
-                      <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>+{q.data.length - 5} mais</span>
-                    )}
+                    {q.data.length > 5 && <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>+{q.data.length - 5} mais</span>}
                   </div>
                 )}
               </div>
@@ -131,47 +104,32 @@ export function OportunidadesPage() {
         </div>
       </div>
 
-      {quadrant.length > 0 && (
-        <div className="card" style={{ marginTop: 'var(--space-6)' }}>
-          <div className="card-header"><h2 className="dash-section-title">Detalhamento por Cliente</h2></div>
-          <div className="card-body" style={{ padding: 0 }}>
-            <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Cliente</th>
-                    <th>Faturamento</th>
-                    <th>Produtos</th>
-                    <th>Quadrante</th>
+      <div className="card" style={{ marginTop: 'var(--space-6)' }}>
+        <div className="card-header"><h2 className="dash-section-title">Detalhamento por Cliente</h2></div>
+        <div className="card-body" style={{ padding: 0 }}>
+          <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
+            <table className="data-table">
+              <thead><tr><th>Cliente</th><th>Faturamento</th><th>Produtos</th><th>Quadrante</th></tr></thead>
+              <tbody>
+                {quadrant.map((q, i) => (
+                  <tr key={i}>
+                    <td><strong>{q.nome}</strong></td>
+                    <td>{fmt(q.faturamento)}</td>
+                    <td>{q.penetracao}</td>
+                    <td>
+                      <span className="badge" style={{
+                        background: q.isLarge ? (q.isHighPen ? 'rgba(34,197,94,0.12)' : 'rgba(59,130,246,0.12)') : (q.isHighPen ? 'rgba(168,85,247,0.12)' : 'rgba(245,158,11,0.12)'),
+                        color: q.isLarge ? (q.isHighPen ? '#22c55e' : '#3b82f6') : (q.isHighPen ? '#a855f7' : '#f59e0b'),
+                        fontWeight: 600,
+                      }}>{q.isLarge ? (q.isHighPen ? 'Estrela' : 'Oportunidade') : (q.isHighPen ? 'Nicho' : 'Evitar')}</span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {quadrant.map((q, i) => (
-                    <tr key={i}>
-                      <td><strong>{q.nome}</strong></td>
-                      <td>{fmt(q.faturamento)}</td>
-                      <td>{q.penetracao}</td>
-                      <td>
-                        <span className="badge" style={{
-                          background: q.isLarge
-                            ? (q.isHighPen ? 'rgba(34,197,94,0.12)' : 'rgba(59,130,246,0.12)')
-                            : (q.isHighPen ? 'rgba(168,85,247,0.12)' : 'rgba(245,158,11,0.12)'),
-                          color: q.isLarge
-                            ? (q.isHighPen ? '#22c55e' : '#3b82f6')
-                            : (q.isHighPen ? '#a855f7' : '#f59e0b'),
-                          fontWeight: 600,
-                        }}>
-                          {q.isLarge ? (q.isHighPen ? 'Estrela' : 'Oportunidade') : (q.isHighPen ? 'Nicho' : 'Evitar')}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      )}
+      </div>
     </AppLayout>
   )
 }

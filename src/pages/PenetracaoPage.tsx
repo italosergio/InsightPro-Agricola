@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { produtosAJINOMOTO } from '@/data/produtos'
 
 const levels = [
   { key: 'excelente', label: 'Excelente', color: '#16a34a', bg: 'rgba(22,163,74,0.12)', desc: 'Top 10%' },
