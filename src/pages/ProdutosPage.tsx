@@ -125,6 +125,24 @@ export function ProdutosPage() {
             <span className="page-hero-eyebrow">Cadastro de Produtos</span>
             <h2 className="page-hero-title">Produtos Agrícolas</h2>
             <p className="page-hero-subtitle">Cadastre e gerencie produtos para culturas como Uva, Manga e outras</p>
+            <button
+              onClick={scrollToForm}
+              style={{
+                whiteSpace: 'nowrap',
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.18)',
+                borderRadius: 'var(--radius-lg)',
+                color: '#fff',
+                padding: 'var(--space-3) var(--space-5)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'background var(--transition-fast)',
+              }}
+            >
+              + Adicionar Produto
+            </button>
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -132,9 +150,6 @@ export function ProdutosPage() {
               <span className="page-hero-kpi-label">Cadastrados</span>
             </div>
           </div>
-          <button className="btn btn--primary" onClick={scrollToForm} style={{ whiteSpace: 'nowrap' }}>
-            + Adicionar Produto
-          </button>
         </div>
       </div>
 
