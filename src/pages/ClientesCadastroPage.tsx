@@ -78,16 +78,14 @@ export function ClientesCadastroPage() {
               onClick={scrollToForm}
               style={{
                 whiteSpace: 'nowrap',
-                background: 'rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255,255,255,0.18)',
-                borderRadius: 'var(--radius-lg)',
-                color: '#fff',
-                padding: 'var(--space-3) var(--space-5)',
+                background: 'none',
+                border: 'none',
+                color: 'rgba(255,255,255,0.9)',
+                padding: 0,
                 fontSize: 'var(--text-sm)',
                 fontWeight: 600,
                 cursor: 'pointer',
-                transition: 'background var(--transition-fast)',
+                textDecoration: 'underline',
               }}
             >
               + Adicionar Cliente
