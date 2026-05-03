@@ -74,6 +74,24 @@ export function ClientesCadastroPage() {
             <span className="page-hero-eyebrow">Cadastro</span>
             <h2 className="page-hero-title">Clientes</h2>
             <p className="page-hero-subtitle">Cadastre e gerencie os clientes da sua carteira agrícola</p>
+            <button
+              onClick={scrollToForm}
+              style={{
+                whiteSpace: 'nowrap',
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.18)',
+                borderRadius: 'var(--radius-lg)',
+                color: '#fff',
+                padding: 'var(--space-3) var(--space-5)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'background var(--transition-fast)',
+              }}
+            >
+              + Adicionar Cliente
+            </button>
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -81,9 +99,6 @@ export function ClientesCadastroPage() {
               <span className="page-hero-kpi-label">Cadastrados</span>
             </div>
           </div>
-          <button className="btn btn--primary" onClick={scrollToForm} style={{ whiteSpace: 'nowrap' }}>
-            + Adicionar Cliente
-          </button>
         </div>
       </div>
 

@@ -68,6 +68,26 @@ export function ClientesPage() {
             <div className="page-hero-eyebrow">Carteira</div>
             <h1 className="page-hero-title">Clientes</h1>
             <p className="page-hero-subtitle">Gerencie e visualize todos os clientes da sua carteira agrícola</p>
+            <Link
+              to="/cadastro-clientes"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                whiteSpace: 'nowrap',
+                background: 'rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,0.18)',
+                borderRadius: 'var(--radius-lg)',
+                color: '#fff',
+                padding: 'var(--space-3) var(--space-5)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'background var(--transition-fast)',
+              }}
+            >
+              + Adicionar Cliente
+            </Link>
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -87,9 +107,6 @@ export function ClientesPage() {
               <span className="page-hero-kpi-label">Hectares</span>
             </div>
           </div>
-          <Link to="/cadastro-clientes" className="btn btn--primary" style={{ whiteSpace: 'nowrap' }}>
-            + Adicionar Cliente
-          </Link>
         </div>
       </div>
 
