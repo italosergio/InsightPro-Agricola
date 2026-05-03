@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 
 interface SwotItem {
@@ -60,7 +59,7 @@ export function SWOTPage() {
   const aMitigar = swotData.weaknesses.length + swotData.threats.length
 
   return (
-    <AppLayout title="Análise SWOT" subtitle="Matriz de Forças, Fraquezas, Oportunidades e Ameaças">
+    <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -146,6 +145,6 @@ export function SWOTPage() {
           </div>
         ))}
       </div>
-    </AppLayout>
+    </>
   )
 }

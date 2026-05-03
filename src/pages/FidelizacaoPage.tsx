@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -82,7 +81,7 @@ export function FidelizacaoPage() {
   }
 
   return (
-    <AppLayout title="Fidelizacao" subtitle="Análise de volume e fidelidade de produtos">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--pink" />
         <div className="page-hero-deco" />
@@ -146,6 +145,6 @@ export function FidelizacaoPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

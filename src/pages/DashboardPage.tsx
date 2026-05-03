@@ -2,7 +2,6 @@ import { useMemo, useRef, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber'
 import Highcharts from 'highcharts'
@@ -320,7 +319,7 @@ export function DashboardPage() {
 
   if (totalClientes === 0) {
     return (
-      <AppLayout title="Dashboard" subtitle="Visão geral da carteira">
+      <>
         <div className="dash-hero dash-hero--empty">
           <div className="dash-hero-bg" />
           <div className="dash-hero-content" style={{ textAlign: 'center', maxWidth: 520 }}>
@@ -336,14 +335,14 @@ export function DashboardPage() {
             <div className="home-hero-circle home-hero-circle--2" />
           </div>
         </div>
-      </AppLayout>
+      </>
     )
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <AppLayout title="Dashboard" subtitle="Visão geral da carteira de clientes">
+    <>
 
       {/* ── HERO BANNER ──────────────────────────────────────────────── */}
       <div className="dash-hero">
@@ -615,7 +614,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-    </AppLayout>
+    </>
   )
 }
 

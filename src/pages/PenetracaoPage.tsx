@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { produtosAJINOMOTO } from '@/data/produtos'
@@ -53,7 +52,7 @@ export function PenetracaoPage() {
   const getLevelMeta = (key: string) => levels.find(l => l.key === key)!
 
   return (
-    <AppLayout title="Penetracao" subtitle="Análise de penetração de produtos">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--teal" />
         <div className="page-hero-deco" />
@@ -141,6 +140,6 @@ export function PenetracaoPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

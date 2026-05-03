@@ -1,5 +1,4 @@
 import { useMemo, useRef } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -177,7 +176,7 @@ export function AnaliseABCPage() {
 
   if (data.length === 0) {
     return (
-      <AppLayout title="Analise ABC" subtitle="Classificacao de clientes por faturamento">
+        <>
         <div className="card">
           <div className="card-body">
             <div className="empty-state">
@@ -190,12 +189,12 @@ export function AnaliseABCPage() {
             </div>
           </div>
         </div>
-      </AppLayout>
+      </>
     )
   }
 
   return (
-    <AppLayout title="Analise ABC" subtitle="Classificacao de clientes por faturamento">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -325,6 +324,6 @@ export function AnaliseABCPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

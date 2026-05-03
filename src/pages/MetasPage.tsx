@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
@@ -207,7 +206,7 @@ export function MetasPage() {
   }), [metasEmAndamento, hcTheme, theme, chartHeight])
 
   return (
-    <AppLayout title="Metas & KPIs" subtitle="Definição e acompanhamento de metas comerciais e operacionais">
+    <>
       {metas.length === 0 ? (
         <div className="card">
           <div className="card-body">
@@ -408,6 +407,6 @@ export function MetasPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

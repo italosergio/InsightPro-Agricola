@@ -1,4 +1,3 @@
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 
@@ -7,7 +6,7 @@ export function ExportarPage() {
   const { exportCSV, exportPDF } = useData()
 
   return (
-    <AppLayout title="Exportar" subtitle="Exportação de dados em diferentes formatos">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--teal" />
         <div className="page-hero-deco" />
@@ -65,6 +64,6 @@ export function ExportarPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -121,7 +120,7 @@ export function TerritorialPage() {
   }), [regionData, hcTheme])
 
   return (
-    <AppLayout title="Territorial" subtitle="Análise territorial por região">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--blue" />
         <div className="page-hero-deco" />
@@ -206,6 +205,6 @@ export function TerritorialPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 
 interface GutItem {
@@ -102,7 +101,7 @@ export function GUTPage() {
   const maxScore = 125
 
   return (
-    <AppLayout title="Matriz GUT" subtitle="Gravidade, Urgência e Tendência">
+    <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
         <div className="page-hero-bg page-hero-bg--amber" />
         <div className="page-hero-deco" />
@@ -284,6 +283,6 @@ export function GUTPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

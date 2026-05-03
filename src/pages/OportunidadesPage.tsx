@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { getClientProductos, getClientName } from '@/data/produtos'
@@ -49,7 +48,7 @@ export function OportunidadesPage() {
   }
 
   return (
-    <AppLayout title="Oportunidades" subtitle="Matriz de oportunidades por penetração e tamanho do cliente">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--purple" />
         <div className="page-hero-deco" />
@@ -130,6 +129,6 @@ export function OportunidadesPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 import { produtosAJINOMOTO } from '@/data/produtos'
 
@@ -84,7 +83,7 @@ export function ProdutosPage() {
   const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
   return (
-    <AppLayout title="Produtos" subtitle="Catálogo de produtos agrícolas">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--teal" />
         <div className="page-hero-deco" />
@@ -269,6 +268,6 @@ export function ProdutosPage() {
           </div>
         </div>
       )}
-    </AppLayout>
+    </>
   )
 }

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import type { Cliente } from '@/types'
@@ -59,7 +58,7 @@ export function ClientesPage() {
   }
 
   return (
-    <AppLayout title="Clientes" subtitle={`${sorted.length} registros encontrados`}>
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -201,6 +200,6 @@ export function ClientesPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

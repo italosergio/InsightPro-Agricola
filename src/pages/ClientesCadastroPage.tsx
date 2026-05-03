@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import type { Cliente } from '@/types'
@@ -65,7 +64,7 @@ export function ClientesCadastroPage() {
   }
 
   return (
-    <AppLayout title="Cadastro de Clientes" subtitle="Gerencie os clientes da carteira">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -226,6 +225,6 @@ export function ClientesCadastroPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

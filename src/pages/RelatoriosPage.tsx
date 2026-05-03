@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 
@@ -94,7 +93,7 @@ export function RelatoriosPage() {
     : relatoriosState.filter(r => r.tipo === tipoFilter)
 
   return (
-    <AppLayout title="Relatórios" subtitle="Geração de relatórios personalizados">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -248,6 +247,6 @@ export function RelatoriosPage() {
           to { transform: rotate(360deg); }
         }
       `}</style>
-    </AppLayout>
+    </>
   )
 }

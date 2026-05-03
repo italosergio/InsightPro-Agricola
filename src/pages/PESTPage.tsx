@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 
 interface PestItem {
@@ -81,7 +80,7 @@ export function PESTPage() {
   const totalFactors = quadrants.reduce((sum, q) => sum + pestData[q.key].length, 0)
 
   return (
-    <AppLayout title="Análise PEST" subtitle="Fatores externos Políticos, Econômicos, Sociais e Tecnológicos">
+    <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
         <div className="page-hero-bg page-hero-bg--blue" />
         <div className="page-hero-deco" />
@@ -205,6 +204,6 @@ export function PESTPage() {
           </div>
         ))}
       </div>
-    </AppLayout>
+    </>
   )
 }

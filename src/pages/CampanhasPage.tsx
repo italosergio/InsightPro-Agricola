@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 
 interface Campanha {
@@ -112,7 +111,7 @@ export function CampanhasPage() {
   const filtered = filter === 'todas' ? campanhas : campanhas.filter(c => c.status === filter)
 
   return (
-    <AppLayout title="Campanhas" subtitle="Gestão de campanhas de marketing e vendas">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--purple" />
         <div className="page-hero-deco" />
@@ -297,6 +296,6 @@ export function CampanhasPage() {
           )}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

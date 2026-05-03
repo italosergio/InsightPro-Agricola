@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -96,7 +95,7 @@ export function CulturaPage() {
   }), [cultureData, hcTheme])
 
   return (
-    <AppLayout title="Cultura" subtitle="Análise por cultura agrícola">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--green" />
         <div className="page-hero-deco" />
@@ -186,6 +185,6 @@ export function CulturaPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

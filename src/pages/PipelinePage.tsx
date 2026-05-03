@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 
 interface PipelineItem {
@@ -86,7 +85,7 @@ export function PipelinePage() {
     : 0
 
   return (
-    <AppLayout title="Pipeline" subtitle="Acompanhamento de oportunidades comerciais">
+    <>
       {/* Hero */}
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--purple" />
@@ -289,6 +288,6 @@ export function PipelinePage() {
           ))}
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { produtosAJINOMOTO, getClientProductos, getClientName } from '@/data/produtos'
@@ -21,7 +20,7 @@ export function GapsPage() {
   }, [clientCount, rawData])
 
   return (
-    <AppLayout title="Gaps" subtitle="Oportunidades de crescimento por cliente">
+    <>
       <div className="page-hero">
         <div className="page-hero-bg page-hero-bg--orange" />
         <div className="page-hero-deco" />
@@ -112,6 +111,6 @@ export function GapsPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

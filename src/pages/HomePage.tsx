@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '@/store/DataContext'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber'
 
@@ -336,7 +335,7 @@ export function HomePage() {
   ]
 
   return (
-    <AppLayout title="Início" subtitle="Central de ferramentas da plataforma">
+    <>
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <div className="home-hero">
@@ -490,6 +489,6 @@ export function HomePage() {
       </div>
 
 
-    </AppLayout>
+    </>
   )
 }
