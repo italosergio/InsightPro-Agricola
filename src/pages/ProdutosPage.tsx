@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { usePageTitle } from '@/hooks/useTheme'
+import { produtosAJINOMOTO } from '@/data/produtos'
 
 interface ProdutoCadastro {
   id: string
@@ -60,9 +61,32 @@ export function ProdutosPage() {
   usePageTitle('Produtos')
   const [produtos, setProdutos] = useState<ProdutoCadastro[]>(() => {
     const saved = localStorage.getItem('insightpro_produtos')
-    return saved ? JSON.parse(saved) : []
+    if (saved) return JSON.parse(saved)
+    return produtosAJINOMOTO.map((nome, i) => ({
+      id: `prod_seed_${i}`,
+      nome,
+      fornecedor: 'AJINOMOTO',
+      custo: [85, 120, 95, 65, 150, 78, 110, 90, 72, 88, 105, 55][i],
+      categoria: ['Bioestimulante', 'Bioestimulante', 'Bioestimulante', 'Fertilizante Foliar', 'Fertilizante Foliar', 'Fertilizante Foliar', 'Adjuvante', 'Regulador de Crescimento', 'Fertilizante Foliar', 'Bioestimulante', 'Fertilizante Foliar', 'Fertilizante Foliar'][i],
+      cultura: ['Uva', 'Manga', 'Tomate', 'Soja', 'Café', 'Milho', 'Algodão', 'Soja', 'Uva', 'Citros', 'Arroz', 'Feijão'][i],
+      modoAcao: 'Sistêmico',
+      ingredienteAtivo: `Composto bioativo AJN-${100 + i}`,
+      finalidade: 'Aumento de produtividade e qualidade',
+      tipoAplicacao: 'Foliar',
+      doseRecomendada: `${1.5 + i * 0.3} L/ha`,
+      intervalo: `${7 + (i % 3) * 7}`,
+      epocaAplicacao: 'Vegetativo',
+      compatibilidade: 'Compatível com a maioria dos defensivos',
+      restricoes: 'Evitar aplicação com temperaturas acima de 30°C',
+      observacoes: 'Aplicar nas primeiras horas da manhã',
+    }))
   })
   const [form, setForm] = useState<ProdutoCadastro>({ ...emptyForm })
+  const formRef = useRef<HTMLDivElement>(null)
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const saveProdutos = (data: ProdutoCadastro[]) => {
     setProdutos(data)
@@ -108,10 +132,13 @@ export function ProdutosPage() {
               <span className="page-hero-kpi-label">Cadastrados</span>
             </div>
           </div>
+          <button className="btn btn--primary" onClick={scrollToForm} style={{ whiteSpace: 'nowrap' }}>
+            + Adicionar Produto
+          </button>
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+      <div className="card" style={{ marginBottom: 'var(--space-6)' }} ref={formRef}>
         <div className="card-header">
           <h2 className="dash-section-title">Novo Produto</h2>
         </div>

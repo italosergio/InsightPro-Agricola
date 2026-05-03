@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -30,6 +30,11 @@ export function ClientesCadastroPage() {
   const { rawData, setRawData } = useData()
   const [form, setForm] = useState<Cliente>({ ...emptyForm })
   const [editId, setEditId] = useState<string | null>(null)
+  const formRef = useRef<HTMLDivElement>(null)
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const saveClientes = (data: Cliente[]) => {
     setRawData(data)
@@ -76,10 +81,13 @@ export function ClientesCadastroPage() {
               <span className="page-hero-kpi-label">Cadastrados</span>
             </div>
           </div>
+          <button className="btn btn--primary" onClick={scrollToForm} style={{ whiteSpace: 'nowrap' }}>
+            + Adicionar Cliente
+          </button>
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+      <div className="card" style={{ marginBottom: 'var(--space-6)' }} ref={formRef}>
         <div className="card-header">
           <h2 className="dash-section-title">{editId ? 'Editar Cliente' : 'Novo Cliente'}</h2>
         </div>

@@ -14,6 +14,7 @@ const navSections: NavSection[] = [
       { path: '/inicio', label: 'Início', icon: 'home' },
       { path: '/', label: 'Dashboard', icon: 'dashboard' },
       { path: '/clientes', label: 'Clientes', icon: 'clientes' },
+      { path: '/produtos', label: 'Produtos', icon: 'produtos' },
     ],
   },
   {
@@ -49,8 +50,7 @@ const navSections: NavSection[] = [
   {
     title: 'Cadastros',
     items: [
-      { path: '/produtos', label: 'Produtos', icon: 'produtos' },
-      { path: '/cadastro-clientes', label: 'Cad. Clientes', icon: 'clientes' },
+      { path: '/cadastro-clientes', label: 'Clientes', icon: 'clientes' },
     ],
   },
 ]

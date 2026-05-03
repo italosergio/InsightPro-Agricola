@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
@@ -86,6 +87,9 @@ export function ClientesPage() {
               <span className="page-hero-kpi-label">Hectares</span>
             </div>
           </div>
+          <Link to="/cadastro-clientes" className="btn btn--primary" style={{ whiteSpace: 'nowrap' }}>
+            + Adicionar Cliente
+          </Link>
         </div>
       </div>
 
