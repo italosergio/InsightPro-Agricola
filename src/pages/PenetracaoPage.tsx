@@ -1,132 +1,145 @@
 import { useMemo } from 'react'
-import { AppLayout } from '@/components/layout/AppLayout'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
-import { Bar } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js'
+import { produtosAJINOMOTO } from '@/data/produtos'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+const levels = [
+  { key: 'excelente', label: 'Excelente', color: '#16a34a', bg: 'rgba(22,163,74,0.12)', desc: 'Top 10%' },
+  { key: 'otima',     label: 'Ótima',     color: '#22c55e', bg: 'rgba(34,197,94,0.12)', desc: 'Top 30%' },
+  { key: 'boa',       label: 'Boa',       color: '#eab308', bg: 'rgba(234,179,8,0.12)', desc: 'Top 60%' },
+  { key: 'ruim',      label: 'Ruim',      color: '#f97316', bg: 'rgba(249,115,22,0.12)', desc: 'Top 85%' },
+  { key: 'muitoRuim', label: 'Muito Ruim',color: '#ef4444', bg: 'rgba(239,68,68,0.12)', desc: '15% inferior' },
+]
+
+function getClassification(pct: number) {
+  if (pct >= 50) return 'excelente'
+  if (pct >= 30) return 'otima'
+  if (pct >= 15) return 'boa'
+  if (pct >= 5)  return 'ruim'
+  return 'muitoRuim'
+}
+
+const products = [
+  { nome: 'AminoPlus® AJINOMOTO',        clientCount: 4, total: 5, pct: 80.0 },
+  { nome: 'Amino Arginine® AJINOMOTO',   clientCount: 4, total: 5, pct: 80.0 },
+  { nome: 'Amino Proline® AJINOMOTO',    clientCount: 3, total: 5, pct: 60.0 },
+  { nome: 'Amiorgan® AJINOMOTO',         clientCount: 3, total: 5, pct: 60.0 },
+  { nome: 'Ajifol® Premium+ AJINOMOTO',  clientCount: 2, total: 5, pct: 40.0 },
+  { nome: 'AminoFort® AJINOMOTO',        clientCount: 2, total: 5, pct: 40.0 },
+  { nome: 'AminoReten® AJINOMOTO',       clientCount: 2, total: 5, pct: 35.0 },
+  { nome: 'AjiPower® AJINOMOTO',         clientCount: 1, total: 5, pct: 20.0 },
+  { nome: 'Ajifol® K-Mg AJINOMOTO',      clientCount: 1, total: 5, pct: 18.0 },
+  { nome: 'AlgenMax® AJINOMOTO',         clientCount: 1, total: 5, pct: 15.0 },
+  { nome: 'Bokashi® AJINOMOTO',          clientCount: 1, total: 5, pct: 12.0 },
+  { nome: 'Ajifol® SM-Boro AJINOMOTO',   clientCount: 1, total: 5, pct: 4.0 },
+].map(p => ({ ...p, classificacao: getClassification(p.pct) }))
 
 export function PenetracaoPage() {
-  const { filteredData, rawData } = useData()
+  const { rawData } = useData()
   usePageTitle('Penetracao')
 
-  const data = filteredData.length > 0 ? filteredData : rawData
+  const totalClientes = rawData.length > 0 ? rawData.length : 5
 
-  const penetrationByState = useMemo(() => {
-    const stateMap: Record<string, { clientes: number; area: number; faturamento: number }> = {}
-    data.forEach(c => {
-      if (!stateMap[c.estado]) {
-        stateMap[c.estado] = { clientes: 0, area: 0, faturamento: 0 }
-      }
-      stateMap[c.estado].clientes++
-      stateMap[c.estado].area += c.area_hectares
-      stateMap[c.estado].faturamento += c.faturamento_anual
-    })
-    return Object.entries(stateMap)
-      .sort(([, a], [, b]) => b.faturamento - a.faturamento)
-      .slice(0, 10)
-  }, [data])
+  const productPenetration = useMemo(() => products, [])
 
-  const penetrationByCulture = useMemo(() => {
-    const cultureMap: Record<string, number> = {}
-    data.forEach(c => {
-      if (c.cultura_principal) {
-        cultureMap[c.cultura_principal] = (cultureMap[c.cultura_principal] || 0) + 1
-      }
-    })
-    return Object.entries(cultureMap).sort(([, a], [, b]) => b - a)
-  }, [data])
+  const levelCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    levels.forEach(l => { counts[l.key] = 0 })
+    productPenetration.forEach(p => { counts[p.classificacao]++ })
+    return counts
+  }, [productPenetration])
 
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
-
-  const stateChartData = {
-    labels: penetrationByState.map(([state]) => state),
-    datasets: [{
-      label: 'Faturamento',
-      data: penetrationByState.map(([, d]) => d.faturamento),
-      backgroundColor: 'rgba(34, 197, 94, 0.7)',
-      borderColor: '#22c55e',
-      borderWidth: 1,
-    }],
-  }
-
-  const cultureChartData = {
-    labels: penetrationByCulture.map(([culture]) => culture),
-    datasets: [{
-      label: 'Clientes',
-      data: penetrationByCulture.map(([, count]) => count),
-      backgroundColor: 'rgba(59, 130, 246, 0.7)',
-      borderColor: '#3b82f6',
-      borderWidth: 1,
-    }],
-  }
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    indexAxis: 'y' as const,
-    plugins: {
-      legend: { display: false },
-    },
-  }
+  const getLevelMeta = (key: string) => levels.find(l => l.key === key)!
 
   return (
-    <AppLayout title="Penetracao" subtitle="Analise de penetracao por estado e cultura">
-      <div className="chart-grid">
-        <div className="card">
-          <div className="card-header">
-            <h2>Faturamento por Estado (Top 10)</h2>
+    <>
+      <div className="page-hero">
+        <div className="page-hero-bg page-hero-bg--teal" />
+        <div className="page-hero-deco" />
+        <div className="page-hero-content">
+          <div className="page-hero-text">
+            <span className="page-hero-eyebrow">Penetracao de Produtos</span>
+            <h2 className="page-hero-title">Análise Detalhada de Produtos</h2>
+            <p className="page-hero-subtitle">Porcentagem de clientes que utilizam cada produto na carteira</p>
           </div>
-          <div className="card-body">
-            <div className="chart-container">
-              <Bar data={stateChartData} options={chartOptions} />
+          <div className="page-hero-kpis">
+            <div className="page-hero-kpi">
+              <span className="page-hero-kpi-value">{productPenetration.length}</span>
+              <span className="page-hero-kpi-label">Produtos</span>
             </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-header">
-            <h2>Clientes por Cultura</h2>
-          </div>
-          <div className="card-body">
-            <div className="chart-container">
-              <Bar data={cultureChartData} options={{ ...chartOptions, indexAxis: 'x' as const }} />
+            <div className="page-hero-kpi">
+              <span className="page-hero-kpi-value">{levelCounts.excelente + levelCounts.otima}</span>
+              <span className="page-hero-kpi-label">Boa+</span>
+            </div>
+            <div className="page-hero-kpi">
+              <span className="page-hero-kpi-value">{totalClientes}</span>
+              <span className="page-hero-kpi-label">Clientes</span>
             </div>
           </div>
         </div>
       </div>
 
+      <div className="kpi-grid" style={{ marginBottom: 'var(--space-6)' }}>
+        {levels.map(l => (
+          <div key={l.key} className="kpi-card" style={{ borderLeft: `3px solid ${l.color}` }}>
+            <div className="kpi-label">{l.label}</div>
+            <div className="kpi-value" style={{ color: l.color }}>{levelCounts[l.key]}</div>
+            <div className="kpi-trend" style={{ color: l.color }}>{l.desc}</div>
+          </div>
+        ))}
+      </div>
+
       <div className="card">
         <div className="card-header">
-          <h2>Detalhamento por Estado</h2>
+          <h2 className="dash-section-title">Penetração por Produto</h2>
         </div>
-        <div className="card-body">
-          <div className="table-container">
+        <div className="card-body" style={{ padding: 0 }}>
+          <div className="table-container" style={{ border: 'none', borderRadius: 0 }}>
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Estado</th>
+                  <th>Produto</th>
                   <th>Clientes</th>
-                  <th>Area Total (ha)</th>
-                  <th>Faturamento Total</th>
+                  <th>Penetração %</th>
+                  <th>Classificação</th>
                 </tr>
               </thead>
               <tbody>
-                {penetrationByState.map(([state, d]) => (
-                  <tr key={state}>
-                    <td>{state}</td>
-                    <td>{d.clientes}</td>
-                    <td>{d.area.toLocaleString('pt-BR')}</td>
-                    <td>{formatCurrency(d.faturamento)}</td>
-                  </tr>
-                ))}
+                {productPenetration.map((p, i) => {
+                  const meta = getLevelMeta(p.classificacao)
+                  return (
+                    <tr key={i}>
+                      <td><strong>{p.nome}</strong></td>
+                      <td>{p.clientCount} / {p.total}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 120 }}>
+                          <div style={{ flex: 1, height: 8, background: 'var(--bg-tertiary)', borderRadius: 4, overflow: 'hidden' }}>
+                            <div style={{
+                              height: '100%',
+                              width: `${p.pct}%`,
+                              background: meta.color,
+                              borderRadius: 4,
+                              transition: 'width 0.4s ease',
+                            }} />
+                          </div>
+                          <span style={{ fontSize: 11, color: 'var(--text-tertiary)', minWidth: 40, textAlign: 'right', fontWeight: 600 }}>
+                            {p.pct.toFixed(1)}%
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="badge" style={{ background: meta.bg, color: meta.color, fontWeight: 600 }}>
+                          {meta.label}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </AppLayout>
+    </>
   )
 }

@@ -9,5 +9,5 @@ export function AuthRoute({ children }: { children: ReactNode }) {
 
 export function PublicRoute({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
-  return isAuthenticated ? <Navigate to="/" replace /> : children
+  return isAuthenticated ? <Navigate to="/inicio" replace /> : children
 }

@@ -1,10 +1,13 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
+import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
+import { usePage } from '@/store/PageContext'
 
-export function AppLayout({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
+export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [minimized, setMinimized] = useState(() => localStorage.getItem('sidebar_minimized') === 'true')
+  const { title, subtitle } = usePage()
 
   const handleToggleMinimized = () => {
     const next = !minimized
@@ -24,7 +27,7 @@ export function AppLayout({ children, title, subtitle }: { children: ReactNode; 
       <main className="main-content">
         <div className="content">
           <div className="content-spacer" />
-          {children}
+          <Outlet />
         </div>
       </main>
     </div>

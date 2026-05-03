@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1710"/>
+      <stop offset="100%" style="stop-color:#052e16"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="80" y="80" width="120" height="120" rx="24" fill="#16a34a"/>
+  <text x="140" y="165" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="56" font-weight="700" fill="#ffffff" letter-spacing="-1">IP</text>
+  <text x="230" y="162" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="700" fill="#f0fdf4" letter-spacing="-0.5">InsightPro Agricola</text>
+  <text x="80" y="340" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="700" fill="#4ade80" letter-spacing="-1">Gestao Inteligente</text>
+  <text x="80" y="420" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="700" fill="#ffffff" letter-spacing="-1">de Carteira Agricola</text>
+  <text x="80" y="520" font-family="Inter, system-ui, sans-serif" font-size="28" fill="#a8a29e" letter-spacing="-0.2">Dashboard · Analises ABC / SWOT / GUT / PEST · Pipeline · KPIs · Relatorios</text>
+  <line x1="80" y1="560" x2="1120" y2="560" stroke="#22c55e" stroke-opacity="0.3" stroke-width="1"/>
+  <text x="1120" y="600" font-family="Inter, system-ui, sans-serif" font-size="20" fill="#78716c" text-anchor="end">insightproagricola.com.br</text>
+</svg>
