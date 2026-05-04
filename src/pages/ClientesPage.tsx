@@ -114,6 +114,7 @@ export function ClientesPage() {
             >
               + Adicionar Cliente
             </Link>
+            <br />
             <DownloadReportButton data={downloadData} filename="carteira_clientes.csv" />
           </div>
           <div className="page-hero-kpis">

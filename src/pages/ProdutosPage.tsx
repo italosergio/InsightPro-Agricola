@@ -180,6 +180,7 @@ export function ProdutosPage() {
             >
               + Adicionar Produto
             </button>
+            <br />
             <DownloadReportButton data={downloadData} filename="produtos.csv" />
           </div>
           <div className="page-hero-kpis">

@@ -202,6 +202,7 @@ export function ClientesCadastroPage() {
             >
               + Adicionar Cliente
             </button>
+            <br />
             <DownloadReportButton data={downloadData} filename="clientes_cadastrados.csv" />
           </div>
           <div className="page-hero-kpis">
