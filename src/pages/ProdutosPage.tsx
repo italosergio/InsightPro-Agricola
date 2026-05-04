@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { useData } from '@/store/DataContext'
 import { localDB, DB_KEYS } from '@/lib/localDB'
 import { DownloadReportButton } from '@/lib/downloadUtils'
 
@@ -49,6 +50,7 @@ const emptyForm: ProdutoCadastro = {
 
 export function ProdutosPage() {
   usePageTitle('Produtos')
+  const { rawData } = useData()
   const [produtos, setProdutos] = useState<ProdutoCadastro[]>(() => {
     return localDB.list<ProdutoCadastro>(DB_KEYS.produtos)
   })
@@ -102,9 +104,21 @@ export function ProdutosPage() {
 
   const penetracaoData = useMemo(() => {
     const map: Record<string, number> = {}
-    produtos.forEach(p => { if (p.cultura) map[p.cultura] = (map[p.cultura] || 0) + 1 })
-    return Object.entries(map).sort(([,a], [,b]) => b - a)
-  }, [produtos])
+    produtos.forEach(p => {
+      let count = 0
+      rawData.forEach(c => {
+        if (c.produtos[p.nome.toLowerCase().replace(/\s+/g, '_')]) count++
+      })
+      if (count > 0) map[p.nome] = count
+    })
+    const entries = Object.entries(map).sort(([,a], [,b]) => b - a)
+    const total = entries.reduce((s, [,c]) => s + c, 0)
+    return entries.map(([nome, count]) => ({
+      nome,
+      count,
+      pct: total > 0 ? ((count / total) * 100).toFixed(0) : '0',
+    }))
+  }, [produtos, rawData])
 
   const refresh = () => {
     setProdutos(localDB.list<ProdutoCadastro>(DB_KEYS.produtos))
@@ -193,12 +207,18 @@ export function ProdutosPage() {
       </div>
 
       <div className="penetration-bar-wrap">
+        <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 'var(--space-2)' }}>Penetração</div>
         <div className="penetration-bar">
-          {penetracaoData.map(([cultura, count], i) => {
-            const colors = ['#16a34a','#2563eb','#d97706','#dc2626','#8b5cf6','#059669','#0d9488','#ea580c']
+          {penetracaoData.map((item, i) => {
+            const colors = ['#16a34a','#2563eb','#d97706','#dc2626','#8b5cf6','#059669','#0d9488','#ea580c','#4f46e5','#be185d','#b45309','#0e7490']
             return (
-              <div key={cultura} className="penetration-bar-seg" style={{ flex: count || 0.01, background: colors[i % colors.length] }}>
-                <span>{cultura} ({count})</span>
+              <div
+                key={item.nome}
+                className="penetration-bar-seg"
+                style={{ flex: item.count || 0.01, background: colors[i % colors.length], position: 'relative' }}
+                title={`${item.nome}: ${item.count} cliente${item.count !== 1 ? 's' : ''} (${item.pct}%)`}
+              >
+                <span style={{ fontSize: 10 }}>{item.nome} {item.pct}%</span>
               </div>
             )
           })}
@@ -297,7 +317,9 @@ export function ProdutosPage() {
                       <td>{p.fornecedor}</td>
                       <td>{p.doseRecomendada || 'N/A'}</td>
                       <td>{p.custo > 0 ? fmt(p.custo) : 'N/A'}</td>
-                      <td><span className="badge badge--neutral">{p.cultura || 'N/A'}</span></td>
+                      <td>
+                        {(() => { const pd = penetracaoData.find(d => d.nome === p.nome); return pd ? <span className="badge badge--success">{pd.count} cliente{pd.count !== 1 ? 's' : ''}</span> : <span className="badge badge--neutral">0</span> })()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

@@ -142,7 +142,7 @@ export function DashboardPage() {
   const estadoChartOpts = useMemo<Highcharts.Options>(() => ({
     ...hcTheme, chart: { ...hcTheme.chart, type: 'bar', height: 300 }, title: { text: undefined },
     xAxis: { ...hcTheme.xAxis, categories: faturamentoPorEstado.map(([e]) => e) },
-    yAxis: { ...hcTheme.yAxis, labels: { ...hcTheme.yAxis?.labels, formatter: function () { return `R$${Highcharts.numberFormat(this.value as number / 1e6, 0)}Mi` } } },
+    yAxis: { ...(hcTheme.yAxis as Highcharts.YAxisOptions), labels: { ...(hcTheme.yAxis as Highcharts.YAxisOptions)?.labels, formatter: function () { return `R$${Highcharts.numberFormat(this.value as number / 1e6, 0)}Mi` } } },
     tooltip: { ...hcTheme.tooltip, formatter: function () { return `<b>${this.x}</b><br/>R$ ${Highcharts.numberFormat(this.y as number, 0, ',', '.')}` } },
     plotOptions: { ...hcTheme.plotOptions, bar: { ...hcTheme.plotOptions?.bar, dataLabels: { enabled: false } } },
     colors: ['#16a34a', '#22c55e', '#34d464', '#4ade80', '#86efac', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899'],
@@ -161,7 +161,7 @@ export function DashboardPage() {
   const culturaChartOpts = useMemo<Highcharts.Options>(() => ({
     ...hcTheme, chart: { ...hcTheme.chart, type: 'column', height: 280 }, title: { text: undefined },
     xAxis: { ...hcTheme.xAxis, categories: faturamentoPorCultura.map(([c]) => c.length > 12 ? c.substring(0, 12) + '…' : c) },
-    yAxis: { ...hcTheme.yAxis, labels: { ...hcTheme.yAxis?.labels, formatter: function () { return `${Highcharts.numberFormat(this.value as number / 1e6, 0)}Mi` } } },
+    yAxis: { ...(hcTheme.yAxis as Highcharts.YAxisOptions), labels: { ...(hcTheme.yAxis as Highcharts.YAxisOptions)?.labels, formatter: function () { return `${Highcharts.numberFormat(this.value as number / 1e6, 0)}Mi` } } },
     tooltip: { ...hcTheme.tooltip, formatter: function () { return `<b>${this.x}</b><br/>Faturamento: R$ ${Highcharts.numberFormat(this.y as number, 0, ',', '.')}` } },
     plotOptions: { column: { ...hcTheme.plotOptions?.column, borderRadius: 6 }, series: { animation: { duration: 900 } } },
     colors: ['#16a34a', '#22c55e', '#34d464', '#3b82f6', '#6366f1', '#a855f7', '#ec4899', '#f59e0b'],
@@ -171,7 +171,7 @@ export function DashboardPage() {
   const areaEstadoChartOpts = useMemo<Highcharts.Options>(() => ({
     ...hcTheme, chart: { ...hcTheme.chart, type: 'bar', height: 280 }, title: { text: undefined },
     xAxis: { ...hcTheme.xAxis, categories: areaPorEstado.map(([e]) => e) },
-    yAxis: { ...hcTheme.yAxis, labels: { ...hcTheme.yAxis?.labels, formatter: function () { return `${Highcharts.numberFormat(this.value as number / 1000, 0)}k ha` } } },
+    yAxis: { ...(hcTheme.yAxis as Highcharts.YAxisOptions), labels: { ...(hcTheme.yAxis as Highcharts.YAxisOptions)?.labels, formatter: function () { return `${Highcharts.numberFormat(this.value as number / 1000, 0)}k ha` } } },
     tooltip: { ...hcTheme.tooltip, formatter: function () { return `<b>${this.x}</b><br/>${Highcharts.numberFormat(this.y as number, 0, ',', '.')} ha` } },
     plotOptions: { bar: { ...hcTheme.plotOptions?.bar, borderRadius: 6 }, series: { animation: { duration: 900 } } },
     colors: ['#059669', '#10b981', '#34d464', '#4ade80', '#86efac', '#a3e635', '#facc15', '#f97316'],

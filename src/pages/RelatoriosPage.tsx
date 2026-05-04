@@ -104,7 +104,7 @@ function downloadCSV(filename: string, csvContent: string) {
 
 type Row = Record<string, string | number>
 
-function pdfTable(pdf: ReturnType<typeof import('jspdf').default>, headers: string[], rows: Row[], colW: number[], startY: number, opts?: { rowH?: number; fontSize?: number }): number {
+function pdfTable(pdf: any, headers: string[], rows: Row[], colW: number[], startY: number, opts?: { rowH?: number; fontSize?: number }): number {
   const fs = opts?.fontSize ?? 7
   const rh = opts?.rowH ?? 5
   let y = startY
@@ -412,11 +412,13 @@ export function RelatoriosPage() {
         const swot = localDB.get<Record<string, { text: string }[]>>(DB_KEYS.swot)
         if (swot) {
           const labels: Record<string, string> = { strengths: 'Forças', weaknesses: 'Fraquezas', opportunities: 'Oportunidades', threats: 'Ameaças' }
-          const colors = ['#16a34a', '#dc2626', '#2563eb', '#d97706']
+          const quadColors: [number, number, number][] = [[22, 163, 74], [220, 38, 38], [37, 99, 235], [217, 119, 6]]
+          const bulletColors = ['#16a34a', '#dc2626', '#2563eb', '#d97706']
           let ci = 0
           Object.entries(swot).forEach(([key, items]) => {
             if (y + 10 > 280) { pdf.addPage(); y = 20 }
-            pdf.setFillColor(...(ci === 0 ? [22, 163, 74] as const : ci === 1 ? [220, 38, 38] as const : ci === 2 ? [37, 99, 235] as const : [217, 119, 6] as const as [number, number, number]))
+            const c = quadColors[ci]
+            pdf.setFillColor(c[0], c[1], c[2])
             pdf.rect(10, y - 4, pageW, 7, 'F')
             pdf.setFontSize(10)
             pdf.setTextColor(255, 255, 255)
@@ -426,7 +428,7 @@ export function RelatoriosPage() {
             pdf.setTextColor(60, 60, 60)
             items.forEach(item => {
               if (y > 278) { pdf.addPage(); y = 20 }
-              pdf.setDrawColor(colors[ci])
+              pdf.setDrawColor(bulletColors[ci])
               pdf.circle(15, y - 1, 1.2, 'F')
               pdf.text(item.text, 18, y)
               y += 5.5
