@@ -52,6 +52,9 @@ export interface AuthContextType {
 export interface DataContextType {
   rawData: Cliente[]
   setRawData: (data: Cliente[]) => void
+  addCliente: (cliente: Cliente) => void
+  updateCliente: (id: string, updates: Partial<Cliente>) => void
+  removeCliente: (id: string) => void
   filteredData: Cliente[]
   activeFilters: Record<string, string>
   applyFilters: (filters: Record<string, string>) => void

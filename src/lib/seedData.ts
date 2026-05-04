@@ -1,4 +1,5 @@
 import type { Cliente } from '@/types'
+import { localDB, DB_KEYS } from './localDB'
 
 const clientesMock: Cliente[] = [
   { id: 'c001', nome: 'Agropecuária Boa Vista Ltda', cpf_cnpj: '12.345.678/0001-90', telefone: '(66) 3541-2210', email: 'financeiro@boavistaagro.com.br', cidade: 'Sorriso', estado: 'MT', cultura_principal: 'Soja', area_hectares: 12400, faturamento_anual: 85200000, potencial_compra: 4250000, ultima_compra: '2025-04-15', status: 'ativo', produtos: { sementes: { nome: 'Sementes Soja', quantidade: 1800, valor_total: 3240000 } } },
@@ -188,19 +189,35 @@ const relatoriosMock = [
   { id: 'r10', titulo: 'Resumo Executivo', tipo: 'gerencial', descricao: 'Visao consolidada de KPIs, graficos e principais insights da carteira', icone: 'file-text', geradoEm: null },
 ]
 
-const SEED_VERSION = 'v1'
+const produtosMock = [
+  { id: 'prod_seed_0', nome: 'AminoPlus', fornecedor: 'AJINOMOTO', custo: 85, categoria: 'Bioestimulante', cultura: 'Uva', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-100', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '1,5 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_1', nome: 'Amino Arginine', fornecedor: 'AJINOMOTO', custo: 120, categoria: 'Bioestimulante', cultura: 'Manga', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-101', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '1,8 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_2', nome: 'Amino Proline', fornecedor: 'AJINOMOTO', custo: 95, categoria: 'Bioestimulante', cultura: 'Tomate', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-102', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '2,1 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_3', nome: 'Amiorgan', fornecedor: 'AJINOMOTO', custo: 65, categoria: 'Fertilizante Foliar', cultura: 'Soja', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-103', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '2,4 L/ha', intervalo: '14', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_4', nome: 'Ajifol Premium+', fornecedor: 'AJINOMOTO', custo: 150, categoria: 'Fertilizante Foliar', cultura: 'Café', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-104', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '2,7 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_5', nome: 'AminoFort', fornecedor: 'AJINOMOTO', custo: 78, categoria: 'Fertilizante Foliar', cultura: 'Milho', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-105', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '3,0 L/ha', intervalo: '14', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_6', nome: 'AminoReten', fornecedor: 'AJINOMOTO', custo: 110, categoria: 'Adjuvante', cultura: 'Algodão', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-106', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '3,3 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_7', nome: 'AjiPower', fornecedor: 'AJINOMOTO', custo: 90, categoria: 'Regulador de Crescimento', cultura: 'Soja', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-107', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '3,6 L/ha', intervalo: '14', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_8', nome: 'Ajifol K-Mg', fornecedor: 'AJINOMOTO', custo: 72, categoria: 'Fertilizante Foliar', cultura: 'Uva', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-108', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '3,9 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_9', nome: 'AlgenMax', fornecedor: 'AJINOMOTO', custo: 88, categoria: 'Bioestimulante', cultura: 'Citros', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-109', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '4,2 L/ha', intervalo: '14', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_10', nome: 'Bokashi', fornecedor: 'AJINOMOTO', custo: 105, categoria: 'Fertilizante Foliar', cultura: 'Arroz', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-110', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '4,5 L/ha', intervalo: '7', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+  { id: 'prod_seed_11', nome: 'Ajifol SM-Boro', fornecedor: 'AJINOMOTO', custo: 55, categoria: 'Fertilizante Foliar', cultura: 'Feijão', modoAcao: 'Sistêmico', ingredienteAtivo: 'Composto bioativo AJN-111', finalidade: 'Aumento de produtividade e qualidade', tipoAplicacao: 'Foliar', doseRecomendada: '4,8 L/ha', intervalo: '14', epocaAplicacao: 'Vegetativo', compatibilidade: 'Compatível com a maioria dos defensivos', restricoes: 'Evitar aplicação com temperaturas acima de 30°C', observacoes: 'Aplicar nas primeiras horas da manhã' },
+]
+
+const SEED_VERSION = 'v2'
 
 export function seedData(): void {
   const seeded = localStorage.getItem('insightpro_seed_version')
   if (seeded === SEED_VERSION) return
 
-  localStorage.setItem('insightpro_data', JSON.stringify(clientesMock))
-  localStorage.setItem('insightpro_swot', JSON.stringify(swotMock))
-  localStorage.setItem('insightpro_gut', JSON.stringify(gutMock))
-  localStorage.setItem('insightpro_pest', JSON.stringify(pestMock))
-  localStorage.setItem('insightpro_metas', JSON.stringify(metasMock))
-  localStorage.setItem('insightpro_campanhas', JSON.stringify(campanhasMock))
-  localStorage.setItem('insightpro_pipeline', JSON.stringify(pipelineMock))
-  localStorage.setItem('insightpro_relatorios', JSON.stringify(relatoriosMock))
-  localStorage.setItem('insightpro_seed_version', SEED_VERSION)
+  localDB.set(DB_KEYS.data, clientesMock)
+  localDB.set(DB_KEYS.produtos, produtosMock)
+  localDB.set(DB_KEYS.swot, swotMock)
+  localDB.set(DB_KEYS.gut, gutMock)
+  localDB.set(DB_KEYS.pest, pestMock)
+  localDB.set(DB_KEYS.metas, metasMock)
+  localDB.set(DB_KEYS.campanhas, campanhasMock)
+  localDB.set(DB_KEYS.pipeline, pipelineMock)
+  localDB.set(DB_KEYS.relatorios, relatoriosMock)
+  localDB.set(DB_KEYS.seedVersion, SEED_VERSION)
 }
