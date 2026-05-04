@@ -141,13 +141,13 @@ export function ClientesPage() {
       <div className="abc-bar-wrap">
         <div className="abc-bar">
           <div className="abc-bar-seg abc-bar-seg--a" style={{ flex: abcData.a || 0.01 }}>
-            <span>Classe A ({abcData.a})</span>
+            <span>Classe A 80% ({abcData.a})</span>
           </div>
           <div className="abc-bar-seg abc-bar-seg--b" style={{ flex: abcData.b || 0.01 }}>
-            <span>Classe B ({abcData.b})</span>
+            <span>Classe B 15% ({abcData.b})</span>
           </div>
           <div className="abc-bar-seg abc-bar-seg--c" style={{ flex: abcData.c || 0.01 }}>
-            <span>Classe C ({abcData.c})</span>
+            <span>Classe C 5% ({abcData.c})</span>
           </div>
         </div>
       </div>
