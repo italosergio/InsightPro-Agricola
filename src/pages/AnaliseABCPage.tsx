@@ -246,52 +246,14 @@ export function AnaliseABCPage() {
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
-        <div className="card-body" style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', fontWeight: 600 }}>Filtrar por estado:</span>
-          <select className="form-control" value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} style={{ maxWidth: 160 }}>
-            <option value="Todos">Todos</option>
-            {estados.map(e => <option key={e} value={e}>{e}</option>)}
-          </select>
-        </div>
-      </div>
-
-      <div className="kpi-grid">
-        <div className="kpi-card" style={{ borderLeft: '3px solid #22c55e' }}>
-          <div className="kpi-label">Classe A — Elite</div>
-          <div className="kpi-value">{classCounts.A}</div>
-          <div className="kpi-trend positive">{fmt(classRevenue.A)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.A / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card" style={{ borderLeft: '3px solid #f59e0b' }}>
-          <div className="kpi-label">Classe B — Importantes</div>
-          <div className="kpi-value">{classCounts.B}</div>
-          <div className="kpi-trend" style={{ color: 'var(--color-warning)', background: 'var(--color-warning-bg)' }}>{fmt(classRevenue.B)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.B / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card" style={{ borderLeft: '3px solid #ef4444' }}>
-          <div className="kpi-label">Classe C — Demais</div>
-          <div className="kpi-value">{classCounts.C}</div>
-          <div className="kpi-trend negative">{fmt(classRevenue.C)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.C / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-label">Total Analisado</div>
-          <div className="kpi-value">{filteredData.length}</div>
-          <div className="kpi-trend positive">{fmt(totalFat)}</div>
-        </div>
-      </div>
-
       <div className="chart-grid">
         <div className="card">
-          <div className="card-header">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2>Faturamento por Classe</h2>
+            <select className="form-control" value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} style={{ maxWidth: 100, fontSize: 'var(--text-xs)', padding: '2px 6px', height: 28 }}>
+              <option value="Todos">Todos</option>
+              {estados.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
           </div>
           <div className="card-body">
             <div className="chart-container">

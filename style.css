@@ -3777,6 +3777,22 @@ textarea.form-control {
   grid-template-columns: repeat(6, 1fr);
 }
 
+.dash-kpi-compact .kpi-card {
+  padding: var(--space-3) var(--space-4);
+}
+
+.dash-kpi-compact .kpi-value {
+  font-size: var(--text-lg);
+}
+
+.dash-kpi-compact .kpi-label {
+  font-size: var(--text-xs);
+}
+
+.dash-kpi-compact .kpi-trend {
+  font-size: 11px;
+}
+
 @media (max-width: 1200px) {
   .dash-kpi-compact { grid-template-columns: repeat(3, 1fr); }
 }
