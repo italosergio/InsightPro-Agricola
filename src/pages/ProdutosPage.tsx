@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
 import { localDB, DB_KEYS } from '@/lib/localDB'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface ProdutoCadastro {
   id: string
@@ -86,6 +87,25 @@ export function ProdutosPage() {
     })
   }, [produtos, sortField, sortDir])
 
+  const downloadData = useMemo(() => {
+    return sortedProdutos.map(p => ({
+      nome: p.nome,
+      fornecedor: p.fornecedor,
+      custo: p.custo,
+      categoria: p.categoria,
+      cultura: p.cultura,
+      modo_acao: p.modoAcao,
+      ingrediente_ativo: p.ingredienteAtivo,
+      dose_recomendada: p.doseRecomendada,
+    }))
+  }, [sortedProdutos])
+
+  const penetracaoData = useMemo(() => {
+    const map: Record<string, number> = {}
+    produtos.forEach(p => { if (p.cultura) map[p.cultura] = (map[p.cultura] || 0) + 1 })
+    return Object.entries(map).sort(([,a], [,b]) => b - a)
+  }, [produtos])
+
   const refresh = () => {
     setProdutos(localDB.list<ProdutoCadastro>(DB_KEYS.produtos))
   }
@@ -160,6 +180,7 @@ export function ProdutosPage() {
             >
               + Adicionar Produto
             </button>
+            <DownloadReportButton data={downloadData} filename="produtos.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -167,6 +188,19 @@ export function ProdutosPage() {
               <span className="page-hero-kpi-label">Cadastrados</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="penetration-bar-wrap">
+        <div className="penetration-bar">
+          {penetracaoData.map(([cultura, count], i) => {
+            const colors = ['#16a34a','#2563eb','#d97706','#dc2626','#8b5cf6','#059669','#0d9488','#ea580c']
+            return (
+              <div key={cultura} className="penetration-bar-seg" style={{ flex: count || 0.01, background: colors[i % colors.length] }}>
+                <span>{cultura} ({count})</span>
+              </div>
+            )
+          })}
         </div>
       </div>
 
@@ -250,7 +284,7 @@ export function ProdutosPage() {
                     <th onClick={() => handleSort('fornecedor')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Fornecedor{sortIcon('fornecedor')}</th>
                     <th style={{ whiteSpace: 'nowrap' }}>Dose</th>
                     <th onClick={() => handleSort('custo')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Custo{sortIcon('custo')}</th>
-                    <th style={{ whiteSpace: 'nowrap' }}>Ações</th>
+                    <th style={{ whiteSpace: 'nowrap' }}>Penetração</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -262,12 +296,7 @@ export function ProdutosPage() {
                       <td>{p.fornecedor}</td>
                       <td>{p.doseRecomendada || 'N/A'}</td>
                       <td>{p.custo > 0 ? fmt(p.custo) : 'N/A'}</td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 4 }}>
-                          <button className="btn btn--ghost btn--sm" onClick={() => startEdit(p)} style={{ color: '#3b82f6' }}>Editar</button>
-                          <button className="btn btn--ghost btn--sm" onClick={() => setConfirmDelete(p.id)} style={{ color: '#ef4444' }}>Remover</button>
-                        </div>
-                      </td>
+                      <td><span className="badge badge--neutral">{p.cultura || 'N/A'}</span></td>
                     </tr>
                   ))}
                 </tbody>

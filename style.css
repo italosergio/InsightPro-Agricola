@@ -3772,3 +3772,111 @@ textarea.form-control {
 .row-highlight {
   animation: rowHighlight 0.5s ease-in-out 2;
 }
+
+.dash-kpi-compact {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 1200px) {
+  .dash-kpi-compact { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .dash-kpi-compact { grid-template-columns: repeat(2, 1fr); }
+}
+
+.abc-bar-wrap {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.abc-bar {
+  display: flex;
+  height: 28px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.abc-bar-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #fff;
+  transition: flex 0.3s ease;
+  min-width: 0;
+  position: relative;
+}
+
+.abc-bar-seg span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+.abc-bar-seg--a { background: #16a34a; }
+.abc-bar-seg--b { background: #2563eb; }
+.abc-bar-seg--c { background: #d97706; }
+
+@media (max-width: 768px) {
+  .abc-bar {
+    flex-direction: column;
+    height: auto;
+    gap: var(--space-2);
+    background: transparent;
+  }
+  .abc-bar-seg {
+    height: 36px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+  }
+  .abc-bar-wrap { margin-bottom: var(--space-4); }
+}
+
+.penetration-bar-wrap {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.penetration-bar {
+  display: flex;
+  height: 28px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.penetration-bar-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #fff;
+  transition: flex 0.3s ease;
+}
+
+.penetration-bar-seg span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+@media (max-width: 768px) {
+  .penetration-bar {
+    flex-direction: column;
+    height: auto;
+    gap: var(--space-2);
+    background: transparent;
+  }
+  .penetration-bar-seg {
+    height: 32px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+  }
+  .penetration-bar-wrap { margin-bottom: var(--space-4); }
+}

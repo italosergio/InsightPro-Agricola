@@ -5,6 +5,7 @@ import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
 import { LazyChart } from '@/components/LazyChart'
 import { produtosAJINOMOTO, getClientProductos } from '@/data/produtos'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 function buildHCTheme(theme: 'light' | 'dark') {
   const isDark = theme === 'dark'
@@ -53,6 +54,7 @@ export function CulturaPage() {
   const hcTheme = useMemo(() => buildHCTheme(theme), [theme])
 
   const cultureData = useMemo(() => {
+
     const culturas = Array.from(new Set(rawData.map(c => c.cultura_principal).filter(Boolean)))
     if (culturas.length === 0) {
       const fallback = ['Soja', 'Milho', 'Café', 'Algodão', 'Cana-de-Açúcar', 'Uva', 'Manga', 'Tomate']
@@ -75,6 +77,16 @@ export function CulturaPage() {
       return { cultura, clientes, area, areaMedia: clientes > 0 ? area / clientes : 0, produtosMedio: prods.size, produtos: prods }
     })
   }, [rawData])
+
+  const downloadData = useMemo(() => {
+    return cultureData.map(c => ({
+      cultura: c.cultura,
+      clientes: c.clientes,
+      area: c.area,
+      area_media: c.areaMedia,
+      produtos_medio: c.produtosMedio,
+    }))
+  }, [cultureData])
 
   const clientChart = useMemo<Highcharts.Options>(() => ({
     ...hcTheme, chart: { ...hcTheme.chart, type: 'column', height: 300 },
@@ -104,6 +116,7 @@ export function CulturaPage() {
             <span className="page-hero-eyebrow">Análise por Cultura</span>
             <h2 className="page-hero-title">Culturas da Carteira</h2>
             <p className="page-hero-subtitle">Distribuição de clientes, área e produtos por cultura principal</p>
+            <DownloadReportButton data={downloadData} filename="analise_cultura.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

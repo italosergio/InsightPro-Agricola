@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { produtosAJINOMOTO } from '@/data/produtos'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 const levels = [
   { key: 'excelente', label: 'Excelente', color: '#16a34a', bg: 'rgba(22,163,74,0.12)', desc: 'Top 10%' },
@@ -42,6 +43,16 @@ export function PenetracaoPage() {
 
   const productPenetration = useMemo(() => products, [])
 
+  const downloadData = useMemo(() => {
+    return productPenetration.map(p => ({
+      nome: p.nome,
+      clientes: p.clientCount,
+      total: p.total,
+      penetracao_pct: `${p.pct.toFixed(1)}%`,
+      classificacao: p.classificacao,
+    }))
+  }, [productPenetration])
+
   const levelCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     levels.forEach(l => { counts[l.key] = 0 })
@@ -61,6 +72,7 @@ export function PenetracaoPage() {
             <span className="page-hero-eyebrow">Penetracao de Produtos</span>
             <h2 className="page-hero-title">Análise Detalhada de Produtos</h2>
             <p className="page-hero-subtitle">Porcentagem de clientes que utilizam cada produto na carteira</p>
+            <DownloadReportButton data={downloadData} filename="penetracao.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -79,7 +91,7 @@ export function PenetracaoPage() {
         </div>
       </div>
 
-      <div className="kpi-grid" style={{ marginBottom: 'var(--space-6)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
         {levels.map(l => (
           <div key={l.key} className="kpi-card" style={{ borderLeft: `3px solid ${l.color}` }}>
             <div className="kpi-label">{l.label}</div>

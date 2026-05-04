@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface PestItem {
   id: string
@@ -79,6 +80,14 @@ export function PESTPage() {
 
   const totalFactors = quadrants.reduce((sum, q) => sum + pestData[q.key].length, 0)
 
+  const downloadData = quadrants.flatMap(q =>
+    pestData[q.key].map(item => ({
+      quadrante: q.title,
+      id: item.id,
+      texto: item.text,
+    }))
+  )
+
   return (
     <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
@@ -92,6 +101,7 @@ export function PESTPage() {
             </div>
             <h1 className="page-hero-title">Análise PEST</h1>
             <p className="page-hero-subtitle">Fatores Políticos, Econômicos, Sociais e Tecnológicos do ambiente externo</p>
+            <DownloadReportButton data={downloadData} filename="pest.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

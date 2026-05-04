@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface PipelineItem {
   id: string
@@ -84,6 +85,20 @@ export function PipelinePage() {
     ? Math.round((pipeline.fechado_ganho.length / totalOportunidades) * 100)
     : 0
 
+  const downloadData = stages.flatMap(s =>
+    pipeline[s.key].map(item => ({
+      estagio: s.label,
+      cliente: item.cliente,
+      cultura: item.cultura,
+      cidade: item.cidade,
+      valor: item.valor,
+      probabilidade: item.probabilidade,
+      contato: item.contato,
+      ultimo_contato: item.ultimoContato,
+      observacao: item.observacao,
+    }))
+  )
+
   return (
     <>
       {/* Hero */}
@@ -95,6 +110,7 @@ export function PipelinePage() {
             <span className="page-hero-eyebrow">Funil de Vendas</span>
             <h2 className="page-hero-title">Pipeline Comercial</h2>
             <p className="page-hero-subtitle">Gerencie e acompanhe todas as oportunidades de negócio em tempo real.</p>
+            <DownloadReportButton data={downloadData} filename="pipeline.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

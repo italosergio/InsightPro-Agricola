@@ -1,9 +1,21 @@
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 export function ExportarPage() {
   usePageTitle('Exportar')
-  const { exportCSV, exportPDF } = useData()
+  const { exportCSV, exportPDF, rawData } = useData()
+
+  const downloadData = rawData.map(c => ({
+    nome: c.nome,
+    cidade: c.cidade,
+    estado: c.estado,
+    cultura: c.cultura_principal,
+    area_hectares: c.area_hectares,
+    faturamento: c.faturamento_anual,
+    potencial: c.potencial_compra,
+    status: c.status,
+  }))
 
   return (
     <>
@@ -15,6 +27,7 @@ export function ExportarPage() {
             <p className="page-hero-eyebrow">Exportar</p>
             <h1 className="page-hero-title">Exportar Dados</h1>
             <p className="page-hero-subtitle">Baixe seus dados nos formatos CSV e PDF para compartilhar</p>
+            <DownloadReportButton data={downloadData} filename="exportar.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

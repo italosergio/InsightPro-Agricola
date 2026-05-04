@@ -1,7 +1,8 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { LazyChart } from '@/components/LazyChart'
@@ -54,16 +55,24 @@ function buildHCTheme(theme: 'light' | 'dark') {
 }
 
 export function AnaliseABCPage() {
-  const { filteredData, rawData } = useData()
+  const { filteredData: contextFiltered, rawData } = useData()
   const { theme } = useTheme()
   usePageTitle('Analise ABC')
 
-  const data = filteredData.length > 0 ? filteredData : rawData
+  const data = contextFiltered.length > 0 ? contextFiltered : rawData
+
+  const [estadoFilter, setEstadoFilter] = useState<string>('Todos')
+  const estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
+
+  const filteredData = useMemo(() => {
+    if (estadoFilter === 'Todos') return data
+    return data.filter(c => c.estado === estadoFilter)
+  }, [data, estadoFilter])
 
   const hcTheme = useMemo(() => buildHCTheme(theme), [theme])
 
   const abcData = useMemo(() => {
-    const sorted = [...data].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
+    const sorted = [...filteredData].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
     const totalFaturamento = sorted.reduce((sum, c) => sum + c.faturamento_anual, 0)
 
     let cumulative = 0
@@ -73,7 +82,19 @@ export function AnaliseABCPage() {
       const classe = percentage <= 80 ? 'A' : percentage <= 95 ? 'B' : 'C'
       return { ...cliente, classe, percentage }
     })
-  }, [data])
+  }, [filteredData])
+
+  const downloadData = useMemo(() => {
+    return abcData.map(c => ({
+      nome: c.nome,
+      faturamento: c.faturamento_anual,
+      classe_abc: c.classe,
+      pct: `${c.percentage.toFixed(1)}%`,
+      estado: c.estado,
+      cultura: c.cultura_principal,
+      status: c.status,
+    }))
+  }, [abcData])
 
   const classCounts = useMemo(() => {
     const counts = { A: 0, B: 0, C: 0 }
@@ -90,7 +111,7 @@ export function AnaliseABCPage() {
   const fmt = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value)
 
-  const totalFat = data.reduce((sum, c) => sum + c.faturamento_anual, 0)
+  const totalFat = filteredData.reduce((sum, c) => sum + c.faturamento_anual, 0)
 
   const barChartRef = useRef<HighchartsReact.RefObject>(null)
   const donutChartRef = useRef<HighchartsReact.RefObject>(null)
@@ -174,7 +195,7 @@ export function AnaliseABCPage() {
     }],
   }), [classCounts, hcTheme, theme])
 
-  if (data.length === 0) {
+  if (filteredData.length === 0) {
     return (
         <>
         <div className="card">
@@ -206,6 +227,7 @@ export function AnaliseABCPage() {
             </div>
             <h1 className="page-hero-title">Analise ABC</h1>
             <p className="page-hero-subtitle">Classificacao de clientes por faturamento anual — Curva ABC (80/15/5)</p>
+            <DownloadReportButton data={downloadData} filename="analise_abc.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -221,6 +243,16 @@ export function AnaliseABCPage() {
               <span className="page-hero-kpi-label">Classe C</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+        <div className="card-body" style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', fontWeight: 600 }}>Filtrar por estado:</span>
+          <select className="form-control" value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} style={{ maxWidth: 160 }}>
+            <option value="Todos">Todos</option>
+            {estados.map(e => <option key={e} value={e}>{e}</option>)}
+          </select>
         </div>
       </div>
 
@@ -251,7 +283,7 @@ export function AnaliseABCPage() {
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Total Analisado</div>
-          <div className="kpi-value">{data.length}</div>
+          <div className="kpi-value">{filteredData.length}</div>
           <div className="kpi-trend positive">{fmt(totalFat)}</div>
         </div>
       </div>

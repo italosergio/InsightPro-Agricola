@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { getClientProductos, getClientName } from '@/data/produtos'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 export function OportunidadesPage() {
   const { rawData } = useData()
@@ -34,6 +35,15 @@ export function OportunidadesPage() {
   const niche = quadrant.filter(q => !q.isLarge && q.isHighPen)
   const avoid = quadrant.filter(q => !q.isLarge && !q.isHighPen)
 
+  const downloadData = useMemo(() => {
+    return quadrant.map(q => ({
+      nome: q.nome,
+      faturamento: q.faturamento,
+      penetracao: q.penetracao,
+      quadrante: q.isLarge ? (q.isHighPen ? 'Estrela' : 'Oportunidade') : (q.isHighPen ? 'Nicho' : 'Evitar'),
+    }))
+  }, [quadrant])
+
   const quads = [
     { key: 'stars', label: 'Estrelas', sub: 'Alta penetração em clientes grandes', data: stars, color: '#22c55e', bg: 'rgba(34,197,94,0.08)', action: 'Proteger e expandir' },
     { key: 'opportunities', label: 'Oportunidades', sub: 'Baixa penetração em clientes grandes', data: opportunities, color: '#3b82f6', bg: 'rgba(59,130,246,0.08)', action: 'Aumentar penetração' },
@@ -57,6 +67,7 @@ export function OportunidadesPage() {
             <span className="page-hero-eyebrow">Matriz de Oportunidades</span>
             <h2 className="page-hero-title">Cruzamento Penetração x Tamanho</h2>
             <p className="page-hero-subtitle">Identifique onde concentrar esforços comerciais baseado na penetração de produtos e tamanho do cliente</p>
+            <DownloadReportButton data={downloadData} filename="oportunidades.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

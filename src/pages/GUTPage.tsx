@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface GutItem {
   id: string
@@ -100,6 +101,15 @@ export function GUTPage() {
   const highCount = items.filter(i => i.score >= 27 && i.score < 75).length
   const maxScore = 125
 
+  const downloadData = items.map(item => ({
+    problema: item.problema,
+    gravidade: item.gravidade,
+    urgencia: item.urgencia,
+    tendencia: item.tendencia,
+    score: item.score,
+    prioridade: getPriorityInfo(item.score).label,
+  }))
+
   return (
     <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
@@ -113,6 +123,7 @@ export function GUTPage() {
             </div>
             <h1 className="page-hero-title">Matriz de Priorização GUT</h1>
             <p className="page-hero-subtitle">Classifique problemas por Gravidade, Urgência e Tendência</p>
+            <DownloadReportButton data={downloadData} filename="gut.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

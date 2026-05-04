@@ -4,6 +4,7 @@ import { usePageTitle } from '@/hooks/useTheme'
 import { validarCPFouCNPJ, validarTelefone, validarEmail } from '@/lib/validators'
 import { cidadesPorEstado } from '@/data/cidades'
 import { localDB, DB_KEYS } from '@/lib/localDB'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 import type { Cliente, ProdutoInfo } from '@/types'
 
 const estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
@@ -152,6 +153,23 @@ export function ClientesCadastroPage() {
     })
   }, [rawData, sortField, sortDir])
 
+  const downloadData = useMemo(() => {
+    return sortedData.map(c => ({
+      nome: c.nome,
+      cpf_cnpj: c.cpf_cnpj,
+      telefone: c.telefone,
+      email: c.email,
+      cidade: c.cidade,
+      estado: c.estado,
+      cultura_principal: c.cultura_principal,
+      area_hectares: c.area_hectares,
+      faturamento_anual: c.faturamento_anual,
+      potencial_compra: c.potencial_compra,
+      ultima_compra: c.ultima_compra,
+      status: c.status,
+    }))
+  }, [sortedData])
+
   const fmt = (v: number) => {
     if (v >= 1e9) return `R$ ${(v / 1e9).toFixed(1).replace('.', ',')} Bi`
     if (v >= 1e6) return `R$ ${(v / 1e6).toFixed(1).replace('.', ',')} Mi`
@@ -184,6 +202,7 @@ export function ClientesCadastroPage() {
             >
               + Adicionar Cliente
             </button>
+            <DownloadReportButton data={downloadData} filename="clientes_cadastrados.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

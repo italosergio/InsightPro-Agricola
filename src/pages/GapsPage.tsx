@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { produtosAJINOMOTO, getClientProductos, getClientName } from '@/data/produtos'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 export function GapsPage() {
   const { rawData } = useData()
@@ -19,6 +20,16 @@ export function GapsPage() {
     }).sort((a, b) => b.potencial - a.potencial)
   }, [clientCount, rawData])
 
+  const downloadData = useMemo(() => {
+    return gapData.map(g => ({
+      nome: g.nome,
+      usando: g.usando,
+      gap: g.gap,
+      potencial: g.potencial,
+      faturamento: g.faturamento,
+    }))
+  }, [gapData])
+
   return (
     <>
       <div className="page-hero">
@@ -29,6 +40,7 @@ export function GapsPage() {
             <span className="page-hero-eyebrow">Análise de Gaps</span>
             <h2 className="page-hero-title">Oportunidades de Crescimento</h2>
             <p className="page-hero-subtitle">Identifique produtos não utilizados em clientes-alvo</p>
+            <DownloadReportButton data={downloadData} filename="gaps.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

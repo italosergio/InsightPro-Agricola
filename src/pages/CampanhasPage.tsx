@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface Campanha {
   id: string
@@ -110,6 +111,20 @@ export function CampanhasPage() {
   const [filter, setFilter] = useState('todas')
   const filtered = filter === 'todas' ? campanhas : campanhas.filter(c => c.status === filter)
 
+  const downloadData = useMemo(() => {
+    return filtered.map(c => ({
+      nome: c.nome,
+      tipo: tipoLabels[c.tipo] || c.tipo,
+      publico: c.publico,
+      orcamento: c.orcamento,
+      retorno_estimado: c.retornoEstimado,
+      inicio: c.inicio,
+      fim: c.fim,
+      status: statusLabels[c.status] || c.status,
+      canais: c.canais.map(ch => canalLabels[ch] || ch).join(', '),
+    }))
+  }, [filtered])
+
   return (
     <>
       <div className="page-hero">
@@ -120,6 +135,7 @@ export function CampanhasPage() {
             <p className="page-hero-eyebrow">Campanhas</p>
             <h1 className="page-hero-title">Gestão de Campanhas</h1>
             <p className="page-hero-subtitle">Acompanhe o desempenho das suas campanhas de marketing e vendas</p>
+            <DownloadReportButton data={downloadData} filename="campanhas.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
