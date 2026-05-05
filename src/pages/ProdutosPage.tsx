@@ -218,7 +218,7 @@ export function ProdutosPage() {
                 style={{ flex: item.count || 0.01, background: colors[i % colors.length], position: 'relative' }}
                 title={`${item.nome}: ${item.count} cliente${item.count !== 1 ? 's' : ''} (${item.pct}%)`}
               >
-                <span style={{ fontSize: 10 }}>{item.nome} {item.pct}%</span>
+                <span style={{ fontSize: Math.max(7, Math.min(12, 5 + Number(item.pct) * 0.35)), lineHeight: 1.1 }}>{item.nome} {item.pct}%</span>
               </div>
             )
           })}
