@@ -12,7 +12,7 @@ const navSections: NavSection[] = [
     title: 'Principal',
     items: [
       { path: '/inicio', label: 'Início', icon: 'home' },
-      { path: '/', label: 'Dashboard', icon: 'dashboard' },
+      { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
       { path: '/clientes', label: 'Clientes', icon: 'clientes' },
       { path: '/produtos', label: 'Produtos', icon: 'produtos' },
     ],

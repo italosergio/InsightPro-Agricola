@@ -160,7 +160,14 @@ export function RelatoriosPage() {
 
   const [relatoriosState, setRelatoriosState] = useState<Relatorio[]>(() => {
     const saved = localStorage.getItem('insightpro_relatorios')
-    return saved ? JSON.parse(saved) : relatoriosList
+    if (!saved) return relatoriosList
+    const parsed: Relatorio[] = JSON.parse(saved)
+    // Garante que todos os relatorios existam, mesclando com a lista original
+    const merged = relatoriosList.map(base => {
+      const existing = parsed.find(r => r.id === base.id)
+      return existing ? { ...base, geradoEm: existing.geradoEm } : base
+    })
+    return merged
   })
 
   const [savedReports, setSavedReports] = useState<SavedReport[]>(() => {
@@ -1475,6 +1482,26 @@ export function RelatoriosPage() {
               {aiContent.mensagem_final}
             </div>
           )}
+
+          {/* Link discreto para PPTX */}
+          <div style={{ marginTop: 'var(--space-4)', textAlign: 'left' }}>
+            <button
+              onClick={gerarPPTX}
+              disabled={gerandoPPTX}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                fontSize: 'var(--text-xs)',
+                color: 'var(--text-tertiary)',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                textDecorationColor: 'var(--border-primary)',
+              }}
+            >
+              {gerandoPPTX ? 'Gerando apresentacao...' : 'Baixar apresentacao (PPTX)'}
+            </button>
+          </div>
         </div>
 
         {/* Footer */}
@@ -1486,9 +1513,6 @@ export function RelatoriosPage() {
           justifyContent: 'flex-end',
         }}>
           <button className="btn btn--secondary" onClick={fecharAiModal}>Fechar</button>
-          <button className="btn btn--primary" onClick={gerarPPTX} disabled={gerandoPPTX}>
-            {gerandoPPTX ? 'Gerando...' : 'Baixar Apresentação (PPTX)'}
-          </button>
           <button className="btn btn--primary" onClick={gerarPDFdoIA} disabled={relatorioGerando === 'ia'}>
             {relatorioGerando === 'ia' ? 'Gerando PDF...' : 'Baixar PDF'}
           </button>
@@ -1907,7 +1931,15 @@ export function RelatoriosPage() {
             <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end' }}>
               <button className="btn btn--secondary" onClick={fecharPreview}>Fechar</button>
               {previewAction ? (
-                <button className="btn btn--primary" onClick={confirmarGeracao}>
+                <button className="btn btn--primary" onClick={() => {
+                  const { type, reportId } = previewAction
+                  fecharPreview()
+                  setTimeout(() => {
+                    if (type === 'pdf_completo') gerarPDFCompleto()
+                    else if (type === 'pdf' && reportId) gerarPDF(reportId)
+                    else if (type === 'csv' && reportId) gerarCSV(reportId)
+                  }, 100)
+                }}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14, marginRight: 4 }}>
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />

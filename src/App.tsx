@@ -38,7 +38,7 @@ function ScrollToTop() {
 }
 
 const titleMap: Record<string, { title: string; subtitle: string }> = {
-  '/': { title: 'Dashboard', subtitle: 'Visão geral da carteira de clientes' },
+  '/dashboard': { title: 'Dashboard', subtitle: 'Visão geral da carteira de clientes' },
   '/inicio': { title: 'Início', subtitle: 'Central de ferramentas da plataforma' },
   '/clientes': { title: 'Clientes', subtitle: '' },
   '/analise-abc': { title: 'Analise ABC', subtitle: 'Classificacao de clientes por faturamento' },
@@ -85,7 +85,8 @@ export function App() {
               <Routes>
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route element={<AuthRoute><DashboardLayout /></AuthRoute>}>
-                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/inicio" element={<HomePage />} />
                   <Route path="/clientes" element={<ClientesPage />} />
                   <Route path="/analise-abc" element={<AnaliseABCPage />} />
