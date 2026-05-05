@@ -1836,18 +1836,27 @@ textarea.form-control {
   overflow: hidden;
 }
 
-/* Imagem de fundo (plantacao de soja) + overlay escuro */
+/* Imagem de fundo (plantacao de soja) + overlay (toggle por tema) */
 .login-container::before {
   content: '';
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(5, 20, 10, 0.92) 0%, rgba(5, 20, 10, 0.75) 50%, rgba(5, 20, 10, 0.92) 100%),
-    url('https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+    linear-gradient(135deg, rgba(220, 250, 230, 0.88) 0%, rgba(200, 240, 215, 0.75) 50%, rgba(220, 250, 230, 0.88) 100%),
+    url('/login-bg.webp');
   background-size: cover;
   background-position: center;
   background-blend-mode: normal;
   z-index: 0;
+}
+
+[data-theme="dark"] .login-container::before {
+  background:
+    linear-gradient(135deg, rgba(5, 25, 12, 0.92) 0%, rgba(8, 30, 15, 0.78) 50%, rgba(5, 25, 12, 0.92) 100%),
+    url('/login-bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: normal;
 }
 
 .login-container::after {
