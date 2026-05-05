@@ -41,7 +41,7 @@ export function DashboardLayout() {
         onToggleMinimized={handleToggleMinimized}
       />
       <Header title={title} subtitle={subtitle} onMenuToggle={() => setSidebarOpen(true)} />
-      <main className="main-content" ref={mainRef}>
+      <main className="main-content" key={pathname} ref={mainRef}>
         <div className="content">
           <div className="content-spacer" />
           <Outlet />

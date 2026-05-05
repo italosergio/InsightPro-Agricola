@@ -80,6 +80,10 @@ export function DashboardPage() {
   const clientesAtivos = useMemo(() => rawData.filter(c => c.status === 'ativo').length, [rawData])
   const clientesInativos = useMemo(() => rawData.filter(c => c.status === 'inativo').length, [rawData])
   const clientesProspect = useMemo(() => rawData.filter(c => c.status === 'prospect').length, [rawData])
+
+  const filteredAtivos = useMemo(() => filteredByAbc.filter(c => c.status === 'ativo').length, [filteredByAbc])
+  const filteredInativos = useMemo(() => filteredByAbc.filter(c => c.status === 'inativo').length, [filteredByAbc])
+  const filteredProspect = useMemo(() => filteredByAbc.filter(c => c.status === 'prospect').length, [filteredByAbc])
   const ticketMedio = totalClientes > 0 ? totalFaturamento / totalClientes : 0
   const taxaAtivacao = totalClientes > 0 ? (clientesAtivos / totalClientes) * 100 : 0
 
@@ -155,8 +159,8 @@ export function DashboardPage() {
     plotOptions: { pie: { ...hcTheme.plotOptions?.pie, innerSize: '55%', borderWidth: 3, borderColor: isDark ? '#0d1710' : '#f8fafc', dataLabels: { enabled: false } }, series: { animation: { duration: 900 } } },
     legend: { enabled: true, layout: 'horizontal', align: 'center', verticalAlign: 'bottom', itemStyle: { color: isDark ? '#8fad9a' : '#57534e', fontSize: '10px' as any, fontWeight: '500' }, itemDistance: 12, padding: 4 },
     colors: ['#22c55e', '#3b82f6', '#ef4444'],
-    series: [{ type: 'pie', name: 'Clientes', data: [{ name: 'Ativos', y: clientesAtivos }, { name: 'Prospects', y: clientesProspect }, { name: 'Inativos', y: clientesInativos }] }],
-  }), [clientesAtivos, clientesInativos, clientesProspect, hcTheme, isDark])
+    series: [{ type: 'pie', name: 'Clientes', data: [{ name: 'Ativos', y: filteredAtivos }, { name: 'Prospects', y: filteredProspect }, { name: 'Inativos', y: filteredInativos }] }],
+  }), [filteredAtivos, filteredInativos, filteredProspect, hcTheme, isDark])
 
   const culturaChartOpts = useMemo<Highcharts.Options>(() => ({
     ...hcTheme, chart: { ...hcTheme.chart, type: 'column', height: 280 }, title: { text: undefined },
@@ -249,9 +253,9 @@ export function DashboardPage() {
           <div className="card-body">
             <LazyChart options={statusChartOpts} />
             <div className="dash-status-legend">
-              <div className="dash-status-item"><span style={{ background: '#22c55e' }} /><span>Ativos</span><strong>{clientesAtivos}</strong></div>
-              <div className="dash-status-item"><span style={{ background: '#3b82f6' }} /><span>Prospects</span><strong>{clientesProspect}</strong></div>
-              <div className="dash-status-item"><span style={{ background: '#ef4444' }} /><span>Inativos</span><strong>{clientesInativos}</strong></div>
+              <div className="dash-status-item"><span style={{ background: '#22c55e' }} /><span>Ativos</span><strong>{filteredAtivos}</strong></div>
+              <div className="dash-status-item"><span style={{ background: '#3b82f6' }} /><span>Prospects</span><strong>{filteredProspect}</strong></div>
+              <div className="dash-status-item"><span style={{ background: '#ef4444' }} /><span>Inativos</span><strong>{filteredInativos}</strong></div>
             </div>
           </div>
         </div>
