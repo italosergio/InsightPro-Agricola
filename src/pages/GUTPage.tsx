@@ -59,7 +59,7 @@ export function GUTPage() {
   })
 
   const [form, setForm] = useState({ problema: '', gravidade: 1, urgencia: 1, tendencia: 1 })
-  const [showForm, setShowForm] = useState(true)
+  const [showForm, setShowForm] = useState(false)
 
   const saveItems = (data: GutItem[]) => {
     setItems(data)
