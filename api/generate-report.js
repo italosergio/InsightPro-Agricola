@@ -172,7 +172,7 @@ async function callDeepSeek(systemPrompt, userPrompt, apiKey) {
   }
 
   const result = await response.json();
-  return result.choices?.[0]?.message?.content || '';
+  return { content: result.choices?.[0]?.message?.content || '', model };
 }
 
 export default async function handler(req, res) {
@@ -217,7 +217,7 @@ export default async function handler(req, res) {
     }
 
     const { systemPrompt, prompt } = buildPrompt(data);
-    const content = await callDeepSeek(systemPrompt, prompt, apiKey);
+    const { content, model } = await callDeepSeek(systemPrompt, prompt, apiKey);
 
     // Tenta fazer parse do JSON retornado
     let parsed;
