@@ -31,8 +31,11 @@ import { HomePage } from '@/pages/HomePage'
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
-    const main = document.querySelector('.main-content')
-    if (main) main.scrollTop = 0
+    window.scrollTo(0, 0)
+    requestAnimationFrame(() => {
+      const main = document.querySelector('.main-content')
+      if (main) main.scrollTop = 0
+    })
   }, [pathname])
   return null
 }
