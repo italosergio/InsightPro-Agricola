@@ -75,6 +75,24 @@ export function ProdutosPage() {
     return sortDir === 'asc' ? ' ↑' : ' ↓'
   }
 
+  const penetracaoData = useMemo(() => {
+    const map: Record<string, number> = {}
+    produtos.forEach(p => {
+      let count = 0
+      rawData.forEach(c => {
+        if (c.produtos[p.nome.toLowerCase().replace(/\s+/g, '_')]) count++
+      })
+      if (count > 0) map[p.nome] = count
+    })
+    const entries = Object.entries(map).sort(([,a], [,b]) => b - a)
+    const total = entries.reduce((s, [,c]) => s + c, 0)
+    return entries.map(([nome, count]) => ({
+      nome,
+      count,
+      pct: total > 0 ? ((count / total) * 100).toFixed(0) : '0',
+    }))
+  }, [produtos, rawData])
+
   const sortedProdutos = useMemo(() => {
     if (sortField === 'penetracao') {
       return [...produtos].sort((a, b) => {
@@ -108,24 +126,6 @@ export function ProdutosPage() {
       dose_recomendada: p.doseRecomendada,
     }))
   }, [sortedProdutos])
-
-  const penetracaoData = useMemo(() => {
-    const map: Record<string, number> = {}
-    produtos.forEach(p => {
-      let count = 0
-      rawData.forEach(c => {
-        if (c.produtos[p.nome.toLowerCase().replace(/\s+/g, '_')]) count++
-      })
-      if (count > 0) map[p.nome] = count
-    })
-    const entries = Object.entries(map).sort(([,a], [,b]) => b - a)
-    const total = entries.reduce((s, [,c]) => s + c, 0)
-    return entries.map(([nome, count]) => ({
-      nome,
-      count,
-      pct: total > 0 ? ((count / total) * 100).toFixed(0) : '0',
-    }))
-  }, [produtos, rawData])
 
   const refresh = () => {
     setProdutos(localDB.list<ProdutoCadastro>(DB_KEYS.produtos))
