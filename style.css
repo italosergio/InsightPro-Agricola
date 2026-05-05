@@ -770,6 +770,7 @@ textarea:focus-visible {
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .sidebar-is-minimized .main-content {

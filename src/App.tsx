@@ -31,11 +31,14 @@ import { HomePage } from '@/pages/HomePage'
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
-    window.scrollTo(0, 0)
-    requestAnimationFrame(() => {
-      const main = document.querySelector('.main-content')
-      if (main) main.scrollTop = 0
-    })
+    const scrollToTop = () => {
+      const main = document.querySelector('.main-content') as HTMLElement | null
+      if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
+      else window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    scrollToTop()
+    const timer = setTimeout(scrollToTop, 50)
+    return () => clearTimeout(timer)
   }, [pathname])
   return null
 }
