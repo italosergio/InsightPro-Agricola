@@ -26,7 +26,7 @@ interface ProdutoCadastro {
 const categorias = ['Fungicida', 'Inseticida', 'Herbicida', 'Adjuvante', 'Fertilizante Foliar', 'Bioestimulante', 'Regulador de Crescimento', 'Outros']
 const culturas = ['Uva', 'Manga', 'Soja', 'Milho', 'Café', 'Algodão', 'Cana-de-Açúcar', 'Tomate', 'Citros', 'Arroz', 'Feijão', 'Trigo', 'Dendê', 'Pecuária']
 
-type SortField = keyof ProdutoCadastro
+type SortField = keyof ProdutoCadastro | 'penetracao'
 type SortDir = 'asc' | 'desc'
 
 const emptyForm: ProdutoCadastro = {
@@ -76,9 +76,16 @@ export function ProdutosPage() {
   }
 
   const sortedProdutos = useMemo(() => {
+    if (sortField === 'penetracao') {
+      return [...produtos].sort((a, b) => {
+        const ca = penetracaoData.find(d => d.nome === a.nome)?.count ?? 0
+        const cb = penetracaoData.find(d => d.nome === b.nome)?.count ?? 0
+        return sortDir === 'asc' ? ca - cb : cb - ca
+      })
+    }
     return [...produtos].sort((a, b) => {
-      const aVal = a[sortField]
-      const bVal = b[sortField]
+      const aVal = a[sortField as keyof ProdutoCadastro]
+      const bVal = b[sortField as keyof ProdutoCadastro]
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         return sortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
       }
@@ -87,7 +94,7 @@ export function ProdutosPage() {
       }
       return 0
     })
-  }, [produtos, sortField, sortDir])
+  }, [produtos, sortField, sortDir, penetracaoData])
 
   const downloadData = useMemo(() => {
     return sortedProdutos.map(p => ({
@@ -303,9 +310,9 @@ export function ProdutosPage() {
                     <th onClick={() => handleSort('categoria')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Categoria{sortIcon('categoria')}</th>
                     <th onClick={() => handleSort('cultura')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Cultura{sortIcon('cultura')}</th>
                     <th onClick={() => handleSort('fornecedor')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Fornecedor{sortIcon('fornecedor')}</th>
-                    <th style={{ whiteSpace: 'nowrap' }}>Dose</th>
+                    <th onClick={() => handleSort('doseRecomendada')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Dose{sortIcon('doseRecomendada')}</th>
                     <th onClick={() => handleSort('custo')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Custo{sortIcon('custo')}</th>
-                    <th style={{ whiteSpace: 'nowrap' }}>Penetração</th>
+                    <th onClick={() => handleSort('penetracao')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Penetração{sortIcon('penetracao')}</th>
                   </tr>
                 </thead>
                 <tbody>
