@@ -31,14 +31,16 @@ import { HomePage } from '@/pages/HomePage'
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
-    const scrollToTop = () => {
-      const main = document.querySelector('.main-content') as HTMLElement | null
-      if (main) main.scrollTo({ top: 0, behavior: 'smooth' })
-      else window.scrollTo({ top: 0, behavior: 'smooth' })
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
     }
-    scrollToTop()
-    const timer = setTimeout(scrollToTop, 50)
-    return () => clearTimeout(timer)
+    const main = document.querySelector('.main-content') as HTMLElement | null
+    if (main) {
+      main.scrollTop = 0
+      requestAnimationFrame(() => { main.scrollTop = 0 })
+      setTimeout(() => { main.scrollTop = 0 }, 60)
+    }
+    window.scrollTo(0, 0)
   }, [pathname])
   return null
 }
