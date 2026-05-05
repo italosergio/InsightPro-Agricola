@@ -62,7 +62,11 @@ export function AnaliseABCPage() {
   const data = contextFiltered.length > 0 ? contextFiltered : rawData
 
   const [estadoFilter, setEstadoFilter] = useState<string>('Todos')
-  const estados = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
+
+  const estadosComDados = useMemo(() => {
+    const set = new Set(data.map(c => c.estado).filter(Boolean))
+    return Array.from(set).sort()
+  }, [data])
 
   const filteredData = useMemo(() => {
     if (estadoFilter === 'Todos') return data
@@ -252,7 +256,7 @@ export function AnaliseABCPage() {
             <h2>Faturamento por Classe</h2>
             <select className="form-control" value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} style={{ maxWidth: 100, fontSize: 'var(--text-xs)', padding: '2px 6px', height: 28 }}>
               <option value="Todos">Todos</option>
-              {estados.map(e => <option key={e} value={e}>{e}</option>)}
+              {estadosComDados.map(e => <option key={e} value={e}>{e}</option>)}
             </select>
           </div>
           <div className="card-body">
