@@ -33,7 +33,7 @@ export function GapsPage() {
   return (
     <>
       <div className="page-hero">
-        <div className="page-hero-bg page-hero-bg--orange" />
+        <div className="page-hero-bg page-hero-bg--gray" />
         <div className="page-hero-deco" />
         <div className="page-hero-content">
           <div className="page-hero-text">
