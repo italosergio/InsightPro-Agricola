@@ -80,10 +80,6 @@ export function DashboardPage() {
   const clientesAtivos = useMemo(() => rawData.filter(c => c.status === 'ativo').length, [rawData])
   const clientesInativos = useMemo(() => rawData.filter(c => c.status === 'inativo').length, [rawData])
   const clientesProspect = useMemo(() => rawData.filter(c => c.status === 'prospect').length, [rawData])
-
-  const filteredAtivos = useMemo(() => filteredByAbc.filter(c => c.status === 'ativo').length, [filteredByAbc])
-  const filteredInativos = useMemo(() => filteredByAbc.filter(c => c.status === 'inativo').length, [filteredByAbc])
-  const filteredProspect = useMemo(() => filteredByAbc.filter(c => c.status === 'prospect').length, [filteredByAbc])
   const ticketMedio = totalClientes > 0 ? totalFaturamento / totalClientes : 0
   const taxaAtivacao = totalClientes > 0 ? (clientesAtivos / totalClientes) * 100 : 0
 
@@ -96,6 +92,10 @@ export function DashboardPage() {
   }, [rawData])
 
   const filteredByAbc = useMemo(() => abcChartFilter === 'Todos' ? rawData : rawData.filter(c => getClasse(c, rawData) === abcChartFilter), [rawData, abcChartFilter])
+
+  const filteredAtivos = useMemo(() => filteredByAbc.filter(c => c.status === 'ativo').length, [filteredByAbc])
+  const filteredInativos = useMemo(() => filteredByAbc.filter(c => c.status === 'inativo').length, [filteredByAbc])
+  const filteredProspect = useMemo(() => filteredByAbc.filter(c => c.status === 'prospect').length, [filteredByAbc])
 
   const faturamentoPorEstado = useMemo(() => {
     const map: Record<string, number> = {}
