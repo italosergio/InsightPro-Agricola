@@ -31,16 +31,8 @@ import { HomePage } from '@/pages/HomePage'
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual'
-    }
-    const main = document.querySelector('.main-content') as HTMLElement | null
-    if (main) {
-      main.scrollTop = 0
-      requestAnimationFrame(() => { main.scrollTop = 0 })
-      setTimeout(() => { main.scrollTop = 0 }, 60)
-    }
-    window.scrollTo(0, 0)
+    const main = document.querySelector('.main-content')
+    if (main) main.scrollTop = 0
   }, [pathname])
   return null
 }
