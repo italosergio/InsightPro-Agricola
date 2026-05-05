@@ -153,6 +153,7 @@ export function RelatoriosPage() {
   const [aiContent, setAiContent] = useState<AIGeneratedContent | null>(null)
   const [showAiModal, setShowAiModal] = useState(false)
   const [aiError, setAiError] = useState<string | null>(null)
+  const [gerandoPPTX, setGerandoPPTX] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const [previewReport, setPreviewReport] = useState<SavedReport | null>(null)
   const [previewAction, setPreviewAction] = useState<{ type: 'pdf' | 'csv' | 'pdf_completo'; reportId?: string; rel?: Relatorio } | null>(null)
@@ -751,6 +752,205 @@ export function RelatoriosPage() {
     setShowPreviewModal(true)
   }
 
+  // ── Gerar PPTX com base no relatório IA ──
+  const gerarPPTX = async () => {
+    if (!aiContent) return
+    setGerandoPPTX(true)
+    try {
+      const pptxgen = (await import('pptxgenjs')).default
+      const pres: any = new pptxgen()
+      pres.layout = 'LAYOUT_16x9'
+      pres.author = 'InsightPro Agrícola'
+      pres.title = 'Relatório Executivo'
+
+      const C = {
+        forest: '1B512E', moss: '448542', leaf: '6EBF47',
+        cream: 'F7F7F2', charcoal: '212121', warmGray: '5C5C5C',
+        white: 'FFFFFF', lightGreen: 'E8F5E9', goldAccent: 'D4A017',
+      }
+
+      const makeShadow = () => ({ type: 'outer' as const, blur: 4, offset: 1, color: '000000', opacity: 0.06 })
+
+      const addFooter = (slide: any, pageNum: number, total: number) => {
+        slide.addText(`InsightPro Agrícola  •  ${pageNum} / ${total}`, {
+          x: 0.5, y: 5.2, w: 9, h: 0.35,
+          fontSize: 8, fontFace: 'Calibri', color: C.warmGray, align: 'center' as const,
+        })
+      }
+
+      const totalSlides = 6 + (aiContent.resumo_executivo ? 1 : 0) + (aiContent.mensagem_final ? 1 : 0)
+      let slideNum = 0
+
+      // Slide 1 — Capa
+      {
+        const s = pres.addSlide()
+        s.background = { color: C.forest }
+        s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 0.12, fill: { color: C.leaf } })
+        s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 5.505, w: 10, h: 0.12, fill: { color: C.leaf } })
+        s.addText('INSIGHTPRO AGRÍCOLA', {
+          x: 0.8, y: 0.6, w: 8.4, h: 0.5,
+          fontSize: 13, fontFace: 'Calibri', color: C.leaf, charSpacing: 8, align: 'left' as const,
+        })
+        s.addText('Relatório Executivo', {
+          x: 0.8, y: 1.8, w: 8, h: 1.2,
+          fontSize: 36, fontFace: 'Georgia', color: C.white, bold: true, align: 'left' as const,
+        })
+        s.addShape(pres.shapes.RECTANGLE, { x: 0.8, y: 3.3, w: 2.5, h: 0.04, fill: { color: C.leaf } })
+        s.addText(`Dashboard Executivo  •  ${new Date().toLocaleDateString('pt-BR')}`, {
+          x: 0.8, y: 3.6, w: 8, h: 0.4,
+          fontSize: 14, fontFace: 'Calibri', color: C.cream,
+        })
+        s.addText('Análise da Carteira de Clientes', {
+          x: 0.8, y: 4.15, w: 8, h: 0.35,
+          fontSize: 11, fontFace: 'Calibri', color: C.cream, italic: true,
+        })
+        slideNum++
+        addFooter(s, slideNum, totalSlides)
+      }
+
+      // Função para slide de conteúdo
+      const addContentSlide = (title: string, body: string | string[], options?: { chart?: any }) => {
+        const s = pres.addSlide()
+        s.background = { color: C.cream }
+        slideNum++
+
+        s.addText(title, {
+          x: 0.5, y: 0.3, w: 9, h: 0.6,
+          fontSize: 28, fontFace: 'Georgia', color: C.forest, bold: true, margin: 0,
+        })
+
+        const items = Array.isArray(body) ? body : [body]
+        let yPos = 1.3
+        items.forEach(item => {
+          const lines = item.length > 300 ? item.substring(0, 300) + '...' : item
+          s.addText(lines, {
+            x: 0.7, y: yPos, w: 8.6, h: 1.8,
+            fontSize: 12, fontFace: 'Calibri', color: C.charcoal, lineSpacingMultiple: 1.3,
+            margin: 0, valign: 'top' as const,
+          })
+          yPos += 2.0
+        })
+
+        if (options?.chart) {
+          const { chartType, data, title: chartTitle } = options.chart
+          s.addChart(chartType, data, {
+            x: 0.5, y: Math.max(yPos, 3.2), w: 9, h: 2.0,
+            showPercent: chartType === pres.charts.PIE,
+            showLegend: true, legendPos: 'r' as const,
+            legendFontSize: 8, legendColor: C.charcoal,
+            chartColors: ['1B512E', '448542', '6EBF47', '97BC62', 'C5E1A5', 'D4A017'],
+            dataLabelColor: C.charcoal, dataLabelFontSize: 8,
+            showTitle: true, title: chartTitle,
+            titleColor: C.forest, titleFontSize: 10,
+            showValue: true, dataLabelPosition: 'outEnd' as const,
+            chartArea: { fill: { color: C.white }, roundedCorners: true },
+            catAxisLabelColor: C.warmGray, valAxisLabelColor: C.warmGray,
+            valGridLine: { color: 'E2E8F0', size: 0.5 },
+            catGridLine: { style: 'none' as const },
+          })
+        }
+
+        addFooter(s, slideNum, totalSlides)
+      }
+
+      // Slides
+      if (aiContent.resumo_executivo) {
+        addContentSlide('Resumo Executivo', aiContent.resumo_executivo)
+      }
+
+      if (aiContent.analise_abc) {
+        addContentSlide('Análise ABC', aiContent.analise_abc, {
+          chart: {
+            chartType: pres.charts.PIE,
+            data: [{
+              name: 'ABC',
+              labels: chartData.abc().map(d => d[0]),
+              values: chartData.abc().map(d => d[1]),
+            }],
+            title: 'Distribuição ABC',
+          },
+        })
+      }
+
+      if (aiContent.penetracao_produtos) {
+        addContentSlide('Penetração de Produtos', aiContent.penetracao_produtos, {
+          chart: {
+            chartType: pres.charts.BAR,
+            data: [{
+              name: 'Penetração',
+              labels: chartData.penetracao().map(d => d[0]),
+              values: chartData.penetracao().map(d => d[1]),
+            }],
+            title: 'Penetração (%)',
+          },
+        })
+      }
+
+      if (aiContent.analise_territorial) {
+        addContentSlide('Análise Territorial', aiContent.analise_territorial, {
+          chart: {
+            chartType: pres.charts.BAR,
+            data: [{
+              name: 'Clientes',
+              labels: chartData.estados().map(d => d[0]),
+              values: chartData.estados().map(d => d[1]),
+            }],
+            title: 'Clientes por Estado',
+          },
+        })
+      }
+
+      if (aiContent.oportunidades_crescimento?.length) {
+        addContentSlide('Oportunidades de Crescimento', aiContent.oportunidades_crescimento, {
+          chart: {
+            chartType: pres.charts.BAR,
+            data: [{
+              name: 'Culturas',
+              labels: chartData.culturas().map(d => d[0]),
+              values: chartData.culturas().map(d => d[1]),
+            }],
+            title: 'Clientes por Cultura',
+          },
+        })
+      }
+
+      if (aiContent.recomendacoes_estrategicas?.length) {
+        addContentSlide('Recomendações Estratégicas', aiContent.recomendacoes_estrategicas)
+      }
+
+      if (aiContent.mensagem_final) {
+        const s = pres.addSlide()
+        s.background = { color: C.forest }
+        slideNum++
+        s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 0.12, fill: { color: C.leaf } })
+        s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 5.505, w: 10, h: 0.12, fill: { color: C.leaf } })
+        s.addText('PRÓXIMOS PASSOS', {
+          x: 1, y: 0.6, w: 8, h: 0.4,
+          fontSize: 12, fontFace: 'Calibri', color: C.leaf, charSpacing: 6,
+        })
+        s.addText(aiContent.mensagem_final, {
+          x: 1, y: 1.5, w: 8, h: 2.5,
+          fontSize: 28, fontFace: 'Georgia', color: C.white, bold: true, lineSpacingMultiple: 1.1,
+        })
+        s.addShape(pres.shapes.RECTANGLE, { x: 1, y: 3.2, w: 2.5, h: 0.04, fill: { color: C.leaf } })
+        addFooter(s, slideNum, totalSlides)
+      }
+
+      // Gera o arquivo
+      const blob: Blob = await pres.write({ outputType: 'blob' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'InsightPro-Relatorio-Executivo.pptx'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err: any) {
+      console.error('Erro ao gerar PPTX:', err)
+    } finally {
+      setGerandoPPTX(false)
+    }
+  }
+
   const confirmarGeracao = () => {
     if (!previewAction) return
     const { type, reportId } = previewAction
@@ -1178,16 +1378,16 @@ export function RelatoriosPage() {
       >
         {/* Header */}
         <div style={{
-          background: 'linear-gradient(135deg, var(--color-green-700), var(--color-green-800))',
+          background: 'linear-gradient(135deg, #15803d, #166534)',
           padding: 'var(--space-6) var(--space-6) var(--space-4)',
-          color: 'white',
+          color: '#fff',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ fontSize: 'var(--text-xs)', opacity: 0.8, margin: 0, letterSpacing: 1, textTransform: 'uppercase' }}>
+              <p style={{ fontSize: 'var(--text-xs)', color: '#fff', opacity: 0.7, margin: 0, letterSpacing: 1, textTransform: 'uppercase' }}>
                 Relatorio Executivo
               </p>
-              <h2 style={{ margin: 'var(--space-1) 0', fontSize: 'var(--text-xl)' }}>
+              <h2 style={{ margin: 'var(--space-1) 0', fontSize: 'var(--text-xl)', color: '#fff' }}>
                 InsightPro Agricola
               </h2>
             </div>
@@ -1286,6 +1486,9 @@ export function RelatoriosPage() {
           justifyContent: 'flex-end',
         }}>
           <button className="btn btn--secondary" onClick={fecharAiModal}>Fechar</button>
+          <button className="btn btn--primary" onClick={gerarPPTX} disabled={gerandoPPTX}>
+            {gerandoPPTX ? 'Gerando...' : 'Baixar Apresentação (PPTX)'}
+          </button>
           <button className="btn btn--primary" onClick={gerarPDFdoIA} disabled={relatorioGerando === 'ia'}>
             {relatorioGerando === 'ia' ? 'Gerando PDF...' : 'Baixar PDF'}
           </button>
@@ -1443,21 +1646,23 @@ export function RelatoriosPage() {
               Gere insights estratégicos automaticamente com inteligência artificial sobre os dados da sua carteira.
             </p>
           </div>
-          <button
-            className="btn btn--primary"
-            onClick={gerarRelatorioIA}
-            disabled={gerandoAI}
-            style={{ width: '100%', marginTop: 'auto' }}
-          >
-            {gerandoAI ? (
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
-                Gerando...
-              </span>
-            ) : (
-              'Gerar com IA'
-            )}
-          </button>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'auto' }}>
+            <button
+              className="btn btn--primary"
+              onClick={gerarRelatorioIA}
+              disabled={gerandoAI}
+              style={{ flex: 1 }}
+            >
+              {gerandoAI ? (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
+                  Gerando...
+                </span>
+              ) : (
+                'Gerar com IA'
+              )}
+            </button>
+          </div>
           {aiError && (
             <div style={{ color: 'var(--color-red-500)', fontSize: 'var(--text-xs)', textAlign: 'center' }}>
               {aiError}
@@ -1524,7 +1729,7 @@ export function RelatoriosPage() {
                 <div style={{ marginTop: 'auto', display: 'flex', gap: 'var(--space-2)' }}>
                   <button
                     className="btn btn--primary btn--sm"
-                    onClick={() => gerarPDF(rel.id)}
+                    onClick={() => abrirPreviewAntesGerar('pdf', rel)}
                     disabled={relatorioGerando === rel.id || relatorioGerando === '_all_'}
                     style={{ flex: 1 }}
                   >
@@ -1532,7 +1737,7 @@ export function RelatoriosPage() {
                   </button>
                   <button
                     className="btn btn--secondary btn--sm"
-                    onClick={() => gerarCSV(rel.id)}
+                    onClick={() => abrirPreviewAntesGerar('csv', rel)}
                     disabled={relatorioGerando === rel.id || relatorioGerando === '_all_'}
                     style={{ flex: 1 }}
                   >
