@@ -3156,25 +3156,25 @@ textarea.form-control {
   background: linear-gradient(135deg, #001a1a 0%, #134e4a 40%, #0d9488 75%, #115e59 100%);
 }
 
-/* Light theme overrides */
+/* Light theme overrides — cores mais claras e frescas */
 [data-theme="light"] .page-hero-bg--green {
-  background: linear-gradient(135deg, #080e0b 0%, #14532d 40%, #15803d 75%, #0a4423 100%);
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 30%, #a5d6a7 60%, #81c784 100%);
 }
 
 [data-theme="light"] .page-hero-bg--blue {
-  background: linear-gradient(135deg, #0a0f1a 0%, #1e3a5f 40%, #2563eb 75%, #1e40af 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 30%, #90caf9 60%, #64b5f6 100%);
 }
 
 [data-theme="light"] .page-hero-bg--amber {
-  background: linear-gradient(135deg, #1a0f00 0%, #78350f 40%, #d97706 75%, #92400e 100%);
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 30%, #ffe082 60%, #ffd54f 100%);
 }
 
 [data-theme="light"] .page-hero-bg--purple {
-  background: linear-gradient(135deg, #0f0a1a 0%, #4c1d95 40%, #7c3aed 75%, #5b21b6 100%);
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 30%, #ce93d8 60%, #ba68c8 100%);
 }
 
 [data-theme="light"] .page-hero-bg--teal {
-  background: linear-gradient(135deg, #001a1a 0%, #134e4a 40%, #0d9488 75%, #115e59 100%);
+  background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 30%, #80cbc4 60%, #4db6ac 100%);
 }
 
 .page-hero-deco {
@@ -3237,6 +3237,10 @@ textarea.form-control {
   margin-bottom: var(--space-2);
 }
 
+[data-theme="light"] .page-hero-eyebrow {
+  color: rgba(0, 0, 0, 0.4);
+}
+
 .page-hero-title {
   font-size: var(--text-3xl);
   font-weight: var(--font-bold);
@@ -3245,11 +3249,19 @@ textarea.form-control {
   margin: 0 0 var(--space-2);
 }
 
+[data-theme="light"] .page-hero-title {
+  color: var(--color-green-800);
+}
+
 .page-hero-subtitle {
   font-size: var(--text-base);
   color: rgba(255,255,255,0.65);
   margin: 0;
   max-width: 480px;
+}
+
+[data-theme="light"] .page-hero-subtitle {
+  color: var(--color-stone-600);
 }
 
 .page-hero-kpis {
