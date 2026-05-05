@@ -2491,9 +2491,10 @@ textarea.form-control {
 }
 
 .home-tool-card-desc {
-  font-size: var(--text-xs);
-  color: var(--text-tertiary);
-  line-height: 1.5;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.55;
+  max-width: 100%;
 }
 
 .home-tool-card-badge {

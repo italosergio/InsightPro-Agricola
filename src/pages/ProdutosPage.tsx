@@ -1,8 +1,11 @@
 import { useState, useMemo } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
 import { useData } from '@/store/DataContext'
+import { useTheme } from '@/store/ThemeContext'
 import { localDB, DB_KEYS } from '@/lib/localDB'
 import { DownloadReportButton } from '@/lib/downloadUtils'
+import Highcharts from 'highcharts'
+import { LazyChart } from '@/components/LazyChart'
 
 interface ProdutoCadastro {
   id: string
@@ -51,6 +54,8 @@ const emptyForm: ProdutoCadastro = {
 export function ProdutosPage() {
   usePageTitle('Produtos')
   const { rawData } = useData()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [produtos, setProdutos] = useState<ProdutoCadastro[]>(() => {
     return localDB.list<ProdutoCadastro>(DB_KEYS.produtos)
   })
@@ -126,6 +131,18 @@ export function ProdutosPage() {
       dose_recomendada: p.doseRecomendada,
     }))
   }, [sortedProdutos])
+
+  const penetracaoChartOpts = useMemo<Highcharts.Options>(() => ({
+    chart: { type: 'bar', height: Math.max(200, penetracaoData.length * 40), backgroundColor: 'transparent', style: { fontFamily: 'Inter, system-ui, sans-serif' }, spacing: [4, 4, 4, 4] },
+    title: { text: undefined },
+    xAxis: { categories: penetracaoData.map(d => d.nome), labels: { style: { color: isDark ? '#8fad9a' : '#57534e', fontSize: '11px' } }, lineColor: isDark ? '#1a2e20' : '#e7e5e4', tickColor: 'transparent', gridLineColor: isDark ? '#1a2e20' : '#f5f5f4' },
+    yAxis: { title: { text: undefined }, labels: { format: '{value}%', style: { color: isDark ? '#5a7a66' : '#78716c', fontSize: '10px' } }, gridLineColor: isDark ? '#1a2e20' : '#f5f5f4' },
+    tooltip: { pointFormat: '<b>{point.y}%</b> de penetração<br/>({point.clientes} cliente(s))' },
+    plotOptions: { bar: { borderRadius: 5, borderWidth: 0, dataLabels: { enabled: true, format: '{y}%', style: { fontSize: '10px', fontWeight: '600', textOutline: 'none' }, color: isDark ? '#d6d3d1' : '#57534e' } } },
+    colors: ['#064e3b', '#065f46', '#047857', '#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#047857', '#065f46', '#059669', '#10b981'],
+    series: [{ type: 'bar', name: 'Penetração (%)', data: penetracaoData.map(d => ({ y: Number(d.pct), clientes: d.count })), showInLegend: false }],
+    credits: { enabled: false },
+  }), [penetracaoData, isDark])
 
   const refresh = () => {
     setProdutos(localDB.list<ProdutoCadastro>(DB_KEYS.produtos))
@@ -215,7 +232,7 @@ export function ProdutosPage() {
 
       <div className="penetration-bar-wrap">
         <div style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 'var(--space-2)' }}>Penetração</div>
-        <div className="penetration-bar">
+        <div className="desktop-only penetration-bar">
           {penetracaoData.map((item, i) => {
             const colors = ['#16a34a','#2563eb','#d97706','#dc2626','#8b5cf6','#059669','#0d9488','#ea580c','#4f46e5','#be185d','#b45309','#0e7490']
             return (
@@ -229,6 +246,11 @@ export function ProdutosPage() {
               </div>
             )
           })}
+        </div>
+        <div className="mobile-only card" style={{ marginBottom: 0 }}>
+          <div className="card-body" style={{ padding: 'var(--space-2)' }}>
+            <LazyChart options={penetracaoChartOpts} height={Math.max(200, penetracaoData.length * 40)} />
+          </div>
         </div>
       </div>
 
