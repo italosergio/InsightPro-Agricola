@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
 import { localDB, DB_KEYS } from '@/lib/localDB'
 import Papa from 'papaparse'
+import { generateAIReport, prepareReportData, type AIGeneratedContent } from '@/lib/aiService'
 
 interface Relatorio {
   id: string
@@ -11,6 +12,16 @@ interface Relatorio {
   descricao: string
   icone: string
   geradoEm: string | null
+}
+
+interface SavedReport {
+  id: string
+  type: 'pdf_completo' | 'csv_completo' | 'ia' | 'pdf_individual' | 'csv_individual'
+  title: string
+  subtitle: string
+  generatedAt: string
+  aiContent?: AIGeneratedContent
+  reportId?: string // for individual reports (r1, r2, etc.)
 }
 
 interface ProdutoCadastro {
@@ -138,11 +149,32 @@ export function RelatoriosPage() {
   const { rawData } = useData()
   const [relatorioGerando, setRelatorioGerando] = useState<string | null>(null)
   const [tipoFilter, setTipoFilter] = useState('todos')
+  const [gerandoAI, setGerandoAI] = useState(false)
+  const [aiContent, setAiContent] = useState<AIGeneratedContent | null>(null)
+  const [showAiModal, setShowAiModal] = useState(false)
+  const [aiError, setAiError] = useState<string | null>(null)
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [previewReport, setPreviewReport] = useState<SavedReport | null>(null)
+  const [previewAction, setPreviewAction] = useState<{ type: 'pdf' | 'csv' | 'pdf_completo'; reportId?: string; rel?: Relatorio } | null>(null)
 
   const [relatoriosState, setRelatoriosState] = useState<Relatorio[]>(() => {
     const saved = localStorage.getItem('insightpro_relatorios')
     return saved ? JSON.parse(saved) : relatoriosList
   })
+
+  const [savedReports, setSavedReports] = useState<SavedReport[]>(() => {
+    const saved = localStorage.getItem('insightpro_relatorios_historico')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  const savedReportsRef = useRef(savedReports)
+  savedReportsRef.current = savedReports
+
+  const saveToHistory = (report: SavedReport) => {
+    const updated = [report, ...savedReportsRef.current].slice(0, 50)
+    setSavedReports(updated)
+    localStorage.setItem('insightpro_relatorios_historico', JSON.stringify(updated))
+  }
 
   const marcarGerado = (id: string) => {
     const updated = relatoriosState.map(r =>
@@ -304,6 +336,17 @@ export function RelatoriosPage() {
 
     downloadCSV(filename, csv)
     marcarGerado(id)
+    const relCSV = relatoriosList.find(r => r.id === id)
+    if (relCSV) {
+      saveToHistory({
+        id: `csv_${id}_${Date.now()}`,
+        type: 'csv_individual',
+        title: relCSV.titulo,
+        subtitle: 'CSV',
+        generatedAt: new Date().toISOString(),
+        reportId: id,
+      })
+    }
     setTimeout(() => setRelatorioGerando(null), 600)
   }
 
@@ -516,6 +559,17 @@ export function RelatoriosPage() {
     const safeName = (rel?.titulo || 'relatorio').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
     pdf.save(`${safeName}.pdf`)
     marcarGerado(id)
+    const relPDF = relatoriosList.find(r => r.id === id)
+    if (relPDF) {
+      saveToHistory({
+        id: `pdf_${id}_${Date.now()}`,
+        type: 'pdf_individual',
+        title: relPDF.titulo,
+        subtitle: 'PDF',
+        generatedAt: new Date().toISOString(),
+        reportId: id,
+      })
+    }
     setTimeout(() => setRelatorioGerando(null), 600)
   }
 
@@ -619,7 +673,356 @@ export function RelatoriosPage() {
 
     pdf.save('insightpro_relatorio_completo.pdf')
     relatoriosList.forEach(r => marcarGerado(r.id))
+    saveToHistory({
+      id: `pdf_${Date.now()}`,
+      type: 'pdf_completo',
+      title: 'PDF Completo',
+      subtitle: 'Todos os relatorios',
+      generatedAt: new Date().toISOString(),
+    })
     setTimeout(() => setRelatorioGerando(null), 600)
+  }
+
+  const gerarRelatorioIA = useCallback(async () => {
+    setGerandoAI(true)
+    setAiError(null)
+    try {
+      const produtos = localDB.list<ProdutoCadastro>(DB_KEYS.produtos)
+      const metas = localDB.get<Record<string, any>[]>(DB_KEYS.metas) || []
+      const pipeline = localDB.get<Record<string, any[]>>(DB_KEYS.pipeline) || {}
+      const swot = localDB.get<Record<string, { text: string }[]>>(DB_KEYS.swot)
+      const gut = localDB.get<any[]>(DB_KEYS.gut) || []
+      const pest = localDB.get<Record<string, { text: string }[]>>(DB_KEYS.pest)
+      const campanhas = localDB.get<any[]>(DB_KEYS.campanhas) || []
+
+      const dados = prepareReportData('completo', {
+        clientes: rawData,
+        produtos,
+        metas,
+        pipeline,
+        swot: swot || {},
+        gut,
+        pest: pest || {},
+        campanhas,
+      })
+
+      const result = await generateAIReport(dados)
+      setAiContent(result.data)
+      setShowAiModal(true)
+      saveToHistory({
+        id: `ia_${Date.now()}`,
+        type: 'ia',
+        title: 'Relatorio Executivo',
+        subtitle: 'Gerado por IA',
+        generatedAt: new Date().toISOString(),
+        aiContent: result.data,
+      })
+    } catch (err: any) {
+      setAiError(err.message || 'Erro ao gerar relatório com IA')
+    } finally {
+      setGerandoAI(false)
+    }
+  }, [rawData])
+
+  const fecharAiModal = () => {
+    setShowAiModal(false)
+    setAiContent(null)
+    setAiError(null)
+  }
+
+  const abrirPreview = (report: SavedReport) => {
+    if (report.type === 'ia' && report.aiContent) {
+      setAiContent(report.aiContent)
+      setShowAiModal(true)
+    } else {
+      setPreviewReport(report)
+      setShowPreviewModal(true)
+    }
+  }
+
+  const fecharPreview = () => {
+    setShowPreviewModal(false)
+    setPreviewReport(null)
+    setPreviewAction(null)
+  }
+
+  const abrirPreviewAntesGerar = (type: 'pdf' | 'csv' | 'pdf_completo', rel?: Relatorio) => {
+    setPreviewAction({ type, reportId: rel?.id, rel })
+    setShowPreviewModal(true)
+  }
+
+  const confirmarGeracao = () => {
+    if (!previewAction) return
+    const { type, reportId } = previewAction
+    fecharPreview()
+    setTimeout(() => {
+      if (type === 'pdf_completo') gerarPDFCompleto()
+      else if (type === 'pdf' && reportId) gerarPDF(reportId)
+      else if (type === 'csv' && reportId) gerarCSV(reportId)
+    }, 100)
+  }
+
+  // ── Dados para gráficos ──
+  const chartData = {
+    culturas: () => {
+      const map: Record<string, number> = {}
+      rawData.forEach(c => { map[c.cultura_principal] = (map[c.cultura_principal] || 0) + 1 })
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 8)
+    },
+    estados: () => {
+      const map: Record<string, number> = {}
+      rawData.forEach(c => { map[c.estado] = (map[c.estado] || 0) + 1 })
+      return Object.entries(map).sort((a, b) => b[1] - a[1])
+    },
+    abc: (): [string, number][] => {
+      const sorted = [...rawData].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
+      const total = sorted.reduce((s, c) => s + c.faturamento_anual, 0)
+      let acum = 0; let A = 0, B = 0, C = 0
+      sorted.forEach(c => {
+        acum += c.faturamento_anual
+        const pct = total > 0 ? (acum / total) * 100 : 0
+        if (pct <= 80) A++; else if (pct <= 95) B++; else C++
+      })
+      return [['Classe A', A], ['Classe B', B], ['Classe C', C]] as [string, number][]
+    },
+    penetracao: (): [string, number][] => {
+      const count: Record<string, number> = {}
+      const ativosCount = rawData.filter(c => c.status === 'ativo').length
+      rawData.forEach(c => {
+        if (c.produtos) Object.keys(c.produtos).forEach(p => { count[p] = (count[p] || 0) + 1 })
+      })
+      return Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 6)
+        .map(([nome, qtd]) => [nome, Math.round((qtd / Math.max(1, ativosCount)) * 100)] as [string, number])
+    },
+  }
+
+  // ── Gera PDF do relatório IA ──
+  const gerarPDFdoIA = async () => {
+    if (!aiContent) return
+    setRelatorioGerando('ia')
+    const jsPDF = (await import('jspdf')).default
+    const pdf = new jsPDF('p', 'mm', 'a4')
+    const pageW = 190
+    let y = 20
+
+    const addPageIfNeeded = (needed: number) => {
+      if (y + needed > 280) { pdf.addPage(); y = 20 }
+    }
+
+    const addSectionTitle = (title: string) => {
+      addPageIfNeeded(12)
+      pdf.setFillColor(22, 163, 74)
+      pdf.rect(10, y - 4, pageW, 7, 'F')
+      pdf.setFontSize(11)
+      pdf.setTextColor(255, 255, 255)
+      pdf.text(title, 14, y)
+      y += 10
+    }
+
+    const addBodyText = (text: string) => {
+      pdf.setFontSize(9)
+      pdf.setTextColor(60, 60, 60)
+      const lines = pdf.splitTextToSize(text, pageW - 8)
+      lines.forEach((line: string) => {
+        addPageIfNeeded(5)
+        pdf.text(line, 14, y)
+        y += 4.5
+      })
+      y += 3
+    }
+
+    const addBulletList = (items: string[]) => {
+      items.forEach(item => {
+        addPageIfNeeded(5)
+        pdf.setFontSize(9)
+        pdf.setTextColor(60, 60, 60)
+        pdf.circle(16, y - 2, 1, 'F')
+        const lines = pdf.splitTextToSize(item, pageW - 14)
+        lines.forEach((line: string) => {
+          pdf.text(line, 20, y)
+          y += 4.5
+        })
+      })
+      y += 2
+    }
+
+    const drawBarChart = (data: [string, number][], title: string, color: [number, number, number] = [22, 163, 74]) => {
+      addPageIfNeeded(55)
+
+      // Title
+      pdf.setFontSize(10)
+      pdf.setTextColor(color[0], color[1], color[2])
+      pdf.text(title, 14, y)
+      const chartY = y + 8
+
+      const maxVal = Math.max(...data.map(d => d[1]), 1)
+      const totalItems = data.length
+      const gap = totalItems > 10 ? 2 : 3
+      const chartH = 28
+      const availableW = pageW - 24
+      const barW = Math.max(3, (availableW - (totalItems - 1) * gap) / totalItems)
+      const totalW = totalItems * barW + (totalItems - 1) * gap
+      const startX = 16 + (availableW - totalW) / 2 + 4
+      const baselineY = chartY + chartH
+
+      y = baselineY + 12 // reserva espaco
+
+      data.forEach(([label, val], i) => {
+        const bx = startX + i * (barW + gap)
+        const bh = Math.max((val / maxVal) * chartH, 2)
+
+        // Barra
+        pdf.setFillColor(color[0], color[1], color[2])
+        pdf.setDrawColor(color[0], color[1], color[2])
+        pdf.rect(bx, baselineY - bh, barW, bh, 'F')
+
+        // Valor acima da barra
+        const valFontSize = totalItems > 10 ? 5 : 7
+        pdf.setFontSize(valFontSize)
+        pdf.setTextColor(60, 60, 60)
+        const valY = bh > 6 ? baselineY - bh - 2 : baselineY - bh - 4
+        pdf.text(String(val), bx + barW / 2, valY, { align: 'center' })
+
+        // Label
+        const labelFont = totalItems > 8 ? 4.5 : (label.length > 6 ? 5 : 6)
+        pdf.setFontSize(labelFont)
+        pdf.setTextColor(80, 80, 80)
+        pdf.text(label, bx + barW / 2, baselineY + 3, { align: 'center' })
+      })
+    }
+
+    const drawPieChart = (data: [string, number][], title: string) => {
+      addPageIfNeeded(55)
+      pdf.setFontSize(10)
+      pdf.setTextColor(22, 163, 74)
+      pdf.text(title, 14, y)
+      y += 7
+
+      const total = data.reduce((s, d) => s + d[1], 0)
+      const cx = 45, cy = y + 18, r = 16
+      const colors: [number, number, number][] = [[22, 163, 74], [37, 99, 235], [217, 119, 6], [220, 38, 38], [139, 92, 246], [6, 182, 212], [236, 72, 153], [132, 204, 22]]
+
+      let startAngle = -Math.PI / 2
+      data.forEach(([label, val], i) => {
+        const sliceAngle = (val / total) * 2 * Math.PI
+        const c = colors[i % colors.length]
+        pdf.setFillColor(c[0], c[1], c[2])
+        // Draw pie slice using lines
+        const steps = Math.max(3, Math.ceil(sliceAngle * 10))
+        const path: [number, number][] = [[cx, cy]]
+        for (let s = 0; s <= steps; s++) {
+          const a = startAngle + (s / steps) * sliceAngle
+          path.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r])
+        }
+        // Simple triangle fan approximation
+        for (let s = 0; s < steps; s++) {
+          const a1 = startAngle + (s / steps) * sliceAngle
+          const a2 = startAngle + ((s + 1) / steps) * sliceAngle
+          const x1 = cx + Math.cos(a1) * r, y1 = cy + Math.sin(a1) * r
+          const x2 = cx + Math.cos(a2) * r, y2 = cy + Math.sin(a2) * r
+          pdf.triangle(cx, cy, x1, y1, x2, y2, 'F')
+        }
+        startAngle += sliceAngle
+      })
+
+      // Legend
+      let lx = 70
+      data.forEach(([label, val], i) => {
+        const c = colors[i % colors.length]
+        pdf.setFillColor(c[0], c[1], c[2])
+        pdf.rect(lx, cy - 8 + i * 5, 4, 4, 'F')
+        pdf.setFontSize(8)
+        pdf.setTextColor(60, 60, 60)
+        pdf.text(`${label} (${val})`, lx + 6, cy - 5 + i * 5)
+      })
+
+      y += 40
+    }
+
+    // ── CAPA ──
+    pdf.setFillColor(22, 163, 74)
+    pdf.rect(0, 0, 210, 297, 'F')
+    pdf.setTextColor(255, 255, 255)
+    pdf.setFontSize(28)
+    pdf.text('Relatorio Executivo', 105, 100, { align: 'center' })
+    pdf.setFontSize(16)
+    pdf.text('InsightPro Agricola', 105, 115, { align: 'center' })
+    pdf.setFontSize(11)
+    pdf.text(new Date().toLocaleDateString('pt-BR'), 105, 130, { align: 'center' })
+    pdf.addPage()
+    y = 20
+
+    // ── CONTEÚDO ──
+    if (aiContent.resumo_executivo) {
+      addSectionTitle('Resumo Executivo')
+      addBodyText(aiContent.resumo_executivo)
+    }
+
+    if (aiContent.kpis_principais?.destaque) {
+      addSectionTitle('Destaque')
+      pdf.setFillColor(240, 245, 240)
+      pdf.rect(10, y - 2, pageW, 12, 'F')
+      pdf.setFontSize(9)
+      pdf.setTextColor(22, 163, 74)
+      const lines = pdf.splitTextToSize(aiContent.kpis_principais.destaque, pageW - 8)
+      lines.forEach((line: string) => { pdf.text(line, 14, y + 2); y += 5 })
+      y += 6
+    }
+
+    if (aiContent.analise_abc) {
+      addSectionTitle('Analise ABC')
+      addBodyText(aiContent.analise_abc)
+      drawPieChart(chartData.abc(), 'Distribuicao ABC')
+      y += 6
+    }
+
+    if (aiContent.penetracao_produtos) {
+      addSectionTitle('Penetracao de Produtos')
+      addBodyText(aiContent.penetracao_produtos)
+      drawBarChart(chartData.penetracao(), 'Penetracao (%)', [52, 212, 100])
+      y += 6
+    }
+
+    if (aiContent.analise_territorial) {
+      addSectionTitle('Analise Territorial')
+      addBodyText(aiContent.analise_territorial)
+      drawBarChart(chartData.estados(), 'Clientes por Estado')
+      y += 6
+    }
+
+    if (aiContent.oportunidades_crescimento?.length) {
+      addSectionTitle('Oportunidades de Crescimento')
+      addBulletList(aiContent.oportunidades_crescimento)
+      drawBarChart(chartData.culturas(), 'Clientes por Cultura')
+      y += 6
+    }
+
+    if (aiContent.recomendacoes_estrategicas?.length) {
+      addSectionTitle('Recomendacoes Estrategicas')
+      addBulletList(aiContent.recomendacoes_estrategicas)
+    }
+
+    if (aiContent.mensagem_final) {
+      const boxPad = 6
+      const maxLineW = pageW - boxPad * 2 - 4
+      const lines = pdf.splitTextToSize(aiContent.mensagem_final, maxLineW)
+      const boxH = Math.max(20, lines.length * 5 + boxPad)
+      addPageIfNeeded(boxH + 6)
+
+      pdf.setFillColor(22, 163, 74)
+      pdf.rect(10, y, pageW, boxH, 'F')
+
+      pdf.setFontSize(10)
+      pdf.setTextColor(255, 255, 255)
+      const textY = y + boxPad + 3
+      lines.forEach((line: string, i: number) => {
+        pdf.text(line, 105, textY + i * 5, { align: 'center' })
+      })
+      y += boxH + 6
+    }
+
+    pdf.save('relatorio_executivo.pdf')
+    setRelatorioGerando(null)
   }
 
   const exportarTodosCSV = () => {
@@ -646,9 +1049,250 @@ export function RelatoriosPage() {
     if (campanhas.length) csv += '\n\n=== CAMPANHAS ===\n' + Papa.unparse(campanhas.map(c => ({ nome: c.nome, tipo: c.tipo, status: c.status, orcamento: c.orcamento, retorno_estimado: c.retornoEstimado, inicio: c.inicio, fim: c.fim })))
 
     downloadCSV('insightpro_dados_completos.csv', csv)
+    saveToHistory({
+      id: `csv_${Date.now()}`,
+      type: 'csv_completo',
+      title: 'Exportar CSV',
+      subtitle: 'Todos os dados',
+      generatedAt: new Date().toISOString(),
+    })
+  }
+
+  // ── Re-baixar relatorio salvo ──
+  const rebaixarRelatorio = (report: SavedReport) => {
+    switch (report.type) {
+      case 'pdf_completo':
+        gerarPDFCompleto()
+        break
+      case 'csv_completo':
+        exportarTodosCSV()
+        break
+      case 'ia':
+        if (report.aiContent) {
+          setAiContent(report.aiContent)
+          setShowAiModal(true)
+        }
+        break
+      case 'pdf_individual':
+        if (report.reportId) gerarPDF(report.reportId)
+        break
+      case 'csv_individual':
+        if (report.reportId) gerarCSV(report.reportId)
+        break
+    }
   }
 
   const filtered = tipoFilter === 'todos' ? relatoriosState : relatoriosState.filter(r => r.tipo === tipoFilter)
+
+  // ── Gráfico de barras CSS ──
+  function BarChart({ data, color = 'var(--color-primary)', height = 100 }: { data: [string, number][]; color?: string; height?: number }) {
+    const maxVal = Math.max(...data.map(d => d[1]), 1)
+    const total = data.reduce((s, d) => s + d[1], 0)
+    return (
+      <div style={{ display: 'flex', gap: 4, padding: '0 4px', marginBottom: 4 }}>
+        {data.map(([label, val]) => {
+          const pct = (val / maxVal) * 100
+          return (
+            <div key={label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {/* Valor */}
+              <span style={{ fontSize: 9, color: 'var(--text-tertiary)', lineHeight: 1.4, minHeight: 14 }}>{val}{total > 100 ? '' : '%'}</span>
+              {/* Area da barra com altura fixa */}
+              <div style={{ width: '100%', height: height - 40, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                <div style={{
+                  width: '100%',
+                  height: `${Math.max(pct, 4)}%`,
+                  background: color,
+                  borderRadius: '3px 3px 0 0',
+                  minHeight: 4,
+                }} />
+              </div>
+              {/* Label com altura fixa — não empurra a barra */}
+              <div style={{
+                fontSize: 8,
+                color: 'var(--text-tertiary)',
+                textAlign: 'center',
+                wordBreak: 'break-word',
+                lineHeight: 1.2,
+                height: 24,
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                width: '100%',
+              }}>
+                {label}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // ── Gráfico de pizza CSS ──
+  function PieChart({ data }: { data: [string, number][] }) {
+    const total = data.reduce((s, d) => s + d[1], 0)
+    const colors = ['#16a34a', '#2563eb', '#d97706', '#dc2626', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16']
+    const conicGradient = data.map((d, i) => {
+      const pct = (d[1] / total) * 100
+      const start = data.slice(0, i).reduce((s, d) => s + (d[1] / total) * 100, 0)
+      return `${colors[i % colors.length]} ${start}% ${start + pct}%`
+    }).join(', ')
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', marginBottom: 'var(--space-3)' }}>
+        <div style={{
+          width: 100, height: 100, borderRadius: '50%',
+          background: `conic-gradient(${conicGradient})`,
+          flexShrink: 0,
+        }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {data.map(([label, val], i) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: colors[i % colors.length], flexShrink: 0 }} />
+              <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{label} ({((val / total) * 100).toFixed(0)}%)</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // ── Componente inline para seções do relatório ──
+  function Section({ title, content }: { title: string; content: string }) {
+    return (
+      <div style={{ marginBottom: 'var(--space-5)' }}>
+        <h3 style={{ color: 'var(--color-green-700)', fontSize: 'var(--text-base)', marginBottom: 'var(--space-2)' }}>{title}</h3>
+        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: 'var(--text-sm)' }}>{content}</p>
+      </div>
+    )
+  }
+
+  // ── Modal de relatório ──
+  const AiModal = showAiModal && aiContent ? (
+    <div className="modal-overlay" onClick={fecharAiModal}>
+      <div
+        className="modal-content"
+        style={{ maxWidth: 720, maxHeight: '85vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', padding: 0 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div style={{
+          background: 'linear-gradient(135deg, var(--color-green-700), var(--color-green-800))',
+          padding: 'var(--space-6) var(--space-6) var(--space-4)',
+          color: 'white',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <p style={{ fontSize: 'var(--text-xs)', opacity: 0.8, margin: 0, letterSpacing: 1, textTransform: 'uppercase' }}>
+                Relatorio Executivo
+              </p>
+              <h2 style={{ margin: 'var(--space-1) 0', fontSize: 'var(--text-xl)' }}>
+                InsightPro Agricola
+              </h2>
+            </div>
+            <button
+              onClick={fecharAiModal}
+              style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', padding: 4, opacity: 0.8 }}
+              aria-label="Fechar"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={20} height={20}>
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Body (scrollavel) */}
+        <div style={{ overflow: 'auto', padding: 'var(--space-6)', flex: 1 }}>
+          {aiContent.resumo_executivo && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <h3 style={{ color: 'var(--color-green-700)', fontSize: 'var(--text-base)', marginBottom: 'var(--space-2)' }}>Resumo Executivo</h3>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: 'var(--text-sm)' }}>{aiContent.resumo_executivo}</p>
+            </div>
+          )}
+
+          {aiContent.kpis_principais?.destaque && (
+            <div style={{ marginBottom: 'var(--space-5)', background: 'var(--color-primary-subtle)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-primary-subtle-border, var(--border-primary))' }}>
+              <h3 style={{ color: 'var(--color-primary)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-1)' }}>Destaque</h3>
+              <p style={{ margin: 0, fontWeight: 500 }}>{aiContent.kpis_principais.destaque}</p>
+            </div>
+          )}
+
+          {aiContent.analise_abc && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <Section title="Analise ABC" content={aiContent.analise_abc} />
+              <PieChart data={chartData.abc()} />
+            </div>
+          )}
+          {aiContent.penetracao_produtos && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <Section title="Penetracao de Produtos" content={aiContent.penetracao_produtos} />
+              <BarChart data={chartData.penetracao()} color="var(--color-emerald-500)" />
+            </div>
+          )}
+          {aiContent.analise_territorial && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <Section title="Analise Territorial" content={aiContent.analise_territorial} />
+              <BarChart data={chartData.estados()} />
+            </div>
+          )}
+
+          {aiContent.oportunidades_crescimento && aiContent.oportunidades_crescimento.length > 0 && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <h3 style={{ color: 'var(--color-green-700)', fontSize: 'var(--text-base)', marginBottom: 'var(--space-2)' }}>Oportunidades de Crescimento</h3>
+              <BarChart data={chartData.culturas()} color="var(--color-amber-500)" />
+              <ul style={{ paddingLeft: 'var(--space-5)', margin: 'var(--space-3) 0 0' }}>
+                {aiContent.oportunidades_crescimento.map((op, i) => (
+                  <li key={i} style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-2)', fontSize: 'var(--text-sm)', lineHeight: 1.6 }}>{op}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {aiContent.recomendacoes_estrategicas && aiContent.recomendacoes_estrategicas.length > 0 && (
+            <div style={{ marginBottom: 'var(--space-5)' }}>
+              <h3 style={{ color: 'var(--color-green-700)', fontSize: 'var(--text-base)', marginBottom: 'var(--space-2)' }}>Recomendacoes Estrategicas</h3>
+              <ul style={{ paddingLeft: 'var(--space-5)', margin: 0 }}>
+                {aiContent.recomendacoes_estrategicas.map((rec, i) => (
+                  <li key={i} style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-2)', fontSize: 'var(--text-sm)', lineHeight: 1.6 }}>{rec}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {aiContent.mensagem_final && (
+            <div style={{
+              marginTop: 'var(--space-5)',
+              padding: 'var(--space-4)',
+              background: 'linear-gradient(135deg, var(--color-green-700), var(--color-green-800))',
+              borderRadius: 'var(--radius-md)',
+              color: 'white',
+              textAlign: 'center',
+              fontSize: 'var(--text-sm)',
+              fontStyle: 'italic',
+            }}>
+              {aiContent.mensagem_final}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          borderTop: '1px solid var(--border-primary)',
+          padding: 'var(--space-4) var(--space-6)',
+          display: 'flex',
+          gap: 'var(--space-3)',
+          justifyContent: 'flex-end',
+        }}>
+          <button className="btn btn--secondary" onClick={fecharAiModal}>Fechar</button>
+          <button className="btn btn--primary" onClick={gerarPDFdoIA} disabled={relatorioGerando === 'ia'}>
+            {relatorioGerando === 'ia' ? 'Gerando PDF...' : 'Baixar PDF'}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
 
   return (
     <>
@@ -664,20 +1308,168 @@ export function RelatoriosPage() {
         </div>
       </div>
 
-      <div className="card" style={{ background: 'var(--color-green-50)', borderColor: 'var(--color-green-200)' }}>
-        <div className="card-body" style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-          <button className="btn btn--primary btn--lg" onClick={gerarPDFCompleto} disabled={relatorioGerando === '_all_'}>
-            {relatorioGerando === '_all_' ? 'Gerando PDF...' : 'Gerar PDF Completo (Todos os Relatórios)'}
-          </button>
-          <button className="btn btn--secondary btn--lg" onClick={exportarTodosCSV}>
-            Exportar Todos os Dados em CSV
+      {/* ── Ações principais em cards ── */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))',
+        gap: 'var(--space-4)',
+        marginBottom: 'var(--space-6)',
+      }}>
+        {/* Card: PDF Completo */}
+        <div style={{
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-5)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-3)',
+          transition: 'box-shadow var(--transition-fast), transform var(--transition-fast)',
+          cursor: 'default',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none' }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: 'var(--radius-md)',
+            background: 'var(--color-primary-subtle)', color: 'var(--color-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600 }}>PDF Completo</h3>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+              Baixe o relatório completo da carteira com todos os dados em um único PDF profissional.
+            </p>
+          </div>
+          <button
+            className="btn btn--primary"
+            onClick={() => abrirPreviewAntesGerar('pdf_completo')}
+            disabled={relatorioGerando === '_all_'}
+            style={{ width: '100%', marginTop: 'auto' }}
+          >
+            {relatorioGerando === '_all_' ? 'Gerando...' : 'Gerar PDF'}
           </button>
         </div>
+
+        {/* Card: Exportar CSV */}
+        <div style={{
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-5)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-3)',
+          transition: 'box-shadow var(--transition-fast), transform var(--transition-fast)',
+          cursor: 'default',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = 'var(--shadow-md)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none' }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: 'var(--radius-md)',
+            background: 'var(--emerald-subtle, var(--color-primary-subtle))', color: 'var(--color-emerald-600)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600 }}>Exportar CSV</h3>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+              Exporte todos os dados da plataforma em formato CSV para análise em Excel ou outras ferramentas.
+            </p>
+          </div>
+          <button
+            className="btn btn--secondary"
+            onClick={exportarTodosCSV}
+            style={{ width: '100%', marginTop: 'auto' }}
+          >
+            Exportar CSV
+          </button>
+        </div>
+
+        {/* Card: IA */}
+        <div style={{
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--color-primary)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-5)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-3)',
+          transition: 'box-shadow var(--transition-fast), transform var(--transition-fast)',
+          cursor: 'default',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(22, 163, 74, 0.15)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none' }}
+        >
+          {/* Badge de destaque */}
+          <div style={{
+            position: 'absolute', top: 12, right: 12,
+            background: 'var(--color-primary)', color: 'var(--text-inverse)',
+            fontSize: 10, fontWeight: 600, letterSpacing: 0.5,
+            padding: '2px 8px', borderRadius: 'var(--radius-full)',
+          }}>
+            NOVIDADE
+          </div>
+
+          <div style={{
+            width: 44, height: 44, borderRadius: 'var(--radius-md)',
+            background: 'var(--color-primary-subtle)', color: 'var(--color-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}>
+              <path d="M12 2a8 8 0 0 0-8 8c0 3.5 2 6.5 5 8l-1 4h8l-1-4c3-1.5 5-4.5 5-8a8 8 0 0 0-8-8z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+          </div>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600 }}>Relatório com IA</h3>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+              Gere insights estratégicos automaticamente com inteligência artificial sobre os dados da sua carteira.
+            </p>
+          </div>
+          <button
+            className="btn btn--primary"
+            onClick={gerarRelatorioIA}
+            disabled={gerandoAI}
+            style={{ width: '100%', marginTop: 'auto' }}
+          >
+            {gerandoAI ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <span className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
+                Gerando...
+              </span>
+            ) : (
+              'Gerar com IA'
+            )}
+          </button>
+          {aiError && (
+            <div style={{ color: 'var(--color-red-500)', fontSize: 'var(--text-xs)', textAlign: 'center' }}>
+              {aiError}
+            </div>
+          )}
+        </div>
+
       </div>
 
       <div className="card">
-        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-          <h2>Relatórios Disponíveis ({relatoriosState.length})</h2>
+        <div className="card-header" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <h2 style={{ margin: 0 }}>Relatórios Disponíveis ({relatoriosState.length})</h2>
           <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
             {['todos', 'analitico', 'comercial', 'gerencial', 'estrategico'].map(f => (
               <button key={f} className={`btn btn--sm ${tipoFilter === f ? 'btn--primary' : 'btn--secondary'}`} onClick={() => setTipoFilter(f)}>
@@ -687,7 +1479,7 @@ export function RelatoriosPage() {
           </div>
         </div>
         <div className="card-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 'var(--space-4)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))', gap: 'var(--space-4)' }}>
             {filtered.map(rel => (
               <div
                 key={rel.id}
@@ -721,7 +1513,7 @@ export function RelatoriosPage() {
                   </div>
                   <div>
                     <h3 style={{ margin: 0, fontSize: 'var(--text-base)' }}>{rel.titulo}</h3>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', margin: 'var(--space-1) 0 0' }}>{rel.descricao}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', margin: 'var(--space-1) 0 0', wordBreak: 'break-word' }}>{rel.descricao}</p>
                   </div>
                 </div>
                 {rel.geradoEm && (
@@ -752,6 +1544,198 @@ export function RelatoriosPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Histórico de relatórios gerados ── */}
+      {savedReports.length > 0 && (
+        <div className="card" style={{ marginTop: 'var(--space-4)' }}>
+          <div className="card-header">
+            <h2 style={{ margin: 0 }}>Relatorios Gerados ({savedReports.length})</h2>
+          </div>
+          <div className="card-body" style={{ padding: 0, overflowX: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontSize: 'var(--text-sm)',
+            }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--border-primary)', background: 'var(--bg-tertiary)' }}>
+                  <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Tipo</th>
+                  <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Relatorio</th>
+                  <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Gerado em</th>
+                  <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'right', fontWeight: 600, color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>Acao</th>
+                </tr>
+              </thead>
+              <tbody>
+                {savedReports.map(report => (
+                  <tr key={report.id} style={{ borderBottom: '1px solid var(--border-primary)', transition: 'background var(--transition-fast)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <td style={{ padding: 'var(--space-3) var(--space-4)', whiteSpace: 'nowrap' }}>
+                      <span className={`badge ${
+                        report.type === 'ia' ? 'badge--warning' :
+                        report.type === 'pdf_completo' || report.type === 'pdf_individual' ? 'badge--info' :
+                        'badge--neutral'
+                      }`}>
+                        {report.type === 'ia' ? 'IA' :
+                         report.type === 'pdf_completo' ? 'PDF' :
+                         report.type === 'csv_completo' ? 'CSV' :
+                         report.type === 'pdf_individual' ? 'PDF' : 'CSV'}
+                      </span>
+                    </td>
+                    <td style={{ padding: 'var(--space-3) var(--space-4)', cursor: 'pointer' }} onClick={() => abrirPreview(report)}>
+                      <div style={{ fontWeight: 500, color: 'var(--color-primary)', textDecoration: 'underline', textDecorationColor: 'var(--color-primary-subtle)' }}>{report.title}</div>
+                      <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)' }}>{report.subtitle}</div>
+                    </td>
+                    <td style={{ padding: 'var(--space-3) var(--space-4)', color: 'var(--text-tertiary)', fontSize: 'var(--text-xs)', whiteSpace: 'nowrap' }}>
+                      {new Date(report.generatedAt).toLocaleString('pt-BR')}
+                    </td>
+                    <td style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'right' }}>
+                      <button
+                        className="btn btn--ghost btn--sm"
+                        onClick={() => rebaixarRelatorio(report)}
+                        title="Baixar novamente"
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14, marginRight: 4 }}>
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        Baixar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de preview (antes de gerar ou de relatorio salvo) */}
+      {showPreviewModal && (previewAction || previewReport) && (
+        <div className="modal-overlay" onClick={fecharPreview}>
+          <div
+            className="modal-content"
+            style={{ maxWidth: 520 }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
+              <div>
+                <span className="badge badge--info" style={{ marginBottom: 'var(--space-2)' }}>
+                  {previewAction ? (
+                    previewAction.type === 'pdf_completo' ? 'PDF Completo' :
+                    previewAction.type === 'pdf' ? 'PDF' : 'CSV'
+                  ) : (
+                    previewReport!.type === 'ia' ? 'IA' :
+                    previewReport!.type === 'pdf_completo' ? 'PDF Completo' :
+                    previewReport!.type === 'csv_completo' ? 'CSV Completo' :
+                    previewReport!.type === 'pdf_individual' ? 'PDF' : 'CSV'
+                  )}
+                </span>
+                <h2 style={{ margin: 0, fontSize: 'var(--text-lg)' }}>
+                  {previewAction ? (
+                    previewAction.rel?.titulo || (
+                      previewAction.type === 'pdf_completo' ? 'PDF Completo' :
+                      previewAction.type === 'pdf' ? 'Relatorio' : 'Exportar Dados'
+                    )
+                  ) : (
+                    previewReport!.title
+                  )}
+                </h2>
+                {previewAction?.rel?.descricao && (
+                  <p style={{ margin: 'var(--space-1) 0 0', color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>
+                    {previewAction.rel.descricao}
+                  </p>
+                )}
+                {previewReport && (
+                  <p style={{ margin: 'var(--space-1) 0 0', color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>
+                    Gerado em {new Date(previewReport.generatedAt).toLocaleString('pt-BR')}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={fecharPreview}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 4 }}
+                aria-label="Fechar"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width={20} height={20}>
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div style={{ marginBottom: 'var(--space-5)', color: 'var(--text-secondary)', fontSize: 'var(--text-sm)' }}>
+              {previewAction ? (
+                previewAction.type === 'pdf_completo' ? (
+                  <>
+                    <p>Este relatorio consolida todos os dados da plataforma em um unico arquivo PDF profissional, incluindo:</p>
+                    <ul style={{ paddingLeft: 'var(--space-5)', lineHeight: 1.8 }}>
+                      <li>Carteira completa de clientes</li>
+                      <li>Analise ABC de faturamento</li>
+                      <li>Penetracao por estado e cultura</li>
+                      <li>Produtos cadastrados</li>
+                      <li>Metas e indicadores</li>
+                      <li>Pipeline de vendas</li>
+                      <li>Matrizes SWOT, GUT e PEST</li>
+                      <li>Oportunidades e gaps</li>
+                    </ul>
+                  </>
+                ) : previewAction.type === 'pdf' ? (
+                  <p>Relatorio em PDF com os dados especificos deste relatorio. Clique em "Baixar" para gerar e fazer o download.</p>
+                ) : (
+                  <p>Arquivo CSV com os dados deste relatorio para analise em Excel ou outras ferramentas. Clique em "Baixar" para fazer o download.</p>
+                )
+              ) : previewReport!.type === 'ia' ? (
+                <p>Relatorio executivo gerado por analise inteligente dos dados da carteira. Clique em "Visualizar" para abrir o conteudo completo.</p>
+              ) : previewReport!.type.includes('pdf') ? (
+                <p>Relatorio em PDF gerado com os dados da plataforma. Clique em "Baixar" para fazer o download do arquivo.</p>
+              ) : (
+                <p>Arquivo CSV com os dados exportados da plataforma. Clique em "Baixar" para fazer o download do arquivo.</p>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end' }}>
+              <button className="btn btn--secondary" onClick={fecharPreview}>Fechar</button>
+              {previewAction ? (
+                <button className="btn btn--primary" onClick={confirmarGeracao}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 14, height: 14, marginRight: 4 }}>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Baixar
+                </button>
+              ) : previewReport!.type === 'ia' ? (
+                <button className="btn btn--primary" onClick={() => {
+                  fecharPreview()
+                  if (previewReport!.aiContent) {
+                    setAiContent(previewReport!.aiContent)
+                    setShowAiModal(true)
+                  }
+                }}>
+                  Visualizar
+                </button>
+              ) : (
+                <button className="btn btn--primary" onClick={() => {
+                  const r = previewReport!
+                  fecharPreview()
+                  setTimeout(() => rebaixarRelatorio(r), 50)
+                }}>
+                  Baixar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de relatório com IA */}
+      {AiModal}
     </>
   )
 }

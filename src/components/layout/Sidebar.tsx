@@ -184,17 +184,27 @@ export function Sidebar({ isOpen, onClose, minimized, onToggleMinimized }: {
               </div>
             )}
           </div>
-          <button className="sidebar-collapse-btn" onClick={onToggleMinimized} aria-label={minimized ? 'Expandir menu' : 'Minimizar menu'}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {minimized
-                ? <polyline points="9 18 15 12 9 6" />
-                : <polyline points="15 18 9 12 15 6" />
-              }
-            </svg>
-          </button>
         </div>
 
         <nav className="sidebar-nav">
+          <button
+            type="button"
+            className="sidebar-toggle-btn"
+            onClick={onToggleMinimized}
+            aria-label={minimized ? 'Expandir menu' : 'Recolher menu'}
+            aria-expanded={!minimized}
+            data-label={minimized ? 'Expandir menu' : 'Recolher menu'}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" />
+              <line x1="9" y1="4" x2="9" y2="20" />
+              {minimized
+                ? <polyline points="14 9 17 12 14 15" />
+                : <polyline points="17 9 14 12 17 15" />
+              }
+            </svg>
+            {!minimized && <span>Minimizar menu</span>}
+          </button>
           {navSections.map(section => (
             <div key={section.title} className="nav-section">
               {!minimized && <div className="nav-section-title">{section.title}</div>}

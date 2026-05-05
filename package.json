@@ -5,6 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "vite --host",
+    "dev:api": "node scripts/dev-api.js",
+    "dev:all": "concurrently -n \"API,VITE\" -c \"green,cyan\" \"npm run dev:api\" \"npm run dev\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
@@ -39,6 +41,7 @@
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
     "typescript": "^6.0.3"
   }
 }
