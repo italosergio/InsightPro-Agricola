@@ -10,6 +10,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:unit": "vitest run src/lib src/store src/components",
+    "test:integration": "vitest run src/integration",
+    "test:snapshot": "vitest run src/snapshots",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src"
