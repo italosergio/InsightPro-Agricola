@@ -145,9 +145,10 @@ O arquivo `.github/workflows/tests.yml` executa automaticamente os testes em tod
 
 ---
 
-## Convenções adotadas
+## Convenções
 
 - Cada arquivo de teste fica ao lado do arquivo que testa (`validators.ts` → `validators.test.ts`)
 - IDs dos testes seguem o plano (1.1, 2.3, etc.) para rastreabilidade
 - `beforeEach` limpa `localStorage`/`sessionStorage` para isolamento entre testes
 - Componentes auxiliares de teste (ex: `LoginButton`) ficam dentro do próprio arquivo de teste
+- **Nunca adapte o teste para contornar código ruim.** Se o teste falha por falta de `htmlFor`, `aria-label` ou outra questão de acessibilidade/semântica, corrija o código de produção — não o teste.

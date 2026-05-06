@@ -163,7 +163,9 @@ npm run test:watch -- src/integration
 
 ## Convenções
 
-- IDs dos testes de integração começam com `I-` (ex: `I-1.1`, `I-2.3`)
-- Cada teste limpa `localStorage` e `sessionStorage` no `beforeEach`
-- Comentários `⚠️ ATENÇÃO` marcam pontos que precisam atualização após integração com BD
+- Cada arquivo de integração fica em `src/integration/`
+- IDs dos testes começam com `I-` (ex: `I-1.1`, `I-2.3`) para rastreabilidade
+- `beforeEach` limpa `localStorage` e `sessionStorage` para isolamento entre testes
 - Testes de integração renderizam a árvore completa de providers (AuthProvider, DataProvider, etc.)
+- Comentários `⚠️ ATENÇÃO` marcam pontos que precisam atualização após integração com BD
+- **Nunca adapte o teste para contornar código ruim.** Se o teste falha por falta de `htmlFor`, `aria-label` ou outra questão de acessibilidade/semântica, corrija o código de produção — não o teste.
