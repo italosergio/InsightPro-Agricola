@@ -1,0 +1,1864 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: HomePage > S-4 estrutura da página de início não mudou 1`] = `
+<div>
+  <div
+    class="home-hero"
+  >
+    <div
+      class="home-hero-bg"
+    />
+    <div
+      class="home-hero-content"
+    >
+      <div
+        class="home-hero-badge"
+      >
+        <svg
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M12 2L2 7l10 5 10-5-10-5z"
+          />
+          <path
+            d="M2 17l10 5 10-5"
+          />
+          <path
+            d="M2 12l10 5 10-5"
+          />
+        </svg>
+        InsightPro Agrícola
+      </div>
+      <h1
+        class="home-hero-title"
+      >
+        Sua plataforma de
+        <br />
+        <span
+          class="home-hero-title-accent"
+        >
+          gestão inteligente
+        </span>
+      </h1>
+      <p
+        class="home-hero-subtitle"
+      >
+        13 ferramentas integradas para análise, estratégia e controle completo da sua carteira de clientes no agronegócio.
+      </p>
+      <div
+        class="home-hero-date"
+      >
+        quarta-feira, 06 de maio de 2026
+      </div>
+      <div
+        class="home-hero-kpis"
+      >
+        <div
+          class="home-kpi-chip"
+          style="--num: 0;"
+        >
+          <div
+            class="home-kpi-chip-value"
+          >
+            0
+          </div>
+          <div
+            class="home-kpi-chip-label"
+          >
+            Clientes
+          </div>
+        </div>
+        <div
+          class="home-kpi-chip"
+          style="--num: 0;"
+        >
+          <div
+            class="home-kpi-chip-value"
+          >
+            R$ 0,0 Mi
+          </div>
+          <div
+            class="home-kpi-chip-label"
+          >
+            Faturamento
+          </div>
+        </div>
+        <div
+          class="home-kpi-chip"
+          style="--num: 0;"
+        >
+          <div
+            class="home-kpi-chip-value"
+          >
+            0 ha
+          </div>
+          <div
+            class="home-kpi-chip-label"
+          >
+            Área Total
+          </div>
+        </div>
+        <div
+          class="home-kpi-chip"
+          style="--num: 0;"
+        >
+          <div
+            class="home-kpi-chip-value"
+          >
+            0
+          </div>
+          <div
+            class="home-kpi-chip-label"
+          >
+            Prospects
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="home-hero-decoration"
+    >
+      <div
+        class="home-hero-circle home-hero-circle--1"
+      />
+      <div
+        class="home-hero-circle home-hero-circle--2"
+      />
+      <div
+        class="home-hero-circle home-hero-circle--3"
+      />
+    </div>
+  </div>
+  <div
+    class="home-section"
+  >
+    <h2
+      class="home-section-title"
+      style="margin-bottom: var(--space-4);"
+    >
+      Acesso Rápido
+    </h2>
+    <div
+      class="home-quick-grid"
+    >
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/"
+        style="--qi-color: #22c55e; --qi-bg: rgba(34,197,94,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              height="7"
+              width="7"
+              x="3"
+              y="3"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="14"
+              y="3"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="14"
+              y="14"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="3"
+              y="14"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Dashboard
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/clientes"
+        style="--qi-color: #22c55e; --qi-bg: rgba(34,197,94,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+            <path
+              d="M23 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <path
+              d="M16 3.13a4 4 0 0 1 0 7.75"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Clientes
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/analise-abc"
+        style="--qi-color: #3b82f6; --qi-bg: rgba(59,130,246,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <line
+              x1="18"
+              x2="18"
+              y1="20"
+              y2="10"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="20"
+              y2="4"
+            />
+            <line
+              x1="6"
+              x2="6"
+              y1="20"
+              y2="14"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Análise ABC
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/penetracao"
+        style="--qi-color: #3b82f6; --qi-bg: rgba(59,130,246,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="6"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="2"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Penetração
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/swot"
+        style="--qi-color: #3b82f6; --qi-bg: rgba(59,130,246,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              height="18"
+              rx="2"
+              width="18"
+              x="3"
+              y="3"
+            />
+            <line
+              x1="3"
+              x2="21"
+              y1="9"
+              y2="9"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="3"
+              y2="21"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Análise SWOT
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/gut"
+        style="--qi-color: #3b82f6; --qi-bg: rgba(59,130,246,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Matriz GUT
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/pest"
+        style="--qi-color: #3b82f6; --qi-bg: rgba(59,130,246,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <line
+              x1="2"
+              x2="22"
+              y1="12"
+              y2="12"
+            />
+            <path
+              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Análise PEST
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/metas"
+        style="--qi-color: #a855f7; --qi-bg: rgba(168,85,247,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+            />
+            <polyline
+              points="22 4 12 14.01 9 11.01"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Metas & KPIs
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/campanhas"
+        style="--qi-color: #a855f7; --qi-bg: rgba(168,85,247,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M22 17H2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3z"
+            />
+            <path
+              d="M16 8a4 4 0 0 0-8 0v5h8V8z"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Campanhas
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/pipeline"
+        style="--qi-color: #a855f7; --qi-bg: rgba(168,85,247,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <polyline
+              points="22 12 18 12 15 21 9 3 6 12 2 12"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Pipeline
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/relatorios"
+        style="--qi-color: #f59e0b; --qi-bg: rgba(245,158,11,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline
+              points="14 2 14 8 20 8"
+            />
+            <line
+              x1="16"
+              x2="8"
+              y1="13"
+              y2="13"
+            />
+            <line
+              x1="16"
+              x2="8"
+              y1="17"
+              y2="17"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Relatórios
+        </span>
+      </a>
+      <a
+        class="home-quick-item"
+        data-discover="true"
+        href="/exportar"
+        style="--qi-color: #f59e0b; --qi-bg: rgba(245,158,11,0.12);"
+      >
+        <div
+          class="home-quick-icon"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline
+              points="14 2 14 8 20 8"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="18"
+              y2="12"
+            />
+            <polyline
+              points="9 15 12 12 15 15"
+            />
+          </svg>
+        </div>
+        <span
+          class="home-quick-label"
+        >
+          Exportar
+        </span>
+      </a>
+    </div>
+  </div>
+  <div
+    class="home-section"
+  >
+    <div
+      class="home-section-header"
+    >
+      <div>
+        <h2
+          class="home-section-title"
+        >
+          Ferramentas da Plataforma
+        </h2>
+        <p
+          class="home-section-sub"
+        >
+          Acesse qualquer módulo diretamente
+        </p>
+      </div>
+      <div
+        class="home-category-tabs"
+      >
+        <button
+          class="home-category-tab active"
+        >
+          Todas
+        </button>
+        <button
+          class="home-category-tab "
+        >
+          Principal
+        </button>
+        <button
+          class="home-category-tab "
+        >
+          Análises
+        </button>
+        <button
+          class="home-category-tab "
+        >
+          Estratégia
+        </button>
+        <button
+          class="home-category-tab "
+        >
+          Relatórios
+        </button>
+      </div>
+    </div>
+    <div
+      class="home-tools-grid"
+    >
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/"
+        style="--card-accent: #22c55e; --card-bg: rgba(34,197,94,0.12); --card-border: rgba(34,197,94,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              height="7"
+              width="7"
+              x="3"
+              y="3"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="14"
+              y="3"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="14"
+              y="14"
+            />
+            <rect
+              height="7"
+              width="7"
+              x="3"
+              y="14"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Dashboard
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Visão geral com KPIs, gráficos de faturamento, status e culturas da carteira.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.35);"
+        >
+          Principal
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/clientes"
+        style="--card-accent: #22c55e; --card-bg: rgba(34,197,94,0.12); --card-border: rgba(34,197,94,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+            <path
+              d="M23 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <path
+              d="M16 3.13a4 4 0 0 1 0 7.75"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Clientes
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Tabela completa de clientes com filtros avançados por estado, cultura e status.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(34, 197, 94); background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.35);"
+        >
+          Principal
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/analise-abc"
+        style="--card-accent: #3b82f6; --card-bg: rgba(59,130,246,0.12); --card-border: rgba(59,130,246,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <line
+              x1="18"
+              x2="18"
+              y1="20"
+              y2="10"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="20"
+              y2="4"
+            />
+            <line
+              x1="6"
+              x2="6"
+              y1="20"
+              y2="14"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Análise ABC
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Classifique clientes por faturamento: A (20% do volume, 80% do valor), B e C.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);"
+        >
+          Análises
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/penetracao"
+        style="--card-accent: #3b82f6; --card-bg: rgba(59,130,246,0.12); --card-border: rgba(59,130,246,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="6"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="2"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Penetração
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Analise a cobertura geográfica da carteira por estado, região e cultura.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);"
+        >
+          Análises
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/swot"
+        style="--card-accent: #3b82f6; --card-bg: rgba(59,130,246,0.12); --card-border: rgba(59,130,246,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              height="18"
+              rx="2"
+              width="18"
+              x="3"
+              y="3"
+            />
+            <line
+              x1="3"
+              x2="21"
+              y1="9"
+              y2="9"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="3"
+              y2="21"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Análise SWOT
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Mapeie forças, fraquezas, oportunidades e ameaças do seu negócio.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);"
+        >
+          Análises
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/gut"
+        style="--card-accent: #3b82f6; --card-bg: rgba(59,130,246,0.12); --card-border: rgba(59,130,246,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Matriz GUT
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Priorize problemas por Gravidade, Urgência e Tendência com score automático.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);"
+        >
+          Análises
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/pest"
+        style="--card-accent: #3b82f6; --card-bg: rgba(59,130,246,0.12); --card-border: rgba(59,130,246,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <line
+              x1="2"
+              x2="22"
+              y1="12"
+              y2="12"
+            />
+            <path
+              d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Análise PEST
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Avalie fatores Políticos, Econômicos, Sociais e Tecnológicos do macro-ambiente.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(59, 130, 246); background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35);"
+        >
+          Análises
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/metas"
+        style="--card-accent: #a855f7; --card-bg: rgba(168,85,247,0.12); --card-border: rgba(168,85,247,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+            />
+            <polyline
+              points="22 4 12 14.01 9 11.01"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Metas & KPIs
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Acompanhe o progresso de metas financeiras, comerciais e operacionais.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35);"
+        >
+          Estratégia
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/campanhas"
+        style="--card-accent: #a855f7; --card-bg: rgba(168,85,247,0.12); --card-border: rgba(168,85,247,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M22 17H2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3z"
+            />
+            <path
+              d="M16 8a4 4 0 0 0-8 0v5h8V8z"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Campanhas
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Planeje e acompanhe campanhas comerciais com orçamento e retorno estimado.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35);"
+        >
+          Estratégia
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/pipeline"
+        style="--card-accent: #a855f7; --card-bg: rgba(168,85,247,0.12); --card-border: rgba(168,85,247,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <polyline
+              points="22 12 18 12 15 21 9 3 6 12 2 12"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Pipeline
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Gerencie oportunidades de venda em cada etapa do funil comercial.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(168, 85, 247); background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35);"
+        >
+          Estratégia
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/relatorios"
+        style="--card-accent: #f59e0b; --card-bg: rgba(245,158,11,0.12); --card-border: rgba(245,158,11,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline
+              points="14 2 14 8 20 8"
+            />
+            <line
+              x1="16"
+              x2="8"
+              y1="13"
+              y2="13"
+            />
+            <line
+              x1="16"
+              x2="8"
+              y1="17"
+              y2="17"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Relatórios
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Gere relatórios analíticos, comerciais e estratégicos em PDF.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35);"
+        >
+          Relatórios
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+      <a
+        class="home-tool-card"
+        data-discover="true"
+        href="/exportar"
+        style="--card-accent: #f59e0b; --card-bg: rgba(245,158,11,0.12); --card-border: rgba(245,158,11,0.35);"
+      >
+        <div
+          class="home-tool-card-icon"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12);"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline
+              points="14 2 14 8 20 8"
+            />
+            <line
+              x1="12"
+              x2="12"
+              y1="18"
+              y2="12"
+            />
+            <polyline
+              points="9 15 12 12 15 15"
+            />
+          </svg>
+        </div>
+        <div
+          class="home-tool-card-body"
+        >
+          <div
+            class="home-tool-card-title"
+          >
+            Exportar
+          </div>
+          <div
+            class="home-tool-card-desc"
+          >
+            Exporte dados e relatórios nos formatos CSV e PDF para uso externo.
+          </div>
+        </div>
+        <span
+          class="home-tool-card-badge"
+          style="color: rgb(245, 158, 11); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35);"
+        >
+          Relatórios
+        </span>
+        <div
+          class="home-tool-card-arrow"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
+        </div>
+      </a>
+    </div>
+  </div>
+  <div
+    class="home-section"
+  >
+    <div
+      class="home-section-header"
+    >
+      <div>
+        <h2
+          class="home-section-title"
+        >
+          Análises Estratégicas
+        </h2>
+        <p
+          class="home-section-sub"
+        >
+          Prévia das ferramentas de inteligência competitiva
+        </p>
+      </div>
+      <a
+        class="home-section-link"
+        data-discover="true"
+        href="/swot"
+      >
+        Ver SWOT completo →
+      </a>
+    </div>
+    <div
+      class="home-analytics-grid"
+    >
+      <div
+        class="card"
+        style="margin-bottom: 0px;"
+      >
+        <div
+          class="card-header"
+          style="display: flex; align-items: center; justify-content: space-between;"
+        >
+          <h2
+            style="font-size: var(--text-base);"
+          >
+            Matriz SWOT
+          </h2>
+          <a
+            class="btn btn--ghost btn--sm"
+            data-discover="true"
+            href="/swot"
+          >
+            Editar
+          </a>
+        </div>
+        <div
+          class="card-body"
+          style="padding: var(--space-4);"
+        />
+      </div>
+      <div
+        class="card"
+        style="margin-bottom: 0px;"
+      >
+        <div
+          class="card-header"
+          style="display: flex; align-items: center; justify-content: space-between;"
+        >
+          <h2
+            style="font-size: var(--text-base);"
+          >
+            Top Prioridades — GUT
+          </h2>
+          <a
+            class="btn btn--ghost btn--sm"
+            data-discover="true"
+            href="/gut"
+          >
+            Ver Matriz
+          </a>
+        </div>
+        <div
+          class="card-body"
+          style="padding: var(--space-4);"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    class="home-section"
+  >
+    <div
+      class="home-section-header"
+    >
+      <div>
+        <h2
+          class="home-section-title"
+        >
+          Metas & Pipeline
+        </h2>
+        <p
+          class="home-section-sub"
+        >
+          Acompanhamento em tempo real dos indicadores estratégicos
+        </p>
+      </div>
+    </div>
+    <div
+      class="home-mp-grid"
+    >
+      <div
+        class="card"
+        style="margin-bottom: 0px;"
+      >
+        <div
+          class="card-header"
+          style="display: flex; align-items: center; justify-content: space-between;"
+        >
+          <h2
+            style="font-size: var(--text-base);"
+          >
+            Progresso de Metas
+          </h2>
+          <a
+            class="btn btn--ghost btn--sm"
+            data-discover="true"
+            href="/metas"
+          >
+            Ver todas
+          </a>
+        </div>
+        <div
+          class="card-body"
+          style="padding: var(--space-4);"
+        />
+      </div>
+      <div
+        class="card"
+        style="margin-bottom: 0px;"
+      >
+        <div
+          class="card-header"
+          style="display: flex; align-items: center; justify-content: space-between;"
+        >
+          <h2
+            style="font-size: var(--text-base);"
+          >
+            Pipeline de Vendas
+          </h2>
+          <a
+            class="btn btn--ghost btn--sm"
+            data-discover="true"
+            href="/pipeline"
+          >
+            Ver Pipeline
+          </a>
+        </div>
+        <div
+          class="card-body"
+          style="padding: var(--space-4);"
+        >
+          <div
+            class="home-pipeline-preview"
+          >
+            <div
+              class="home-pipeline-stages"
+            >
+              <div
+                class="home-pipeline-stage"
+              >
+                <div
+                  class="home-pipeline-stage-bar-wrap"
+                >
+                  <div
+                    class="home-pipeline-stage-bar"
+                    style="height: 8%; background: rgb(120, 113, 108);"
+                  />
+                </div>
+                <div
+                  class="home-pipeline-stage-count"
+                  style="color: rgb(120, 113, 108);"
+                >
+                  0
+                </div>
+                <div
+                  class="home-pipeline-stage-label"
+                >
+                  Prospecção
+                </div>
+              </div>
+              <div
+                class="home-pipeline-stage"
+              >
+                <div
+                  class="home-pipeline-stage-bar-wrap"
+                >
+                  <div
+                    class="home-pipeline-stage-bar"
+                    style="height: 8%; background: rgb(59, 130, 246);"
+                  />
+                </div>
+                <div
+                  class="home-pipeline-stage-count"
+                  style="color: rgb(59, 130, 246);"
+                >
+                  0
+                </div>
+                <div
+                  class="home-pipeline-stage-label"
+                >
+                  Qualificação
+                </div>
+              </div>
+              <div
+                class="home-pipeline-stage"
+              >
+                <div
+                  class="home-pipeline-stage-bar-wrap"
+                >
+                  <div
+                    class="home-pipeline-stage-bar"
+                    style="height: 8%; background: rgb(168, 85, 247);"
+                  />
+                </div>
+                <div
+                  class="home-pipeline-stage-count"
+                  style="color: rgb(168, 85, 247);"
+                >
+                  0
+                </div>
+                <div
+                  class="home-pipeline-stage-label"
+                >
+                  Proposta
+                </div>
+              </div>
+              <div
+                class="home-pipeline-stage"
+              >
+                <div
+                  class="home-pipeline-stage-bar-wrap"
+                >
+                  <div
+                    class="home-pipeline-stage-bar"
+                    style="height: 8%; background: rgb(245, 158, 11);"
+                  />
+                </div>
+                <div
+                  class="home-pipeline-stage-count"
+                  style="color: rgb(245, 158, 11);"
+                >
+                  0
+                </div>
+                <div
+                  class="home-pipeline-stage-label"
+                >
+                  Negociação
+                </div>
+              </div>
+              <div
+                class="home-pipeline-stage"
+              >
+                <div
+                  class="home-pipeline-stage-bar-wrap"
+                >
+                  <div
+                    class="home-pipeline-stage-bar"
+                    style="height: 8%; background: rgb(34, 197, 94);"
+                  />
+                </div>
+                <div
+                  class="home-pipeline-stage-count"
+                  style="color: rgb(34, 197, 94);"
+                >
+                  0
+                </div>
+                <div
+                  class="home-pipeline-stage-label"
+                >
+                  Ganho
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="home-section"
+  >
+    <div
+      class="home-section-header"
+    >
+      <div>
+        <h2
+          class="home-section-title"
+        >
+          Campanhas Ativas
+        </h2>
+        <p
+          class="home-section-sub"
+        >
+          Panorama das ações comerciais em andamento
+        </p>
+      </div>
+      <a
+        class="home-section-link"
+        data-discover="true"
+        href="/campanhas"
+      >
+        Gerenciar campanhas →
+      </a>
+    </div>
+    <div
+      class="card"
+      style="margin-bottom: 0px;"
+    >
+      <div
+        class="card-body"
+        style="padding: var(--space-4);"
+      />
+    </div>
+  </div>
+</div>
+`;
