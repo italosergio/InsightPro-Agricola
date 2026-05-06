@@ -233,8 +233,8 @@ function buildReportHTML(
   const detailRows = kpiEntries.map(([label, value], i) => `
     <tr style="background: ${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
       <td style="
-        padding: 12px 20px;
-        font-size: 13px;
+        padding: 10px 16px;
+        font-size: 12px;
         font-weight: 500;
         color: #4b5563;
         border-bottom: 1px solid #f3f4f6;
@@ -242,8 +242,8 @@ function buildReportHTML(
         width: 58%;
       ">${label}</td>
       <td style="
-        padding: 12px 20px;
-        font-size: 13px;
+        padding: 10px 16px;
+        font-size: 12px;
         font-weight: 700;
         color: #111827;
         border-bottom: 1px solid #f3f4f6;
@@ -450,18 +450,19 @@ function buildReportHTML(
     <!-- ── SECTION 2: Detailed Summary ── -->
     ${sectionHeader('02', 'Resumo Detalhado')}
 
-    <div style="
+    <div class="pb-avoid" style="
       border: 1px solid #e5e7eb;
       border-radius: 8px;
       overflow: hidden;
       margin-bottom: 40px;
+      page-break-inside: avoid;
     ">
-      <table style="width: 100%; border-collapse: collapse;">
+      <table style="width: 95%; margin: 0 auto; border-collapse: collapse;">
         <thead>
           <tr style="background: #f3f4f6;">
             <th style="
-              padding: 12px 20px;
-              font-size: 11px;
+              padding: 10px 16px;
+              font-size: 10px;
               font-weight: 700;
               color: #4b5563;
               text-transform: uppercase;
@@ -471,8 +472,8 @@ function buildReportHTML(
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             ">Indicador</th>
             <th style="
-              padding: 12px 20px;
-              font-size: 11px;
+              padding: 10px 16px;
+              font-size: 10px;
               font-weight: 700;
               color: #4b5563;
               text-transform: uppercase;
