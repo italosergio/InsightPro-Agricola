@@ -120,32 +120,34 @@ export async function generatePageReport(
       .get('pdf')
       .then((pdf: any) => {
         const totalPages = pdf.internal.getNumberOfPages()
+        const pageHeight = pdf.internal.pageSize.getHeight()
         
         // Adiciona cabeçalho e rodapé em todas as páginas EXCETO a primeira
         for (let i = 2; i <= totalPages; i++) {
           pdf.setPage(i)
           
-          // Cabeçalho verde
+          // Cabeçalho verde (no topo, fora da área de conteúdo)
           pdf.setFillColor(22, 163, 74) // #16a34a
-          pdf.rect(0, 0, 210, 12, 'F')
+          pdf.rect(0, 0, 210, 10, 'F')
           pdf.setTextColor(255, 255, 255)
-          pdf.setFontSize(8)
+          pdf.setFontSize(7)
           pdf.setFont('helvetica', 'bold')
-          pdf.text('InsightPro Agrícola', 10, 7)
+          pdf.text('InsightPro Agrícola', 10, 6)
           pdf.setFont('helvetica', 'normal')
-          pdf.text(`${data.pageTitle}`, 105, 7, { align: 'center' })
-          pdf.text(data.generatedAt.split(',')[0], 200, 7, { align: 'right' })
+          pdf.text(`${data.pageTitle}`, 105, 6, { align: 'center' })
+          pdf.text(data.generatedAt.split(',')[0], 200, 6, { align: 'right' })
           
-          // Rodapé
+          // Rodapé (no final, fora da área de conteúdo)
+          const footerY = pageHeight - 10
           pdf.setFillColor(249, 250, 251) // #f9fafb
-          pdf.rect(0, 285, 210, 12, 'F')
+          pdf.rect(0, footerY, 210, 10, 'F')
           pdf.setDrawColor(229, 231, 235) // #e5e7eb
           pdf.setLineWidth(0.3)
-          pdf.line(0, 285, 210, 285)
+          pdf.line(0, footerY, 210, footerY)
           pdf.setTextColor(107, 114, 128) // #6b7280
           pdf.setFontSize(7)
-          pdf.text(`© ${new Date().getFullYear()} InsightPro Agrícola`, 10, 291)
-          pdf.text(`Página ${i} de ${totalPages}`, 200, 291, { align: 'right' })
+          pdf.text(`© ${new Date().getFullYear()} InsightPro Agrícola`, 10, footerY + 6)
+          pdf.text(`Página ${i} de ${totalPages}`, 200, footerY + 6, { align: 'right' })
         }
       })
       .save()
