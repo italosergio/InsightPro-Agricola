@@ -14,7 +14,7 @@ export function LoginPage() {
     e.preventDefault()
     setError('')
     if (login(username, password)) {
-      navigate('/')
+      navigate('/inicio')
     } else {
       setError('Usuario ou senha invalidos')
     }
