@@ -202,8 +202,9 @@ export function DashboardPage() {
 
       await generatePageReport(reportData, setReportMessage)
     } catch (error) {
-      console.error('Erro ao gerar relatório:', error)
-      alert('Erro ao gerar relatório. Tente novamente.')
+      console.error('Erro detalhado ao gerar relatório:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido'
+      alert(`Erro ao gerar relatório: ${errorMessage}\n\nVerifique o console para mais detalhes.`)
     } finally {
       setLoadingReport(false)
       setReportMessage('')

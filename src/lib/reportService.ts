@@ -26,20 +26,24 @@ export async function generatePageReport(
   showLoading?: (message: string) => void
 ): Promise<void> {
   try {
+    console.log('[reportService] Iniciando geração de relatório', data)
     showLoading?.('Gerando gráficos...')
     
     // Converte gráficos para imagens
     const chartImages: string[] = []
-    for (const chart of data.charts) {
-      const base64 = await chartToBase64(chart.options)
+    for (let i = 0; i < data.charts.length; i++) {
+      console.log(`[reportService] Convertendo gráfico ${i + 1}/${data.charts.length}`)
+      const base64 = await chartToBase64(data.charts[i].options)
       chartImages.push(base64)
     }
+    console.log('[reportService] Gráficos convertidos:', chartImages.length)
 
     showLoading?.('Gerando análise com IA...')
     
     // Gera análise de IA se não fornecida
     let aiAnalysis = data.aiAnalysis
     if (!aiAnalysis) {
+      console.log('[reportService] Chamando IA...')
       const aiResult = await generateAIReport({
         reportType: 'custom',
         resumoDados: {
@@ -51,12 +55,14 @@ export async function generatePageReport(
       // Extrai texto da resposta IA
       const content = aiResult.data
       aiAnalysis = content.raw || content.resumo || content.resumo_executivo || 'Análise não disponível'
+      console.log('[reportService] Análise IA recebida:', aiAnalysis.substring(0, 100))
     }
 
     showLoading?.('Montando relatório...')
 
     // Monta HTML do relatório
     const html = buildReportHTML(data, chartImages, aiAnalysis)
+    console.log('[reportService] HTML montado, tamanho:', html.length)
 
     // Gera PDF
     const opt = {
@@ -67,11 +73,13 @@ export async function generatePageReport(
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     }
 
+    console.log('[reportService] Gerando PDF...')
     await html2pdf().set(opt as any).from(html).save()
+    console.log('[reportService] PDF gerado com sucesso!')
     
     showLoading?.('Concluído!')
   } catch (error) {
-    console.error('Erro ao gerar relatório:', error)
+    console.error('[reportService] Erro:', error)
     throw error
   }
 }
