@@ -4,6 +4,7 @@ import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { LazyChart } from '@/components/LazyChart'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 function buildHCTheme(theme: 'light' | 'dark') {
   const isDark = theme === 'dark'
@@ -146,6 +147,18 @@ export function MetasPage() {
   const metasConcluidas = metas.filter(m => m.status === 'concluida')
   const metasAtrasadas = metas.filter(m => m.status === 'atrasada')
 
+  const downloadData = metas.map(m => ({
+    nome: m.nome,
+    tipo: m.tipo,
+    valor_meta: m.valorMeta,
+    valor_atual: m.valorAtual,
+    unidade: m.unidade,
+    progresso_pct: m.valorMeta > 0 ? Math.min(100, Math.round((m.valorAtual / m.valorMeta) * 100)) : 0,
+    responsavel: m.responsavel,
+    prazo: m.prazo,
+    status: m.status,
+  }))
+
   const mediaProgresso = metas.length > 0
     ? metas.reduce((sum, m) => {
       if (m.valorMeta > 0) return sum + Math.min(100, (m.valorAtual / m.valorMeta) * 100)
@@ -238,6 +251,7 @@ export function MetasPage() {
               <h1 style={{ color: '#fff', fontSize: 'var(--text-3xl)', fontWeight: 700, marginTop: 'var(--space-3)', letterSpacing: '-0.02em' }}>
                 Acompanhamento de Metas
               </h1>
+              <DownloadReportButton data={downloadData} filename="metas.csv" />
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-3)', marginTop: 'var(--space-5)' }}>
                 <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-3) var(--space-5)', color: '#fff', minWidth: 110 }}>
                   <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 700 }}>{metas.length}</div>

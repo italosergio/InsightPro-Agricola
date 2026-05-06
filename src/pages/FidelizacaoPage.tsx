@@ -5,6 +5,7 @@ import { usePageTitle } from '@/hooks/useTheme'
 import Highcharts from 'highcharts'
 import { LazyChart } from '@/components/LazyChart'
 import { produtosAJINOMOTO, getClientProductos } from '@/data/produtos'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 function buildHCTheme(theme: 'light' | 'dark') {
   const isDark = theme === 'dark'
@@ -50,6 +51,15 @@ export function FidelizacaoPage() {
   const volumeTotal = productVolume.reduce((s, p) => s + p.quantidade, 0)
   const valorTotal = productVolume.reduce((s, p) => s + p.valor, 0)
 
+  const downloadData = useMemo(() => {
+    return productVolume.map(p => ({
+      nome: p.nome,
+      quantidade: p.quantidade,
+      clientes: p.clientCount,
+      valor: p.valor,
+    }))
+  }, [productVolume])
+
   const abcData = useMemo(() => {
     const sorted = [...productVolume]
     let cum = 0
@@ -83,13 +93,14 @@ export function FidelizacaoPage() {
   return (
     <>
       <div className="page-hero">
-        <div className="page-hero-bg page-hero-bg--pink" />
+        <div className="page-hero-bg page-hero-bg--gray" />
         <div className="page-hero-deco" />
         <div className="page-hero-content">
           <div className="page-hero-text">
             <span className="page-hero-eyebrow">Fidelizacao</span>
             <h2 className="page-hero-title">Análise de Produtos</h2>
             <p className="page-hero-subtitle">Volume total, top produtos e distribuição ABC de produtos na carteira</p>
+            <DownloadReportButton data={downloadData} filename="fidelizacao.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi"><span className="page-hero-kpi-value">{productVolume.length}</span><span className="page-hero-kpi-label">Produtos</span></div>

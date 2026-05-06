@@ -1,8 +1,25 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '@/store/DataContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 import type { Cliente } from '@/types'
+
+function getClasse(cliente: Cliente, clientes: Cliente[]): 'A' | 'B' | 'C' {
+  const sorted = [...clientes].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
+  const total = sorted.reduce((s, c) => s + c.faturamento_anual, 0)
+  let cum = 0
+  for (const c of sorted) {
+    cum += c.faturamento_anual
+    if (c.id === cliente.id) {
+      const pct = total > 0 ? (cum / total) * 100 : 0
+      if (pct <= 80) return 'A'
+      if (pct <= 95) return 'B'
+      return 'C'
+    }
+  }
+  return 'C'
+}
 
 export function ClientesPage() {
   const { filteredData, rawData, exportCSV } = useData()
@@ -37,6 +54,17 @@ export function ClientesPage() {
     return 0
   })
 
+  const downloadData = sorted.map(c => ({
+    nome: c.nome,
+    cidade: c.cidade,
+    estado: c.estado,
+    cultura: c.cultura_principal,
+    area_hectares: c.area_hectares,
+    faturamento_anual: c.faturamento_anual,
+    potencial_compra: c.potencial_compra,
+    status: c.status,
+  }))
+
   const totalPages = Math.ceil(sorted.length / perPage)
   const paginated = sorted.slice((page - 1) * perPage, page * perPage)
 
@@ -56,6 +84,13 @@ export function ClientesPage() {
     if (sortField !== field) return <> ↕</>
     return sortDir === 'asc' ? ' ↑' : ' ↓'
   }
+
+  const abcData = useMemo(() => {
+    const a = data.filter(c => getClasse(c, rawData) === 'A').length
+    const b = data.filter(c => getClasse(c, rawData) === 'B').length
+    const c = data.filter(c => getClasse(c, rawData) === 'C').length
+    return { a, b, c }
+  }, [data, rawData])
 
   return (
     <>
@@ -79,6 +114,8 @@ export function ClientesPage() {
             >
               + Adicionar Cliente
             </Link>
+            <br />
+            <DownloadReportButton data={downloadData} filename="carteira_clientes.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -97,6 +134,20 @@ export function ClientesPage() {
               <span className="page-hero-kpi-value">{totalArea.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</span>
               <span className="page-hero-kpi-label">Hectares</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="abc-bar-wrap">
+        <div className="abc-bar">
+          <div className="abc-bar-seg abc-bar-seg--a" style={{ flex: abcData.a || 0.01 }}>
+            <span>Classe A 80% ({abcData.a})</span>
+          </div>
+          <div className="abc-bar-seg abc-bar-seg--b" style={{ flex: abcData.b || 0.01 }}>
+            <span>Classe B 15% ({abcData.b})</span>
+          </div>
+          <div className="abc-bar-seg abc-bar-seg--c" style={{ flex: abcData.c || 0.01 }}>
+            <span>Classe C 5% ({abcData.c})</span>
           </div>
         </div>
       </div>

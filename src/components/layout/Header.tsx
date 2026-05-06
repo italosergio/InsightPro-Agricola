@@ -2,9 +2,17 @@ import { useTheme } from '@/store/ThemeContext'
 
 export function Header({ title, subtitle, onMenuToggle }: { title: string; subtitle?: string; onMenuToggle: () => void }) {
   const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
 
   return (
-    <header className="app-header">
+    <header
+      className="app-header"
+      style={{
+        backdropFilter: 'blur(14px) saturate(1.2)',
+        WebkitBackdropFilter: 'blur(14px) saturate(1.2)',
+        background: isDark ? 'rgba(13,23,16,0.78)' : 'rgba(255,255,255,0.72)',
+      }}
+    >
       <div className="header-left">
         <button
           className="header-menu-mobile"

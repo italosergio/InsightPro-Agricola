@@ -1,22 +1,35 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type { DataContextType, Cliente } from '@/types'
+import { localDB, DB_KEYS } from '@/lib/localDB'
 import Papa from 'papaparse'
 
 const DataContext = createContext<DataContextType | undefined>(undefined)
 
-const STORAGE_KEY = 'insightpro_data'
-
 export function DataProvider({ children }: { children: ReactNode }) {
   const [rawData, setRawData] = useState<Cliente[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : []
+    return localDB.list<Cliente>(DB_KEYS.data)
   })
 
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(rawData))
+    localDB.set(DB_KEYS.data, rawData)
   }, [rawData])
+
+  const addCliente = useCallback((cliente: Cliente) => {
+    const updated = localDB.add(DB_KEYS.data, cliente)
+    setRawData(updated)
+  }, [])
+
+  const updateCliente = useCallback((id: string, updates: Partial<Cliente>) => {
+    const updated = localDB.update<Cliente>(DB_KEYS.data, id, updates)
+    setRawData(updated)
+  }, [])
+
+  const removeCliente = useCallback((id: string) => {
+    const updated = localDB.delete<Cliente>(DB_KEYS.data, id)
+    setRawData(updated)
+  }, [])
 
   const filteredData = rawData.filter(cliente => {
     return Object.entries(activeFilters).every(([key, value]) => {
@@ -74,7 +87,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       }
     })
 
-    setRawData(prev => [...prev, ...clients])
+    const current = localDB.list<Cliente>(DB_KEYS.data)
+    const updated = [...current, ...clients]
+    localDB.set(DB_KEYS.data, updated)
+    setRawData(updated)
   }
 
   const exportCSV = () => {
@@ -104,6 +120,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     <DataContext.Provider value={{
       rawData,
       setRawData,
+      addCliente,
+      updateCliente,
+      removeCliente,
       filteredData,
       activeFilters,
       applyFilters,

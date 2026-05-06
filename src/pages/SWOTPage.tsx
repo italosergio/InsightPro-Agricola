@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 
 interface SwotItem {
   id: string
@@ -58,6 +59,14 @@ export function SWOTPage() {
   const positivos = swotData.strengths.length + swotData.opportunities.length
   const aMitigar = swotData.weaknesses.length + swotData.threats.length
 
+  const downloadData = quadrants.flatMap(q =>
+    swotData[q.key].map(item => ({
+      quadrante: q.title,
+      id: item.id,
+      texto: item.text,
+    }))
+  )
+
   return (
     <>
       <div style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', marginBottom: 'var(--space-8)' }}>
@@ -71,6 +80,7 @@ export function SWOTPage() {
             </div>
             <h1 className="page-hero-title">Matriz SWOT</h1>
             <p className="page-hero-subtitle">Forças, Fraquezas, Oportunidades e Ameaças do seu negócio agrícola</p>
+            <DownloadReportButton data={downloadData} filename="swot.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">

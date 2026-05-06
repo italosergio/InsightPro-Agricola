@@ -1,7 +1,8 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useData } from '@/store/DataContext'
 import { useTheme } from '@/store/ThemeContext'
 import { usePageTitle } from '@/hooks/useTheme'
+import { DownloadReportButton } from '@/lib/downloadUtils'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { LazyChart } from '@/components/LazyChart'
@@ -54,16 +55,28 @@ function buildHCTheme(theme: 'light' | 'dark') {
 }
 
 export function AnaliseABCPage() {
-  const { filteredData, rawData } = useData()
+  const { filteredData: contextFiltered, rawData } = useData()
   const { theme } = useTheme()
   usePageTitle('Analise ABC')
 
-  const data = filteredData.length > 0 ? filteredData : rawData
+  const data = contextFiltered.length > 0 ? contextFiltered : rawData
+
+  const [estadoFilter, setEstadoFilter] = useState<string>('Todos')
+
+  const estadosComDados = useMemo(() => {
+    const set = new Set(data.map(c => c.estado).filter(Boolean))
+    return Array.from(set).sort()
+  }, [data])
+
+  const filteredData = useMemo(() => {
+    if (estadoFilter === 'Todos') return data
+    return data.filter(c => c.estado === estadoFilter)
+  }, [data, estadoFilter])
 
   const hcTheme = useMemo(() => buildHCTheme(theme), [theme])
 
   const abcData = useMemo(() => {
-    const sorted = [...data].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
+    const sorted = [...filteredData].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
     const totalFaturamento = sorted.reduce((sum, c) => sum + c.faturamento_anual, 0)
 
     let cumulative = 0
@@ -73,7 +86,19 @@ export function AnaliseABCPage() {
       const classe = percentage <= 80 ? 'A' : percentage <= 95 ? 'B' : 'C'
       return { ...cliente, classe, percentage }
     })
-  }, [data])
+  }, [filteredData])
+
+  const downloadData = useMemo(() => {
+    return abcData.map(c => ({
+      nome: c.nome,
+      faturamento: c.faturamento_anual,
+      classe_abc: c.classe,
+      pct: `${c.percentage.toFixed(1)}%`,
+      estado: c.estado,
+      cultura: c.cultura_principal,
+      status: c.status,
+    }))
+  }, [abcData])
 
   const classCounts = useMemo(() => {
     const counts = { A: 0, B: 0, C: 0 }
@@ -90,7 +115,7 @@ export function AnaliseABCPage() {
   const fmt = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value)
 
-  const totalFat = data.reduce((sum, c) => sum + c.faturamento_anual, 0)
+  const totalFat = filteredData.reduce((sum, c) => sum + c.faturamento_anual, 0)
 
   const barChartRef = useRef<HighchartsReact.RefObject>(null)
   const donutChartRef = useRef<HighchartsReact.RefObject>(null)
@@ -174,7 +199,7 @@ export function AnaliseABCPage() {
     }],
   }), [classCounts, hcTheme, theme])
 
-  if (data.length === 0) {
+  if (filteredData.length === 0) {
     return (
         <>
         <div className="card">
@@ -206,6 +231,7 @@ export function AnaliseABCPage() {
             </div>
             <h1 className="page-hero-title">Analise ABC</h1>
             <p className="page-hero-subtitle">Classificacao de clientes por faturamento anual — Curva ABC (80/15/5)</p>
+            <DownloadReportButton data={downloadData} filename="analise_abc.csv" />
           </div>
           <div className="page-hero-kpis">
             <div className="page-hero-kpi">
@@ -224,42 +250,14 @@ export function AnaliseABCPage() {
         </div>
       </div>
 
-      <div className="kpi-grid">
-        <div className="kpi-card" style={{ borderLeft: '3px solid #22c55e' }}>
-          <div className="kpi-label">Classe A — Elite</div>
-          <div className="kpi-value">{classCounts.A}</div>
-          <div className="kpi-trend positive">{fmt(classRevenue.A)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.A / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card" style={{ borderLeft: '3px solid #f59e0b' }}>
-          <div className="kpi-label">Classe B — Importantes</div>
-          <div className="kpi-value">{classCounts.B}</div>
-          <div className="kpi-trend" style={{ color: 'var(--color-warning)', background: 'var(--color-warning-bg)' }}>{fmt(classRevenue.B)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.B / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card" style={{ borderLeft: '3px solid #ef4444' }}>
-          <div className="kpi-label">Classe C — Demais</div>
-          <div className="kpi-value">{classCounts.C}</div>
-          <div className="kpi-trend negative">{fmt(classRevenue.C)}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 'var(--space-1)' }}>
-            {totalFat > 0 ? ((classRevenue.C / totalFat) * 100).toFixed(1) : 0}% do faturamento
-          </div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-label">Total Analisado</div>
-          <div className="kpi-value">{data.length}</div>
-          <div className="kpi-trend positive">{fmt(totalFat)}</div>
-        </div>
-      </div>
-
       <div className="chart-grid">
         <div className="card">
-          <div className="card-header">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2>Faturamento por Classe</h2>
+            <select className="form-control" value={estadoFilter} onChange={e => setEstadoFilter(e.target.value)} style={{ maxWidth: 100, fontSize: 'var(--text-xs)', padding: '2px 6px', height: 28 }}>
+              <option value="Todos">Todos</option>
+              {estadosComDados.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
           </div>
           <div className="card-body">
             <div className="chart-container">
