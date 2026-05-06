@@ -1132,7 +1132,7 @@ export function RelatoriosPage() {
       })
 
       // Legend
-      let lx = 70
+      const lx = 70
       data.forEach(([label, val], i) => {
         const c = colors[i % colors.length]
         pdf.setFillColor(c[0], c[1], c[2])

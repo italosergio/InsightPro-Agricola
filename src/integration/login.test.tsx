@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/store/ThemeContext'
 import { DataProvider } from '@/store/DataContext'
 import { PageProvider } from '@/store/PageContext'
 import { LoginPage } from '@/pages/LoginPage'
-import { AuthRoute, PublicRoute } from '@/components/ProtectedRoute'
+import { PublicRoute } from '@/components/ProtectedRoute'
 
 // ⚠️ ATENÇÃO: Estes testes simulam autenticação com credenciais hardcoded (AuthContext).
 // Após integração com banco de dados real, os testes I-1.1 a I-1.4 devem ser
