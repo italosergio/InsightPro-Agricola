@@ -40,27 +40,22 @@ export async function generatePageReport(
 
     showLoading?.('Gerando análise com IA...')
     
-    // Gera análise de IA se não fornecida (opcional)
+    // Gera análise de IA se não fornecida
     let aiAnalysis = data.aiAnalysis
     if (!aiAnalysis) {
-      try {
-        console.log('[reportService] Chamando IA...')
-        const aiResult = await generateAIReport({
-          reportType: 'custom',
-          resumoDados: {
-            pageTitle: data.pageTitle,
-            summary: data.summary,
-          },
-        })
-        
-        // Extrai texto da resposta IA
-        const content = aiResult.data
-        aiAnalysis = content.raw || content.resumo || content.resumo_executivo || 'Análise não disponível'
-        console.log('[reportService] Análise IA recebida:', aiAnalysis.substring(0, 100))
-      } catch (error) {
-        console.warn('[reportService] IA não disponível, continuando sem análise:', error)
-        aiAnalysis = 'Análise com IA não disponível. Configure VITE_DEEPSEEK_API_KEY no arquivo .env para habilitar.'
-      }
+      console.log('[reportService] Chamando IA via serverless function...')
+      const aiResult = await generateAIReport({
+        reportType: 'custom',
+        resumoDados: {
+          pageTitle: data.pageTitle,
+          summary: data.summary,
+        },
+      })
+      
+      // Extrai texto da resposta IA
+      const content = aiResult.data
+      aiAnalysis = content.raw || content.resumo || content.resumo_executivo || 'Análise não disponível'
+      console.log('[reportService] Análise IA recebida:', aiAnalysis.substring(0, 100))
     }
 
     showLoading?.('Montando relatório...')
