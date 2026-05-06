@@ -1,4 +1,4 @@
-@import '../../style.css';
+@import './global.css';
 
 #root {
   min-height: 100vh;
