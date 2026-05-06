@@ -114,48 +114,41 @@ export async function generatePageReport(
       },
     }
 
-    await html2pdf()
-      .set(opt as any)
-      .from(html)
-      .toPdf()
-      .get('pdf')
-      .then((pdf: any) => {
-        const totalPages = pdf.internal.getNumberOfPages()
-        const pageHeight = pdf.internal.pageSize.getHeight()
+    const pdfWorker = html2pdf().set(opt as any).from(html)
+    
+    await pdfWorker.toPdf().get('pdf').then((pdf: any) => {
+      const totalPages = pdf.internal.getNumberOfPages()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      
+      for (let i = 2; i <= totalPages; i++) {
+        pdf.setPage(i)
         
-        // Remove margens da primeira página
-        pdf.setPage(1)
-        // Não há API direta para remover margens, mas podemos sobrescrever o conteúdo
+        // Cabeçalho
+        pdf.setFillColor(22, 163, 74)
+        pdf.rect(0, 0, 210, 10, 'F')
+        pdf.setTextColor(255, 255, 255)
+        pdf.setFontSize(7)
+        pdf.setFont('helvetica', 'bold')
+        pdf.text('InsightPro Agrícola', 10, 6)
+        pdf.setFont('helvetica', 'normal')
+        pdf.text(`${data.pageTitle}`, 105, 6, { align: 'center' })
+        pdf.text(data.generatedAt.split(',')[0], 200, 6, { align: 'right' })
         
-        // Adiciona cabeçalho e rodapé em todas as páginas EXCETO a primeira
-        for (let i = 2; i <= totalPages; i++) {
-          pdf.setPage(i)
-          
-          // Cabeçalho verde (no topo, fora da área de conteúdo)
-          pdf.setFillColor(22, 163, 74) // #16a34a
-          pdf.rect(0, 0, 210, 10, 'F')
-          pdf.setTextColor(255, 255, 255)
-          pdf.setFontSize(7)
-          pdf.setFont('helvetica', 'bold')
-          pdf.text('InsightPro Agrícola', 10, 6)
-          pdf.setFont('helvetica', 'normal')
-          pdf.text(`${data.pageTitle}`, 105, 6, { align: 'center' })
-          pdf.text(data.generatedAt.split(',')[0], 200, 6, { align: 'right' })
-          
-          // Rodapé (no final, fora da área de conteúdo)
-          const footerY = pageHeight - 10
-          pdf.setFillColor(249, 250, 251) // #f9fafb
-          pdf.rect(0, footerY, 210, 10, 'F')
-          pdf.setDrawColor(229, 231, 235) // #e5e7eb
-          pdf.setLineWidth(0.3)
-          pdf.line(0, footerY, 210, footerY)
-          pdf.setTextColor(107, 114, 128) // #6b7280
-          pdf.setFontSize(7)
-          pdf.text(`© ${new Date().getFullYear()} InsightPro Agrícola`, 10, footerY + 6)
-          pdf.text(`Página ${i} de ${totalPages}`, 200, footerY + 6, { align: 'right' })
-        }
-      })
-      .save()
+        // Rodapé
+        const footerY = pageHeight - 10
+        pdf.setFillColor(249, 250, 251)
+        pdf.rect(0, footerY, 210, 10, 'F')
+        pdf.setDrawColor(229, 231, 235)
+        pdf.setLineWidth(0.3)
+        pdf.line(0, footerY, 210, footerY)
+        pdf.setTextColor(107, 114, 128)
+        pdf.setFontSize(7)
+        pdf.text(`© ${new Date().getFullYear()} InsightPro Agrícola`, 10, footerY + 6)
+        pdf.text(`Página ${i} de ${totalPages}`, 200, footerY + 6, { align: 'right' })
+      }
+    })
+    
+    await pdfWorker.save()
     
     showLoading?.('Concluído!')
   } catch (error) {
@@ -437,6 +430,8 @@ function buildReportHTML(
   </div>
 
   <!-- ═══════════ BODY ═══════════ -->
+  
+  <!-- Primeira página sem padding -->
   <div style="padding: 48px 52px; background: #ffffff;">
 
     <!-- ── SECTION 1: KPI Cards ── -->
@@ -450,9 +445,11 @@ function buildReportHTML(
     ">
       ${kpiTableRows}
     </table>
+    
+    </div> <!-- Fecha primeira página sem padding -->
 
-    <!-- Conteúdo com padding para páginas 2+ -->
-    <div style="padding: 15mm 10mm;">
+    <!-- Conteúdo com padding para páginas 2+ (20mm top para não sobrepor cabeçalho de 10mm) -->
+    <div class="pb-before" style="padding: 20mm 10mm 15mm 10mm; page-break-before: always;">
     
     <!-- ── SECTION 2: Detailed Summary ── -->
     ${sectionHeader('02', 'Resumo Detalhado')}

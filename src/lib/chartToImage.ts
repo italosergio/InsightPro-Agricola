@@ -18,18 +18,25 @@ export async function chartToBase64(
       container.style.left = '-9999px'
       document.body.appendChild(container)
 
-      // Renderiza gráfico
+      // Renderiza gráfico SEM animação para captura rápida
       const chart = Highcharts.chart(container, {
         ...chartOptions,
         chart: {
           ...chartOptions.chart,
           width,
           height,
-          animation: false,
+          animation: false, // Desabilita animação
+        },
+        plotOptions: {
+          ...chartOptions.plotOptions,
+          series: {
+            ...(chartOptions.plotOptions as any)?.series,
+            animation: false, // Desabilita animação em séries
+          },
         },
       })
 
-      // Aguarda renderização
+      // Aguarda renderização completa (1s é suficiente sem animações)
       setTimeout(() => {
         try {
           // Usa método interno do Highcharts para exportar SVG
@@ -66,7 +73,7 @@ export async function chartToBase64(
           document.body.removeChild(container)
           reject(err)
         }
-      }, 500)
+      }, 1000) // 1s é suficiente sem animações
     } catch (err) {
       reject(err)
     }
