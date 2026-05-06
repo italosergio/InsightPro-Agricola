@@ -6,7 +6,7 @@ import { usePageTitle } from '@/hooks/useTheme'
 import { useAnimatedNumber } from '@/hooks/useAnimatedNumber'
 import Highcharts from 'highcharts'
 import { LazyChart } from '@/components/LazyChart'
-import { DownloadReportButton } from '@/lib/downloadUtils'
+import { generatePageReport, prepareDashboardReport, type ChartData } from '@/lib/reportService'
 import type { Cliente } from '@/types'
 
 type ClasseABC = 'Todos' | 'A' | 'B' | 'C'
@@ -69,6 +69,8 @@ export function DashboardPage() {
   usePageTitle('Dashboard')
   const [abcChartFilter, setAbcChartFilter] = useState<ClasseABC>('Todos')
   const [culturaSort, setCulturaSort] = useState<{ f: string; d: 'asc' | 'desc' }>({ f: 'fat', d: 'desc' })
+  const [loadingReport, setLoadingReport] = useState(false)
+  const [reportMessage, setReportMessage] = useState('')
 
   const hcTheme = useMemo(() => buildHCTheme(theme), [theme])
   const isDark = theme === 'dark'
@@ -182,6 +184,32 @@ export function DashboardPage() {
     series: [{ type: 'bar', name: 'Área (ha)', data: areaPorEstado.map(([, v]) => v), showInLegend: false }],
   }), [areaPorEstado, hcTheme])
 
+  const handleGenerateReport = async () => {
+    setLoadingReport(true)
+    setReportMessage('Preparando dados...')
+    
+    try {
+      const charts: ChartData[] = [
+        { title: 'Faturamento por Status', options: statusChartOpts },
+        { title: 'Faturamento por Estado (Top 10)', options: estadoChartOpts },
+        { title: 'Faturamento por Cultura', options: culturaChartOpts },
+      ]
+
+      const reportData = {
+        ...prepareDashboardReport(rawData),
+        charts,
+      }
+
+      await generatePageReport(reportData, setReportMessage)
+    } catch (error) {
+      console.error('Erro ao gerar relatório:', error)
+      alert('Erro ao gerar relatório. Tente novamente.')
+    } finally {
+      setLoadingReport(false)
+      setReportMessage('')
+    }
+  }
+
   if (totalClientes === 0) {
     return (
       <div className="dash-hero dash-hero--empty">
@@ -209,7 +237,23 @@ export function DashboardPage() {
             Carteira com faturamento total de <strong style={{ color: '#86efac' }}>{fmt.short(totalFaturamento)}</strong> e potencial de compra estimado em <strong style={{ color: '#fbbf24' }}>{fmt.short(totalPotencial)}</strong>.
             Área total de <strong style={{ color: '#86efac' }}>{fmt.number(Math.round(totalArea))} ha</strong>, ticket médio de <strong style={{ color: '#fbbf24' }}>{fmt.short(ticketMedio)}</strong> e taxa de ativação de <strong style={{ color: '#86efac' }}>{taxaAtivacao.toFixed(1)}%</strong>.
           </p>
-          <DownloadReportButton data={downloadData} filename="dashboard.csv" />
+          <button
+            onClick={handleGenerateReport}
+            disabled={loadingReport}
+            style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: loadingReport ? '#78716c' : '#16a34a',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontWeight: 600,
+              cursor: loadingReport ? 'not-allowed' : 'pointer',
+              fontSize: '0.875rem',
+              transition: 'all 0.2s',
+            }}
+          >
+            {loadingReport ? reportMessage : '📄 Baixar Relatório com IA'}
+          </button>
         </div>
         <div className="home-hero-decoration"><div className="home-hero-circle home-hero-circle--1" /><div className="home-hero-circle home-hero-circle--2" /><div className="home-hero-circle home-hero-circle--3" /></div>
       </div>
