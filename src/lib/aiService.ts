@@ -208,11 +208,13 @@ async function callServerlessFunction(data: ReportData): Promise<AIReportRespons
 /**
  * Gera um relatório executivo com IA.
  *
- * Sempre usa a serverless function /api/generate-report (Vercel)
- * para manter a chave da API segura no servidor.
+ * - Em **desenvolvimento**: chama DeepSeek diretamente (usa VITE_DEEPSEEK_API_KEY do .env)
+ * - Em **produção**: chama a serverless function /api/generate-report (Vercel)
  */
 export async function generateAIReport(data: ReportData): Promise<AIReportResponse> {
-  // Sempre usa serverless function, mesmo em dev
+  if (import.meta.env.DEV) {
+    return callDeepSeekDirect(data)
+  }
   return callServerlessFunction(data)
 }
 
