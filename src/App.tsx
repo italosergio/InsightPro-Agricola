@@ -6,6 +6,7 @@ import { DataProvider } from '@/store/DataContext'
 import { PageProvider, usePage } from '@/store/PageContext'
 import { AuthRoute, PublicRoute } from '@/components/ProtectedRoute'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { ClientesPage } from '@/pages/ClientesPage'
@@ -83,10 +84,10 @@ export function App() {
               <PageTitleSync />
               <ScrollToTop />
               <Routes>
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                 <Route element={<AuthRoute><DashboardLayout /></AuthRoute>}>
                   <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/inicio" element={<HomePage />} />
                   <Route path="/clientes" element={<ClientesPage />} />
                   <Route path="/analise-abc" element={<AnaliseABCPage />} />
@@ -106,7 +107,7 @@ export function App() {
                   <Route path="/pipeline" element={<PipelinePage />} />
                   <Route path="/relatorios" element={<RelatoriosPage />} />
                   <Route path="/exportar" element={<ExportarPage />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={<Navigate to="/inicio" replace />} />
                 </Route>
               </Routes>
             </PageProvider>
