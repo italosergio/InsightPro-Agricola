@@ -4,6 +4,10 @@ import { chartToBase64 } from './chartToImage'
 import type { Cliente } from '@/types'
 import type Highcharts from 'highcharts'
 
+/* ─────────────────────────────────────────
+   Types
+───────────────────────────────────────── */
+
 export interface ChartData {
   title: string
   options: Highcharts.Options
@@ -16,336 +20,742 @@ export interface ReportData {
   summary: Record<string, string | number>
   charts: ChartData[]
   aiAnalysis?: string
+  /** Clientes reais — passados para a IA calcular métricas a partir da fonte */
+  clientes?: Cliente[]
+  /** Produtos reais — passados para a IA calcular penetração */
+  produtos?: Record<string, unknown>[]
 }
 
-/**
- * Gera relatório PDF com gráficos e análise de IA
- */
+/* ─────────────────────────────────────────
+   Main entry point
+───────────────────────────────────────── */
+
 export async function generatePageReport(
   data: ReportData,
   showLoading?: (message: string) => void
 ): Promise<void> {
   try {
-    console.log('[reportService] Iniciando geração de relatório', data)
     showLoading?.('Gerando gráficos...')
-    
-    // Converte gráficos para imagens
+
     const chartImages: string[] = []
     for (let i = 0; i < data.charts.length; i++) {
-      console.log(`[reportService] Convertendo gráfico ${i + 1}/${data.charts.length}`)
       const base64 = await chartToBase64(data.charts[i].options)
       chartImages.push(base64)
     }
-    console.log('[reportService] Gráficos convertidos:', chartImages.length)
 
     showLoading?.('Gerando análise com IA...')
-    
-    // Gera análise de IA se não fornecida (opcional - não bloqueia o relatório)
+
     let aiAnalysis = data.aiAnalysis
     if (!aiAnalysis) {
       try {
-        console.log('[reportService] Chamando IA via serverless function...')
         const aiResult = await generateAIReport({
           reportType: 'custom',
-          resumoDados: {
-            pageTitle: data.pageTitle,
-            summary: data.summary,
-          },
+          // Passa os arrays reais para que buildPrompt compute métricas reais.
+          // Sem isso, buildPrompt recebe clientes=[] e gera análise zerada.
+          clientes: (data.clientes ?? []) as any[],
+          produtos: (data.produtos ?? []) as any[],
         })
-        
-        // Extrai texto da resposta IA
         const content = aiResult.data
-        aiAnalysis = content.raw || content.resumo || content.resumo_executivo || ''
-        console.log('[reportService] Análise IA recebida')
-      } catch (error) {
-        console.warn('[reportService] Erro ao gerar análise IA, continuando sem ela:', error)
-        aiAnalysis = '' // Continua sem análise
+        aiAnalysis = [
+          content.resumo_executivo,
+          content.analise_abc ? `**Análise ABC**\n${content.analise_abc}` : '',
+          content.penetracao_produtos ? `**Penetração de Produtos**\n${content.penetracao_produtos}` : '',
+          content.analise_territorial ? `**Análise Territorial**\n${content.analise_territorial}` : '',
+          content.oportunidades_crescimento?.length
+            ? `**Oportunidades de Crescimento**\n${content.oportunidades_crescimento.map(o => `- ${o}`).join('\n')}`
+            : '',
+          content.recomendacoes_estrategicas?.length
+            ? `**Recomendações Estratégicas**\n${content.recomendacoes_estrategicas.map(r => `- ${r}`).join('\n')}`
+            : '',
+          content.mensagem_final ?? '',
+          content.raw ?? '',
+          content.resumo ?? '',
+        ].filter(Boolean).join('\n\n')
+      } catch {
+        aiAnalysis = ''
       }
     }
-    
-    // Se não tem análise, gera uma básica com os dados
+
     if (!aiAnalysis) {
-      const summaryText = Object.entries(data.summary)
-        .map(([key, value]) => `${key}: ${value}`)
+      aiAnalysis = Object.entries(data.summary)
+        .map(([k, v]) => `${k}: ${v}`)
         .join('\n')
-      aiAnalysis = `Resumo dos dados:\n\n${summaryText}\n\nNota: Análise detalhada com IA temporariamente indisponível.`
     }
 
     showLoading?.('Montando relatório...')
 
-    // Monta HTML do relatório
     const html = buildReportHTML(data, chartImages, aiAnalysis)
-    console.log('[reportService] HTML montado, tamanho:', html.length)
 
-    // Gera PDF
     const opt = {
-      margin: [15, 15, 15, 15],
+      margin: 0,
       filename: `${data.pageTitle.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 3,
+      image: { type: 'jpeg', quality: 0.97 },
+      html2canvas: {
+        scale: 2,
         useCORS: true,
         letterRendering: true,
         logging: false,
+        backgroundColor: '#ffffff',
+        allowTaint: false,
+        scrollX: 0,
+        scrollY: 0,
       },
-      jsPDF: { 
-        unit: 'mm', 
-        format: 'a4', 
+      jsPDF: {
+        unit: 'mm',
+        format: 'a4',
         orientation: 'portrait',
         compress: true,
       },
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        before: '.pb-before',
+        avoid: '.pb-avoid',
+      },
     }
 
-    console.log('[reportService] Gerando PDF...')
-    await html2pdf().set(opt as any).from(html).save()
-    console.log('[reportService] PDF gerado com sucesso!')
+    await html2pdf()
+      .set(opt as any)
+      .from(html)
+      .toPdf()
+      .get('pdf')
+      .then((pdf: any) => {
+        const totalPages = pdf.internal.getNumberOfPages()
+        
+        // Adiciona cabeçalho e rodapé em todas as páginas EXCETO a primeira
+        for (let i = 2; i <= totalPages; i++) {
+          pdf.setPage(i)
+          
+          // Cabeçalho verde
+          pdf.setFillColor(22, 163, 74) // #16a34a
+          pdf.rect(0, 0, 210, 12, 'F')
+          pdf.setTextColor(255, 255, 255)
+          pdf.setFontSize(8)
+          pdf.setFont('helvetica', 'bold')
+          pdf.text('InsightPro Agrícola', 10, 7)
+          pdf.setFont('helvetica', 'normal')
+          pdf.text(`${data.pageTitle}`, 105, 7, { align: 'center' })
+          pdf.text(data.generatedAt.split(',')[0], 200, 7, { align: 'right' })
+          
+          // Rodapé
+          pdf.setFillColor(249, 250, 251) // #f9fafb
+          pdf.rect(0, 285, 210, 12, 'F')
+          pdf.setDrawColor(229, 231, 235) // #e5e7eb
+          pdf.setLineWidth(0.3)
+          pdf.line(0, 285, 210, 285)
+          pdf.setTextColor(107, 114, 128) // #6b7280
+          pdf.setFontSize(7)
+          pdf.text(`© ${new Date().getFullYear()} InsightPro Agrícola`, 10, 291)
+          pdf.text(`Página ${i} de ${totalPages}`, 200, 291, { align: 'right' })
+        }
+      })
+      .save()
     
     showLoading?.('Concluído!')
   } catch (error) {
-    console.error('[reportService] Erro:', error)
+    console.error('[reportService]', error)
     throw error
   }
 }
 
-/**
- * Monta HTML do relatório
- */
+/* ─────────────────────────────────────────
+   HTML Builder
+   Rules:
+   - Zero emojis — they render as boxes in pdf engines
+   - Zero CSS variables — avoid dark-mode inheritance
+   - Zero flexbox/grid on critical layouts — use tables
+   - Every color is an explicit hex — no inheritance risk
+   - border-radius never combined with overflow:hidden on tables
+   - All backgrounds set explicitly (html2canvas inherits from document)
+───────────────────────────────────────── */
+
 function buildReportHTML(
   data: ReportData,
   chartImages: string[],
   aiAnalysis: string
 ): string {
-  const summaryRows = Object.entries(data.summary)
-    .map(([key, value]) => `
-      <tr>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 500; color: #374151;">${key}</td>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 700; color: #111827; text-align: right;">${value}</td>
-      </tr>
-    `)
-    .join('')
 
-  const chartsHTML = data.charts
-    .map((chart, i) => `
-      <div style="margin: 30px 0; page-break-inside: avoid;">
-        <h3 style="color: #111827; font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #16a34a;">${chart.title}</h3>
-        <div style="background: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;">
-          <img src="${chartImages[i]}" style="width: 100%; height: auto; display: block;" />
-        </div>
-      </div>
-    `)
-    .join('')
+  /* ── Summary KPI cards ── */
+  const kpiEntries = Object.entries(data.summary)
+  const colCount = kpiEntries.length <= 3 ? kpiEntries.length
+    : kpiEntries.length <= 4 ? 4
+    : kpiEntries.length <= 6 ? 3 : 4
+  const kpiRows: string[][] = []
+  for (let i = 0; i < kpiEntries.length; i += colCount) {
+    kpiRows.push(kpiEntries.slice(i, i + colCount).map(([k]) => k))
+  }
 
-  // Formata análise IA em parágrafos
-  const aiParagraphs = aiAnalysis
-    .split('\n')
-    .filter(p => p.trim())
-    .map(p => `<p style="margin: 12px 0; line-height: 1.7; color: #374151;">${p}</p>`)
-    .join('')
-
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="UTF-8">
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-          color: #111827;
-          line-height: 1.6;
-          padding: 40px;
-          background: #ffffff;
-        }
-        .header {
-          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-          color: #ffffff;
-          padding: 40px;
-          border-radius: 12px;
-          margin-bottom: 40px;
-        }
-        .header h1 {
-          font-size: 32px;
-          font-weight: 800;
-          margin-bottom: 8px;
-          letter-spacing: -0.5px;
-        }
-        .header .subtitle {
-          font-size: 16px;
-          opacity: 0.95;
-          margin-bottom: 16px;
-        }
-        .header .meta {
-          font-size: 13px;
-          opacity: 0.85;
-          border-top: 1px solid rgba(255,255,255,0.2);
-          padding-top: 16px;
-          margin-top: 16px;
-        }
-        h2 {
-          color: #111827;
-          font-size: 24px;
-          font-weight: 700;
-          margin-top: 40px;
-          margin-bottom: 20px;
-          padding-bottom: 12px;
-          border-bottom: 3px solid #16a34a;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 20px 0;
-          background: #ffffff;
-          border: 1px solid #e5e7eb;
-          border-radius: 8px;
-          overflow: hidden;
-        }
-        table thead {
-          background: #f9fafb;
-        }
-        table th {
-          padding: 12px 16px;
-          text-align: left;
-          font-weight: 600;
-          color: #374151;
-          border-bottom: 2px solid #e5e7eb;
-        }
-        .ai-section {
+  const kpiTableRows = chunkArray(kpiEntries, colCount).map(row => {
+    const cells = row.map(([label, value]) => `
+      <td style="
+        padding: 0 8px 0 0;
+        vertical-align: top;
+        width: ${Math.floor(100 / colCount)}%;
+      ">
+        <div style="
           background: #f0fdf4;
-          padding: 30px;
-          border-radius: 12px;
-          margin: 30px 0;
-          border-left: 6px solid #16a34a;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .ai-section h3 {
-          color: #15803d;
-          font-size: 18px;
-          font-weight: 700;
-          margin-bottom: 16px;
-        }
-        .footer {
-          margin-top: 60px;
-          padding-top: 30px;
-          border-top: 2px solid #e5e7eb;
+          border: 1px solid #bbf7d0;
+          border-top: 4px solid #16a34a;
+          border-radius: 8px;
+          padding: 20px 18px 18px;
           text-align: center;
-          color: #6b7280;
-          font-size: 12px;
-        }
-        .footer p {
-          margin: 6px 0;
-        }
-        .badge {
-          display: inline-block;
-          background: #dcfce7;
-          color: #15803d;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 600;
-          margin-bottom: 12px;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <div class="badge">📊 RELATÓRIO EXECUTIVO</div>
-        <h1>${data.pageTitle}</h1>
-        ${data.pageSubtitle ? `<div class="subtitle">${data.pageSubtitle}</div>` : ''}
-        <div class="meta">
-          <strong>Gerado em:</strong> ${data.generatedAt}<br>
-          <strong>Plataforma:</strong> InsightPro Agrícola
+        ">
+          <div style="
+            font-size: 26px;
+            font-weight: 800;
+            color: #15803d;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">${value}</div>
+          <div style="
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            line-height: 1.4;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">${label}</div>
         </div>
-      </div>
+      </td>
+    `).join('')
+    /* fill empty cells */
+    const empty = colCount - row.length
+    const padding = Array(empty).fill(`<td style="width:${Math.floor(100/colCount)}%;padding:0 8px 0 0;"></td>`).join('')
+    return `<tr>${cells}${padding}</tr>`
+  }).join('')
 
-      <h2>📋 Resumo Executivo</h2>
-      <table>
-        <tbody>
-          ${summaryRows}
-        </tbody>
+  /* ── Detail table rows ── */
+  const detailRows = kpiEntries.map(([label, value], i) => `
+    <tr style="background: ${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+      <td style="
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #4b5563;
+        border-bottom: 1px solid #f3f4f6;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        width: 58%;
+      ">${label}</td>
+      <td style="
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #111827;
+        border-bottom: 1px solid #f3f4f6;
+        text-align: right;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      ">${value}</td>
+    </tr>
+  `).join('')
+
+  /* ── Charts ── */
+  const chartsHTML = data.charts.map((chart, i) => `
+    <div class="pb-avoid" style="
+      margin-bottom: 28px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    ">
+      <div style="
+        padding: 16px 24px 14px;
+        border-bottom: 2px solid #e5e7eb;
+        background: #f9fafb;
+      ">
+        <div style="
+          font-size: 15px;
+          font-weight: 700;
+          color: #111827;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        ">${chart.title}</div>
+      </div>
+      <div style="padding: 20px 24px; background: #ffffff;">
+        <img src="${chartImages[i]}" style="
+          width: 100%;
+          height: auto;
+          display: block;
+        " />
+      </div>
+    </div>
+  `).join('')
+
+  /* ── AI Analysis content ── */
+  const aiHTML = parseAIContent(aiAnalysis)
+
+  /* ── Full HTML ── */
+  return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=794px, initial-scale=1">
+  <style>
+    /* ── Reset — prevents dark-mode inheritance from document ── */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #111827 !important;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      -webkit-text-size-adjust: 100% !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Page break helpers */
+    .pb-before { page-break-before: always; }
+    .pb-avoid  { page-break-inside: avoid; }
+
+    @media print {
+      html, body { -webkit-print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="report-root" style="
+  background: #ffffff;
+  color: #111827;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 794px;
+  margin: 0 auto;
+">
+
+  <!-- ═══════════ COVER ═══════════ -->
+  <div class="pb-avoid" style="
+    background: #15803d;
+    padding: 48px 52px 44px;
+  ">
+    <!-- Brand row -->
+    <div style="
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 28px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    ">InsightPro Agricola &nbsp;/&nbsp; Relatorio Executivo</div>
+
+    <!-- Title -->
+    <div style="
+      font-size: 38px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    ">${data.pageTitle}</div>
+
+    <!-- Subtitle -->
+    ${data.pageSubtitle ? `
+    <div style="
+      font-size: 17px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 36px;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-weight: 400;
+    ">${data.pageSubtitle}</div>` : '<div style="margin-bottom:36px;"></div>'}
+
+    <!-- Meta bar using table for html2canvas compatibility -->
+    <table style="
+      width: 100%;
+      border-top: 1px solid rgba(255,255,255,0.22);
+      padding-top: 20px;
+      border-collapse: collapse;
+    ">
+      <tr>
+        <td style="padding: 16px 0 0; vertical-align: top; width: 33%;">
+          <div style="
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 4px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Gerado em</div>
+          <div style="
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">${data.generatedAt}</div>
+        </td>
+        <td style="padding: 16px 0 0; vertical-align: top; width: 33%;">
+          <div style="
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 4px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Plataforma</div>
+          <div style="
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">InsightPro Agricola</div>
+        </td>
+        <td style="padding: 16px 0 0; vertical-align: top; width: 33%;">
+          <div style="
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 4px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Tipo</div>
+          <div style="
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Relatorio PDF Executivo</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════ BODY ═══════════ -->
+  <div style="padding: 48px 52px; background: #ffffff;">
+
+    <!-- ── SECTION 1: KPI Cards ── -->
+    ${sectionHeader('01', 'Indicadores Principais')}
+
+    <table style="
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 36px;
+    ">
+      ${kpiTableRows}
+    </table>
+
+    <!-- ── SECTION 2: Detailed Summary ── -->
+    ${sectionHeader('02', 'Resumo Detalhado')}
+
+    <div style="
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    ">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f3f4f6;">
+            <th style="
+              padding: 12px 20px;
+              font-size: 11px;
+              font-weight: 700;
+              color: #4b5563;
+              text-transform: uppercase;
+              letter-spacing: 0.09em;
+              text-align: left;
+              border-bottom: 2px solid #e5e7eb;
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            ">Indicador</th>
+            <th style="
+              padding: 12px 20px;
+              font-size: 11px;
+              font-weight: 700;
+              color: #4b5563;
+              text-transform: uppercase;
+              letter-spacing: 0.09em;
+              text-align: right;
+              border-bottom: 2px solid #e5e7eb;
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            ">Valor</th>
+          </tr>
+        </thead>
+        <tbody>${detailRows}</tbody>
       </table>
+    </div>
 
-      <h2>📈 Análise Visual</h2>
-      ${chartsHTML}
-
-      <h2>🤖 Insights com Inteligência Artificial</h2>
-      <div class="ai-section">
-        ${aiParagraphs}
+    <!-- ── SECTION 3: Charts ── -->
+    ${data.charts.length > 0 ? `
+      ${sectionHeader('03', 'Analise Visual')}
+      <div style="margin-bottom: 40px;">
+        ${chartsHTML}
       </div>
+    ` : ''}
 
-      <div class="footer">
-        <p><strong>InsightPro Agrícola</strong> — Plataforma de Análise e Gestão de Clientes</p>
-        <p>© ${new Date().getFullYear()} Todos os direitos reservados</p>
-        <p style="margin-top: 12px; font-size: 11px; color: #9ca3af;">
-          Este relatório foi gerado automaticamente e contém informações confidenciais
-        </p>
+    <!-- ── SECTION 4: AI Insights ── -->
+    ${sectionHeader(data.charts.length > 0 ? '04' : '03', 'Insights de Inteligencia Artificial')}
+
+    <div class="pb-avoid" style="
+      background: #f0fdf4;
+      border-left: 5px solid #16a34a;
+      border-radius: 0 8px 8px 0;
+      padding: 28px 28px 28px 26px;
+      margin-bottom: 48px;
+    ">
+      <div style="
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #15803d;
+        margin-bottom: 16px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      ">Analise gerada automaticamente com base nos dados da carteira</div>
+      ${aiHTML}
+    </div>
+
+  </div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <div style="
+    background: #f9fafb;
+    border-top: 3px solid #e5e7eb;
+    padding: 20px 52px;
+  ">
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td style="vertical-align: middle; padding: 0;">
+          <span style="
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">InsightPro&nbsp;</span><span style="
+            font-size: 13px;
+            font-weight: 700;
+            color: #16a34a;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Agricola</span>
+          <span style="
+            font-size: 11px;
+            color: #9ca3af;
+            margin-left: 12px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Plataforma de Analise e Gestao de Clientes</span>
+        </td>
+        <td style="vertical-align: middle; text-align: right; padding: 0;">
+          <div style="
+            font-size: 11px;
+            color: #9ca3af;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          ">Documento confidencial &bull; ${new Date().getFullYear()} Todos os direitos reservados</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>`
+}
+
+/* ─────────────────────────────────────────
+   Helper: section title with numbered badge
+───────────────────────────────────────── */
+
+function sectionHeader(num: string, title: string): string {
+  return `
+    <div class="pb-avoid" style="
+      display: table;
+      width: 100%;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 3px solid #16a34a;
+    ">
+      <div style="display: table-cell; vertical-align: middle; width: 36px;">
+        <div style="
+          width: 32px;
+          height: 32px;
+          background: #16a34a;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 32px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #ffffff;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        ">${num}</div>
       </div>
-    </body>
-    </html>
+      <div style="
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 14px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: -0.3px;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      ">${title}</div>
+    </div>
   `
 }
 
-/**
- * Helpers para preparar dados de páginas específicas
- */
+/* ─────────────────────────────────────────
+   Helper: chunk array into rows
+───────────────────────────────────────── */
 
-export function prepareDashboardReport(clientes: Cliente[]): Omit<ReportData, 'charts' | 'aiAnalysis'> {
-  const ativos = clientes.filter(c => c.status === 'ativo').length
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = []
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size))
+  }
+  return result
+}
+
+/* ─────────────────────────────────────────
+   Helper: parse AI markdown-like content to safe HTML
+   - **bold** → strong
+   - Lines starting with - or • → bullet
+   - Blank separator lines → paragraph break
+───────────────────────────────────────── */
+
+function parseAIContent(text: string): string {
+  const lines = text.split('\n')
+  const parts: string[] = []
+
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line) continue
+
+    // Heading: **text** alone on a line
+    if (/^\*\*[^*]+\*\*$/.test(line)) {
+      const content = line.replace(/\*\*/g, '')
+      parts.push(`
+        <div style="
+          font-size: 14px;
+          font-weight: 700;
+          color: #111827;
+          margin: 18px 0 8px;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        ">${escapeHtml(content)}</div>
+      `)
+      continue
+    }
+
+    // Bullet
+    if (/^[-•*]\s/.test(line)) {
+      const content = line.replace(/^[-•*]\s/, '').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      parts.push(`
+        <table style="width:100%; margin: 5px 0; border-collapse: collapse;">
+          <tr>
+            <td style="
+              width: 20px;
+              vertical-align: top;
+              padding: 0;
+              font-size: 16px;
+              line-height: 1.6;
+              color: #16a34a;
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            ">&#x2022;</td>
+            <td style="
+              vertical-align: top;
+              padding: 0 0 0 6px;
+              font-size: 13px;
+              line-height: 1.7;
+              color: #374151;
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            ">${content}</td>
+          </tr>
+        </table>
+      `)
+      continue
+    }
+
+    // Regular paragraph — inline bold support
+    const withBold = line.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    parts.push(`
+      <p style="
+        font-size: 13px;
+        line-height: 1.75;
+        color: #374151;
+        margin: 8px 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      ">${withBold}</p>
+    `)
+  }
+
+  return parts.join('')
+}
+
+/* ─────────────────────────────────────────
+   Helper: escape HTML special chars (for user data)
+───────────────────────────────────────── */
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+/* ─────────────────────────────────────────
+   Data preparers for specific pages
+───────────────────────────────────────── */
+
+export function prepareDashboardReport(
+  clientes: Cliente[]
+): Omit<ReportData, 'charts' | 'aiAnalysis'> {
+  const ativos    = clientes.filter(c => c.status === 'ativo').length
   const prospects = clientes.filter(c => c.status === 'prospect').length
-  const inativos = clientes.filter(c => c.status === 'inativo').length
-  const faturamentoTotal = clientes.reduce((sum, c) => sum + c.faturamento_anual, 0)
+  const inativos  = clientes.filter(c => c.status === 'inativo').length
+  const faturamento = clientes.reduce((s, c) => s + c.faturamento_anual, 0)
+  const ticketMedio = clientes.length > 0 ? faturamento / clientes.length : 0
 
   return {
     pageTitle: 'Dashboard',
-    pageSubtitle: 'Visão geral da carteira de clientes',
+    pageSubtitle: 'Visao geral da carteira de clientes',
     generatedAt: new Date().toLocaleString('pt-BR'),
     summary: {
-      'Total de Clientes': clientes.length,
-      'Clientes Ativos': ativos,
-      'Prospects': prospects,
-      'Inativos': inativos,
-      'Faturamento Total': `R$ ${(faturamentoTotal / 1_000_000).toFixed(2)}M`,
+      'Total de Clientes':    clientes.length,
+      'Clientes Ativos':      ativos,
+      'Prospects':            prospects,
+      'Inativos':             inativos,
+      'Faturamento Total':    `R$ ${(faturamento / 1_000_000).toFixed(2)}M`,
+      'Ticket Medio':         `R$ ${(ticketMedio / 1_000).toFixed(1)}K`,
     },
   }
 }
 
-export function prepareABCReport(clientes: Cliente[]): Omit<ReportData, 'charts' | 'aiAnalysis'> {
+export function prepareABCReport(
+  clientes: Cliente[]
+): Omit<ReportData, 'charts' | 'aiAnalysis'> {
   const sorted = [...clientes].sort((a, b) => b.faturamento_anual - a.faturamento_anual)
-  const total = sorted.reduce((s, c) => s + c.faturamento_anual, 0)
-  
+  const total  = sorted.reduce((s, c) => s + c.faturamento_anual, 0)
+
   let acum = 0
-  let classA = 0, classB = 0, classC = 0
-  let fatA = 0, fatB = 0, fatC = 0
+  let cA = 0, cB = 0, cC = 0
+  let fA = 0, fB = 0, fC = 0
 
   sorted.forEach(c => {
     acum += c.faturamento_anual
     const pct = (acum / total) * 100
-    if (pct <= 80) {
-      classA++
-      fatA += c.faturamento_anual
-    } else if (pct <= 95) {
-      classB++
-      fatB += c.faturamento_anual
-    } else {
-      classC++
-      fatC += c.faturamento_anual
-    }
+    if (pct <= 80)      { cA++; fA += c.faturamento_anual }
+    else if (pct <= 95) { cB++; fB += c.faturamento_anual }
+    else                { cC++; fC += c.faturamento_anual }
   })
 
+  const n = clientes.length || 1
+
   return {
-    pageTitle: 'Análise ABC',
-    pageSubtitle: 'Classificação de clientes por faturamento',
+    pageTitle: 'Analise ABC',
+    pageSubtitle: 'Classificacao de clientes por faturamento',
     generatedAt: new Date().toLocaleString('pt-BR'),
     summary: {
-      'Classe A (Clientes)': `${classA} (${((classA / clientes.length) * 100).toFixed(1)}%)`,
-      'Classe A (Faturamento)': `R$ ${(fatA / 1_000_000).toFixed(2)}M (${((fatA / total) * 100).toFixed(1)}%)`,
-      'Classe B (Clientes)': `${classB} (${((classB / clientes.length) * 100).toFixed(1)}%)`,
-      'Classe B (Faturamento)': `R$ ${(fatB / 1_000_000).toFixed(2)}M (${((fatB / total) * 100).toFixed(1)}%)`,
-      'Classe C (Clientes)': `${classC} (${((classC / clientes.length) * 100).toFixed(1)}%)`,
-      'Classe C (Faturamento)': `R$ ${(fatC / 1_000_000).toFixed(2)}M (${((fatC / total) * 100).toFixed(1)}%)`,
+      'Classe A — Clientes':      `${cA} (${((cA / n) * 100).toFixed(1)}%)`,
+      'Classe A — Faturamento':   `R$ ${(fA / 1_000_000).toFixed(2)}M (${((fA / total) * 100).toFixed(1)}%)`,
+      'Classe B — Clientes':      `${cB} (${((cB / n) * 100).toFixed(1)}%)`,
+      'Classe B — Faturamento':   `R$ ${(fB / 1_000_000).toFixed(2)}M (${((fB / total) * 100).toFixed(1)}%)`,
+      'Classe C — Clientes':      `${cC} (${((cC / n) * 100).toFixed(1)}%)`,
+      'Classe C — Faturamento':   `R$ ${(fC / 1_000_000).toFixed(2)}M (${((fC / total) * 100).toFixed(1)}%)`,
     },
   }
 }

@@ -198,6 +198,7 @@ export function DashboardPage() {
       const reportData = {
         ...prepareDashboardReport(rawData),
         charts,
+        clientes: rawData,
       }
 
       await generatePageReport(reportData, setReportMessage)
