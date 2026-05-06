@@ -87,7 +87,7 @@ export async function generatePageReport(
     const html = buildReportHTML(data, chartImages, aiAnalysis)
 
     const opt = {
-      margin: 0,
+      margin: [15, 10, 15, 10], // top, right, bottom, left (em mm)
       filename: `${data.pageTitle.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.97 },
       html2canvas: {
