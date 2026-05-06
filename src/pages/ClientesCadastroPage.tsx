@@ -221,13 +221,14 @@ export function ClientesCadastroPage() {
         <div className="card-body">
           <div className="form-grid form-grid-3">
             <div className="form-group">
-              <label className="form-label">Nome *</label>
-              <input className="form-control" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} placeholder="Razão social ou nome" />
+              <label htmlFor="campo-nome" className="form-label">Nome *</label>
+              <input id="campo-nome" className="form-control" value={form.nome} onChange={e => setForm({ ...form, nome: e.target.value })} placeholder="Razão social ou nome" />
             </div>
 
             <div className="form-group" style={{ position: 'relative' }}>
-              <label className="form-label">CPF/CNPJ</label>
+              <label htmlFor="campo-cpf" className="form-label">CPF/CNPJ</label>
               <input
+                id="campo-cpf"
                 className="form-control"
                 value={form.cpf_cnpj}
                 onChange={e => {
@@ -250,8 +251,9 @@ export function ClientesCadastroPage() {
             </div>
 
             <div className="form-group" style={{ position: 'relative' }}>
-              <label className="form-label">Telefone</label>
+              <label htmlFor="campo-telefone" className="form-label">Telefone</label>
               <input
+                id="campo-telefone"
                 className="form-control"
                 value={form.telefone}
                 onChange={e => setForm({ ...form, telefone: e.target.value })}
@@ -271,8 +273,9 @@ export function ClientesCadastroPage() {
             </div>
 
             <div className="form-group" style={{ position: 'relative' }}>
-              <label className="form-label">E-mail</label>
+              <label htmlFor="campo-email" className="form-label">E-mail</label>
               <input
+                id="campo-email"
                 className="form-control"
                 type="email"
                 value={form.email}
@@ -288,8 +291,9 @@ export function ClientesCadastroPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Estado</label>
+              <label htmlFor="campo-estado" className="form-label">Estado</label>
               <select
+                id="campo-estado"
                 className="form-control"
                 value={form.estado}
                 onChange={e => {
@@ -303,8 +307,9 @@ export function ClientesCadastroPage() {
             </div>
 
             <div className="form-group" style={{ position: 'relative' }} ref={cityRef}>
-              <label className="form-label">Cidade</label>
+              <label htmlFor="campo-cidade" className="form-label">Cidade</label>
               <input
+                id="campo-cidade"
                 className="form-control"
                 value={cityInput}
                 onChange={e => {
@@ -344,35 +349,35 @@ export function ClientesCadastroPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Cultura Principal</label>
-              <select className="form-control" value={form.cultura_principal} onChange={e => setForm({ ...form, cultura_principal: e.target.value })}>
+              <label htmlFor="campo-cultura" className="form-label">Cultura Principal</label>
+              <select id="campo-cultura" className="form-control" value={form.cultura_principal} onChange={e => setForm({ ...form, cultura_principal: e.target.value })}>
                 <option value="">Selecione</option>
                 {culturas.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Status</label>
-              <select className="form-control" value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Cliente['status'] })}>
+              <label htmlFor="campo-status" className="form-label">Status</label>
+              <select id="campo-status" className="form-control" value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Cliente['status'] })}>
                 {statusList.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Área (hectares)</label>
-              <input className="form-control" type="number" value={form.area_hectares || ''} onChange={e => setForm({ ...form, area_hectares: Number(e.target.value) })} placeholder="0" />
+              <label htmlFor="campo-area" className="form-label">Área (hectares)</label>
+              <input id="campo-area" className="form-control" type="number" value={form.area_hectares || ''} onChange={e => setForm({ ...form, area_hectares: Number(e.target.value) })} placeholder="0" />
             </div>
             <div className="form-group">
-              <label className="form-label">Faturamento Anual (R$)</label>
-              <input className="form-control" type="number" value={form.faturamento_anual || ''} onChange={e => setForm({ ...form, faturamento_anual: Number(e.target.value) })} placeholder="0" />
+              <label htmlFor="campo-faturamento" className="form-label">Faturamento Anual (R$)</label>
+              <input id="campo-faturamento" className="form-control" type="number" value={form.faturamento_anual || ''} onChange={e => setForm({ ...form, faturamento_anual: Number(e.target.value) })} placeholder="0" />
             </div>
             <div className="form-group">
-              <label className="form-label">Potencial de Compra (R$)</label>
-              <input className="form-control" type="number" value={form.potencial_compra || ''} onChange={e => setForm({ ...form, potencial_compra: Number(e.target.value) })} placeholder="0" />
+              <label htmlFor="campo-potencial" className="form-label">Potencial de Compra (R$)</label>
+              <input id="campo-potencial" className="form-control" type="number" value={form.potencial_compra || ''} onChange={e => setForm({ ...form, potencial_compra: Number(e.target.value) })} placeholder="0" />
             </div>
             <div className="form-group">
-              <label className="form-label">Última Compra</label>
-              <input className="form-control" type="date" value={form.ultima_compra} onChange={e => setForm({ ...form, ultima_compra: e.target.value })} />
+              <label htmlFor="campo-ultima-compra" className="form-label">Última Compra</label>
+              <input id="campo-ultima-compra" className="form-control" type="date" value={form.ultima_compra} onChange={e => setForm({ ...form, ultima_compra: e.target.value })} />
             </div>
           </div>
 
@@ -481,8 +486,8 @@ export function ClientesCadastroPage() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 4 }}>
-                          <button className="btn btn--ghost btn--sm" onClick={() => editCliente(c)} style={{ color: '#3b82f6' }}>Editar</button>
-                          <button className="btn btn--ghost btn--sm" onClick={() => setConfirmDelete(c.id)} style={{ color: '#ef4444' }}>Remover</button>
+                          <button className="btn btn--ghost btn--sm" aria-label={`Editar ${c.nome}`} onClick={() => editCliente(c)} style={{ color: '#3b82f6' }}>Editar</button>
+                          <button className="btn btn--ghost btn--sm" aria-label={`Remover ${c.nome}`} onClick={() => setConfirmDelete(c.id)} style={{ color: '#ef4444' }}>Remover</button>
                         </div>
                       </td>
                     </tr>
@@ -503,7 +508,7 @@ export function ClientesCadastroPage() {
             </p>
             <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end' }}>
               <button className="btn btn--secondary" onClick={() => setConfirmDelete(null)}>Cancelar</button>
-              <button className="btn btn--danger" onClick={() => doRemoveCliente(confirmDelete)} style={{ background: '#ef4444', color: '#fff' }}>Remover</button>
+              <button className="btn btn--danger" aria-label="Confirmar exclusão" onClick={() => doRemoveCliente(confirmDelete)} style={{ background: '#ef4444', color: '#fff' }}>Remover</button>
             </div>
           </div>
         </div>
