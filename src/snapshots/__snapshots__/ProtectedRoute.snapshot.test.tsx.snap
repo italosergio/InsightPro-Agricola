@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: ProtectedRoute > S-2a AuthRoute sem autenticação redireciona para /login 1`] = `
+<div>
+  <span>
+    login
+  </span>
+</div>
+`;
+
+exports[`Snapshot: ProtectedRoute > S-2b AuthRoute com autenticação renderiza conteúdo 1`] = `
+<div>
+  <span>
+    área protegida
+  </span>
+</div>
+`;

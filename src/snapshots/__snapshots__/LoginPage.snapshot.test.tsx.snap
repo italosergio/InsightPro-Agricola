@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: LoginPage > S-1 estrutura do formulário de login não mudou 1`] = `
+<div>
+  <div
+    class="login-container"
+  >
+    <button
+      aria-label="Ativar tema escuro"
+      class="login-theme-toggle"
+      title="Modo escuro"
+    >
+      <svg
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        style="width: 20px; height: 20px;"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+        />
+      </svg>
+    </button>
+    <div
+      class="login-card"
+    >
+      <div
+        class="login-header"
+      >
+        <div
+          class="login-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            IP
+          </div>
+        </div>
+        <h1>
+          InsightPro Agricola
+        </h1>
+        <p>
+          Gestao inteligente de carteira de clientes
+        </p>
+      </div>
+      <form
+        class="login-form"
+      >
+        <div
+          class="form-group"
+        >
+          <label
+            class="form-label"
+            for="username"
+          >
+            Usuario
+          </label>
+          <input
+            autocomplete="username"
+            class="form-control"
+            id="username"
+            required=""
+            type="text"
+            value=""
+          />
+        </div>
+        <div
+          class="form-group"
+        >
+          <label
+            class="form-label"
+            for="password"
+          >
+            Senha
+          </label>
+          <input
+            autocomplete="current-password"
+            class="form-control"
+            id="password"
+            required=""
+            type="password"
+            value=""
+          />
+        </div>
+        <button
+          class="btn btn--primary btn--lg btn--full-width"
+          type="submit"
+        >
+          Entrar
+        </button>
+      </form>
+      <div
+        class="login-footer"
+      >
+        <p>
+          © 2026 InsightPro Agricola. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

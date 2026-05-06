@@ -1,0 +1,914 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot: DashboardLayout > S-3 estrutura do layout principal (sidebar + header) não mudou 1`] = `
+<div>
+  <div
+    class="app-container "
+  >
+    <aside
+      aria-label="Menu principal"
+      class="sidebar  "
+      role="navigation"
+    >
+      <div
+        class="sidebar-header"
+      >
+        <div
+          class="sidebar-logo"
+        >
+          <div
+            class="logo-icon"
+          >
+            IP
+          </div>
+          <div
+            class="sidebar-logo-text"
+          >
+            <span
+              class="logo-text"
+            >
+              InsightPro
+            </span>
+            <span
+              class="logo-subtitle"
+            >
+              AGRICULTURA
+            </span>
+          </div>
+        </div>
+      </div>
+      <nav
+        class="sidebar-nav"
+      >
+        <button
+          aria-expanded="true"
+          aria-label="Recolher menu"
+          class="sidebar-toggle-btn"
+          data-label="Recolher menu"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect
+              height="16"
+              rx="2"
+              width="18"
+              x="3"
+              y="4"
+            />
+            <line
+              x1="9"
+              x2="9"
+              y1="4"
+              y2="20"
+            />
+            <polyline
+              points="17 9 14 12 17 15"
+            />
+          </svg>
+          <span>
+            Minimizar menu
+          </span>
+        </button>
+        <div
+          class="nav-section"
+        >
+          <div
+            class="nav-section-title"
+          >
+            Principal
+          </div>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Início"
+            href="/inicio"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+              />
+              <polyline
+                points="9 22 9 12 15 12 15 22"
+              />
+            </svg>
+            <span>
+              Início
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Dashboard"
+            href="/dashboard"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <rect
+                height="7"
+                width="7"
+                x="3"
+                y="3"
+              />
+              <rect
+                height="7"
+                width="7"
+                x="14"
+                y="3"
+              />
+              <rect
+                height="7"
+                width="7"
+                x="14"
+                y="14"
+              />
+              <rect
+                height="7"
+                width="7"
+                x="3"
+                y="14"
+              />
+            </svg>
+            <span>
+              Dashboard
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Clientes"
+            href="/clientes"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+              <path
+                d="M23 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <path
+                d="M16 3.13a4 4 0 0 1 0 7.75"
+              />
+            </svg>
+            <span>
+              Clientes
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Produtos"
+            href="/produtos"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"
+              />
+              <rect
+                height="12"
+                rx="2"
+                width="20"
+                x="2"
+                y="8"
+              />
+              <line
+                x1="6"
+                x2="10"
+                y1="12"
+                y2="12"
+              />
+              <line
+                x1="6"
+                x2="10"
+                y1="16"
+                y2="16"
+              />
+            </svg>
+            <span>
+              Produtos
+            </span>
+          </a>
+        </div>
+        <div
+          class="nav-section"
+        >
+          <div
+            class="nav-section-title"
+          >
+            Analises
+          </div>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Penetracao"
+            href="/penetracao"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="6"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="2"
+              />
+            </svg>
+            <span>
+              Penetracao
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Analise ABC"
+            href="/analise-abc"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <line
+                x1="18"
+                x2="18"
+                y1="20"
+                y2="10"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="20"
+                y2="4"
+              />
+              <line
+                x1="6"
+                x2="6"
+                y1="20"
+                y2="14"
+              />
+            </svg>
+            <span>
+              Analise ABC
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Cultura"
+            href="/cultura"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 20h10"
+              />
+              <path
+                d="M12 20v-6"
+              />
+              <path
+                d="M8 8c0-2.21 1.79-4 4-4s4 1.79 4 4"
+              />
+              <path
+                d="M6 14c0-2.21 1.79-4 4-4s4 1.79 4 4"
+              />
+              <circle
+                cx="12"
+                cy="8"
+                r="1"
+              />
+            </svg>
+            <span>
+              Cultura
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Oportunidades"
+            href="/oportunidades"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="5"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="2"
+                y2="7"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="17"
+                y2="22"
+              />
+              <line
+                x1="2"
+                x2="7"
+                y1="12"
+                y2="12"
+              />
+              <line
+                x1="17"
+                x2="22"
+                y1="12"
+                y2="12"
+              />
+            </svg>
+            <span>
+              Oportunidades
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Territorial"
+            href="/territorial"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polygon
+                points="12 2 22 8 12 14 2 8"
+              />
+              <polyline
+                points="2 8 2 16 12 22 22 16 22 8"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="14"
+                y2="22"
+              />
+            </svg>
+            <span>
+              Territorial
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Gaps"
+            href="/gaps"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <line
+                x1="2"
+                x2="22"
+                y1="22"
+                y2="2"
+              />
+              <path
+                d="M17 14l-3 3 3 3"
+              />
+              <path
+                d="M7 10l3-3-3-3"
+              />
+            </svg>
+            <span>
+              Gaps
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Analise SWOT"
+            href="/swot"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <rect
+                height="18"
+                rx="2"
+                width="18"
+                x="3"
+                y="3"
+              />
+              <line
+                x1="3"
+                x2="21"
+                y1="9"
+                y2="9"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="3"
+                y2="21"
+              />
+            </svg>
+            <span>
+              Analise SWOT
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Matriz GUT"
+            href="/gut"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+              />
+            </svg>
+            <span>
+              Matriz GUT
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Analise PEST"
+            href="/pest"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <line
+                x1="2"
+                x2="22"
+                y1="12"
+                y2="12"
+              />
+              <path
+                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+              />
+            </svg>
+            <span>
+              Analise PEST
+            </span>
+          </a>
+        </div>
+        <div
+          class="nav-section"
+        >
+          <div
+            class="nav-section-title"
+          >
+            Estrategia
+          </div>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Metas & KPIs"
+            href="/metas"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+              />
+              <polyline
+                points="22 4 12 14.01 9 11.01"
+              />
+            </svg>
+            <span>
+              Metas & KPIs
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Campanhas"
+            href="/campanhas"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M22 17H2a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3z"
+              />
+              <path
+                d="M16 8a4 4 0 0 0-8 0v5h8V8z"
+              />
+            </svg>
+            <span>
+              Campanhas
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Pipeline"
+            href="/pipeline"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <polyline
+                points="22 12 18 12 15 21 9 3 6 12 2 12"
+              />
+            </svg>
+            <span>
+              Pipeline
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Fidelizacao"
+            href="/fidelizacao"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+            <span>
+              Fidelizacao
+            </span>
+          </a>
+        </div>
+        <div
+          class="nav-section"
+        >
+          <div
+            class="nav-section-title"
+          >
+            Relatorios
+          </div>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Relatorios"
+            href="/relatorios"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline
+                points="14 2 14 8 20 8"
+              />
+              <line
+                x1="16"
+                x2="8"
+                y1="13"
+                y2="13"
+              />
+              <line
+                x1="16"
+                x2="8"
+                y1="17"
+                y2="17"
+              />
+            </svg>
+            <span>
+              Relatorios
+            </span>
+          </a>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Exportar"
+            href="/exportar"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline
+                points="14 2 14 8 20 8"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="18"
+                y2="12"
+              />
+              <polyline
+                points="9 15 12 12 15 15"
+              />
+            </svg>
+            <span>
+              Exportar
+            </span>
+          </a>
+        </div>
+        <div
+          class="nav-section"
+        >
+          <div
+            class="nav-section-title"
+          >
+            Cadastros
+          </div>
+          <a
+            class="nav-item "
+            data-discover="true"
+            data-label="Clientes"
+            href="/cadastro-clientes"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+              />
+              <circle
+                cx="9"
+                cy="7"
+                r="4"
+              />
+              <path
+                d="M23 21v-2a4 4 0 0 0-3-3.87"
+              />
+              <path
+                d="M16 3.13a4 4 0 0 1 0 7.75"
+              />
+            </svg>
+            <span>
+              Clientes
+            </span>
+          </a>
+        </div>
+      </nav>
+      <div
+        class="sidebar-footer"
+      >
+        <button
+          class="sidebar-logout-btn"
+          data-label="Sair"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+            />
+            <polyline
+              points="16 17 21 12 16 7"
+            />
+            <line
+              x1="21"
+              x2="9"
+              y1="12"
+              y2="12"
+            />
+          </svg>
+          <span>
+            Sair
+          </span>
+        </button>
+      </div>
+    </aside>
+    <header
+      class="app-header"
+      style="backdrop-filter: blur(14px) saturate(1.2); background: rgba(255, 255, 255, 0.72);"
+    >
+      <div
+        class="header-left"
+      >
+        <button
+          aria-label="Abrir menu"
+          class="header-menu-mobile"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <line
+              x1="3"
+              x2="21"
+              y1="12"
+              y2="12"
+            />
+            <line
+              x1="3"
+              x2="21"
+              y1="6"
+              y2="6"
+            />
+            <line
+              x1="3"
+              x2="21"
+              y1="18"
+              y2="18"
+            />
+          </svg>
+        </button>
+        <div
+          class="header-title-group"
+        >
+          <h1
+            class="header-title"
+          >
+            Dashboard
+          </h1>
+          <p
+            class="header-subtitle"
+          >
+            <span
+              class="header-subtitle-dot"
+            />
+            Visão geral
+          </p>
+        </div>
+      </div>
+      <div
+        class="header-right"
+      >
+        <button
+          aria-label="Alternar para modo escuro"
+          class="theme-toggle"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            style="width: 15px; height: 15px;"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            />
+          </svg>
+          <span>
+            Escuro
+          </span>
+        </button>
+      </div>
+    </header>
+    <main
+      class="main-content"
+    >
+      <div
+        class="content"
+      >
+        <div
+          class="content-spacer"
+        />
+        <span>
+          conteúdo
+        </span>
+      </div>
+    </main>
+  </div>
+</div>
+`;

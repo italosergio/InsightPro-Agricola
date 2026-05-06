@@ -11,7 +11,6 @@ interface ProdutoCadastro {
   id: string
   nome: string
   fornecedor: string
-  custo: number
   categoria: string
   cultura: string
   modoAcao: string
@@ -36,7 +35,6 @@ const emptyForm: ProdutoCadastro = {
   id: '',
   nome: '',
   fornecedor: '',
-  custo: 0,
   categoria: '',
   cultura: '',
   modoAcao: '',
@@ -123,7 +121,6 @@ export function ProdutosPage() {
     return sortedProdutos.map(p => ({
       nome: p.nome,
       fornecedor: p.fornecedor,
-      custo: p.custo,
       categoria: p.categoria,
       cultura: p.cultura,
       modo_acao: p.modoAcao,
@@ -189,8 +186,6 @@ export function ProdutosPage() {
     setEditando(null)
     setForm({ ...emptyForm })
   }
-
-  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
   return (
     <>
@@ -270,10 +265,6 @@ export function ProdutosPage() {
                 <input className="form-control" value={form.fornecedor || ''} onChange={e => setForm({ ...form, fornecedor: e.target.value })} placeholder="Ex: Bayer, Syngenta" />
               </div>
               <div className="form-group">
-                <label className="form-label">Custo (R$/L ou R$/kg)</label>
-                <input className="form-control" type="number" value={form.custo || ''} onChange={e => setForm({ ...form, custo: Number(e.target.value) })} placeholder="45.50" />
-              </div>
-              <div className="form-group">
                 <label className="form-label">Categoria</label>
                 <select className="form-control" value={form.categoria || ''} onChange={e => setForm({ ...form, categoria: e.target.value })}>
                   <option value="">Selecione</option>
@@ -333,7 +324,6 @@ export function ProdutosPage() {
                     <th onClick={() => handleSort('cultura')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Cultura{sortIcon('cultura')}</th>
                     <th onClick={() => handleSort('fornecedor')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Fornecedor{sortIcon('fornecedor')}</th>
                     <th onClick={() => handleSort('doseRecomendada')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Dose{sortIcon('doseRecomendada')}</th>
-                    <th onClick={() => handleSort('custo')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Custo{sortIcon('custo')}</th>
                     <th onClick={() => handleSort('penetracao')} style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}>Penetração{sortIcon('penetracao')}</th>
                   </tr>
                 </thead>
@@ -345,7 +335,6 @@ export function ProdutosPage() {
                       <td>{p.cultura || 'N/A'}</td>
                       <td>{p.fornecedor}</td>
                       <td>{p.doseRecomendada || 'N/A'}</td>
-                      <td>{p.custo > 0 ? fmt(p.custo) : 'N/A'}</td>
                       <td>
                         {(() => { const pd = penetracaoData.find(d => d.nome === p.nome); return pd ? <span className="badge badge--success">{pd.count} cliente{pd.count !== 1 ? 's' : ''}</span> : <span className="badge badge--neutral">0</span> })()}
                       </td>
@@ -372,10 +361,6 @@ export function ProdutosPage() {
               <div className="form-group">
                 <label className="form-label">Fornecedor/Marca *</label>
                 <input className="form-control" value={form.fornecedor} onChange={e => setForm({ ...form, fornecedor: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Custo (R$/L ou R$/kg)</label>
-                <input className="form-control" type="number" value={form.custo || ''} onChange={e => setForm({ ...form, custo: Number(e.target.value) })} />
               </div>
               <div className="form-group">
                 <label className="form-label">Categoria</label>

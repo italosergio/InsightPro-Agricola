@@ -7,8 +7,8 @@ function limparDigitos(valor: string): string {
   return valor.replace(/\D/g, '')
 }
 
-function calcularDigitoCPF(digitos: number[]): number {
-  const soma = digitos.reduce((acc, d, i) => acc + d * (10 - i), 0)
+function calcularDigitoCPF(digitos: number[], pesoInicial: number): number {
+  const soma = digitos.reduce((acc, d, i) => acc + d * (pesoInicial - i), 0)
   const resto = (soma * 10) % 11
   return resto >= 10 ? 0 : resto
 }
@@ -26,11 +26,11 @@ export function validarCPF(cpf: string): ValidationResult {
   if (digitos.every(d => d === digitos[0])) return { valido: false, formatado: cpf }
 
   const base = digitos.slice(0, 9)
-  const d1 = calcularDigitoCPF(base)
+  const d1 = calcularDigitoCPF(base, 10)
   if (d1 !== digitos[9]) return { valido: false, formatado: cpf }
 
   const base2 = [...base, d1]
-  const d2 = calcularDigitoCPF(base2)
+  const d2 = calcularDigitoCPF(base2, 11)
   if (d2 !== digitos[10]) return { valido: false, formatado: cpf }
 
   const raw = digitos.join('')
