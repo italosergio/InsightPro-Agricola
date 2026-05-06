@@ -1319,11 +1319,10 @@ function exportDiagnosis() {
 function salvarProduto() {
   const nome = document.getElementById('produtoNome').value.trim();
   const fornecedor = document.getElementById('produtoFornecedor').value.trim();
-  const custo = parseFloat(document.getElementById('produtoCusto').value) || 0;
   const categoria = document.getElementById('produtoCategoria').value;
   const cultura = document.getElementById('produtoCultura').value;
 
-  if (!nome || !fornecedor || !custo || !categoria || !cultura) {
+  if (!nome || !fornecedor || !categoria || !cultura) {
     showToast('Preencha todos os campos obrigatorios.', 'error');
     return;
   }
@@ -1331,7 +1330,7 @@ function salvarProduto() {
   const produtosDB = db.load()?.produtos || [];
   produtosDB.push({
     id: Date.now(),
-    nome, fornecedor, custo, categoria, cultura,
+    nome, fornecedor, categoria, cultura,
     modoAcao: document.getElementById('produtoModoAcao').value,
     ingrediente: document.getElementById('produtoIngrediente').value.trim(),
     finalidade: document.getElementById('produtoFinalidade').value.trim(),
@@ -1349,7 +1348,7 @@ function salvarProduto() {
 }
 
 function limparFormularioProduto() {
-  ['produtoNome', 'produtoFornecedor', 'produtoCusto', 'produtoIngrediente', 'produtoFinalidade', 'produtoDose', 'produtoIntervalo', 'produtoObservacoes'].forEach(id => {
+  ['produtoNome', 'produtoFornecedor', 'produtoIngrediente', 'produtoFinalidade', 'produtoDose', 'produtoIntervalo', 'produtoObservacoes'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -1369,9 +1368,9 @@ function atualizarTabelaProdutos() {
     return;
   }
 
-  let html = '<thead><tr><th>Nome</th><th>Categoria</th><th>Cultura</th><th>Dose</th><th>Custo</th><th>Acoes</th></tr></thead><tbody>';
+  let html = '<thead><tr><th>Nome</th><th>Categoria</th><th>Cultura</th><th>Dose</th><th>Acoes</th></tr></thead><tbody>';
   produtosDB.forEach(p => {
-    html += '<tr><td><strong>' + p.nome + '</strong></td><td><span class="badge badge--info">' + p.categoria + '</span></td><td>' + p.cultura + '</td><td>' + (p.dose || '-') + '</td><td>R$ ' + p.custo.toFixed(2) + '</td><td><button class="btn btn--ghost btn--sm" onclick="removerProduto(' + p.id + ')" style="color: var(--color-error);">Remover</button></td></tr>';
+    html += '<tr><td><strong>' + p.nome + '</strong></td><td><span class="badge badge--info">' + p.categoria + '</span></td><td>' + p.cultura + '</td><td>' + (p.dose || '-') + '</td><td><button class="btn btn--ghost btn--sm" onclick="removerProduto(' + p.id + ')" style="color: var(--color-error);">Remover</button></td></tr>';
   });
   html += '</tbody>';
   table.innerHTML = html;
@@ -1389,8 +1388,8 @@ function removerProduto(id) {
 function exportarProdutos() {
   const produtosDB = db.load()?.produtos || [];
   if (produtosDB.length === 0) return;
-  let csv = 'Nome,Fornecedor,Categoria,Cultura,Dose,Custo\n';
-  produtosDB.forEach(p => csv += '"' + p.nome + '","' + p.fornecedor + '","' + p.categoria + '","' + p.cultura + '","' + (p.dose || '') + '",' + p.custo + '\n');
+  let csv = 'Nome,Fornecedor,Categoria,Cultura,Dose\n';
+  produtosDB.forEach(p => csv += '"' + p.nome + '","' + p.fornecedor + '","' + p.categoria + '","' + p.cultura + '","' + (p.dose || '') + '"\n');
   downloadCSV(csv, 'produtos_cadastrados.csv');
 }
 

@@ -28,7 +28,6 @@ interface ProdutoCadastro {
   id: string
   nome: string
   fornecedor: string
-  custo: number
   categoria: string
   cultura: string
   modoAcao: string
@@ -231,7 +230,7 @@ export function RelatoriosPage() {
         break
       }
       case 'r4':
-        csv = Papa.unparse(produtos.map(p => ({ nome: p.nome, fornecedor: p.fornecedor, categoria: p.categoria, cultura: p.cultura, custo: p.custo, dose: p.doseRecomendada, intervalo: p.intervalo, modo_acao: p.modoAcao, ingrediente_ativo: p.ingredienteAtivo })))
+        csv = Papa.unparse(produtos.map(p => ({ nome: p.nome, fornecedor: p.fornecedor, categoria: p.categoria, cultura: p.cultura, dose: p.doseRecomendada, intervalo: p.intervalo, modo_acao: p.modoAcao, ingrediente_ativo: p.ingredienteAtivo })))
         filename = 'produtos.csv'
         break
       case 'r5': {
@@ -433,7 +432,7 @@ export function RelatoriosPage() {
       }
       case 'r4':
         addSummary([`Total de produtos: ${produtos.length}`, `Fornecedores: ${[...new Set(produtos.map(p => p.fornecedor))].join(', ')}`])
-        y = pdfTable(pdf, ['Produto', 'Fornecedor', 'Categoria', 'Cultura', 'Custo', 'Dose', 'Intervalo'], produtos.map(p => ({ nome: p.nome.substring(0, 22), forn: p.fornecedor.substring(0, 14), cat: p.categoria, cult: p.cultura, custo: `R$ ${p.custo}`, dose: p.doseRecomendada, interv: p.intervalo + ' dias' })), [36, 24, 24, 18, 16, 22, 18], y)
+        y = pdfTable(pdf, ['Produto', 'Fornecedor', 'Categoria', 'Cultura', 'Dose', 'Intervalo'], produtos.map(p => ({ nome: p.nome.substring(0, 22), forn: p.fornecedor.substring(0, 14), cat: p.categoria, cult: p.cultura, dose: p.doseRecomendada, interv: p.intervalo + ' dias' })), [36, 24, 24, 18, 22, 18], y)
         break
       case 'r5': {
         const prospects = rawData.filter(c => c.status === 'prospect')
@@ -631,7 +630,7 @@ export function RelatoriosPage() {
     y += 4
 
     addFullSection('2. Produtos Cadastrados')
-    y = pdfTable(pdf, ['Produto', 'Fornecedor', 'Categoria', 'Cultura', 'Custo', 'Dose'], produtos.map(p => ({ nome: p.nome.substring(0, 22), forn: p.fornecedor.substring(0, 14), cat: p.categoria, cult: p.cultura, custo: `R$ ${p.custo}`, dose: p.doseRecomendada })), [36, 24, 24, 18, 16, 22], y, { fontSize: 7, rowH: 4.5 })
+    y = pdfTable(pdf, ['Produto', 'Fornecedor', 'Categoria', 'Cultura', 'Dose'], produtos.map(p => ({ nome: p.nome.substring(0, 22), forn: p.fornecedor.substring(0, 14), cat: p.categoria, cult: p.cultura, dose: p.doseRecomendada })), [36, 24, 24, 18, 22], y, { fontSize: 7, rowH: 4.5 })
     y += 4
 
     addFullSection('3. Metas e KPIs')
@@ -1237,7 +1236,7 @@ export function RelatoriosPage() {
     const metas = localDB.get<{ nome: string; valorMeta: number; valorAtual: number; unidade: string; status: string; responsavel: string; prazo: string }[]>(DB_KEYS.metas) || []
     const pipeline = localDB.get<Record<string, { cliente: string; cultura: string; valor: number; probabilidade: number; contato: string; observacao: string }[]>>(DB_KEYS.pipeline) || {}
     let csv = '=== CLIENTES ===\n' + Papa.unparse(rawData)
-    csv += '\n\n=== PRODUTOS ===\n' + Papa.unparse(produtos.map(p => ({ nome: p.nome, fornecedor: p.fornecedor, categoria: p.categoria, cultura: p.cultura, custo: p.custo, dose: p.doseRecomendada })))
+    csv += '\n\n=== PRODUTOS ===\n' + Papa.unparse(produtos.map(p => ({ nome: p.nome, fornecedor: p.fornecedor, categoria: p.categoria, cultura: p.cultura, dose: p.doseRecomendada })))
     csv += '\n\n=== METAS ===\n' + Papa.unparse(metas.map(m => ({ nome: m.nome, valor_meta: m.valorMeta, valor_atual: m.valorAtual, unidade: m.unidade, progresso: ((m.valorAtual / m.valorMeta) * 100).toFixed(1) + '%', status: m.status, responsavel: m.responsavel, prazo: m.prazo })))
     const pipeRows: { estagio: string; cliente: string; cultura: string; valor: number; probabilidade: string; contato: string; observacao: string }[] = []
     Object.entries(pipeline).forEach(([est, items]) => items.forEach(item => pipeRows.push({ estagio: est, cliente: item.cliente, cultura: item.cultura, valor: item.valor, probabilidade: item.probabilidade + '%', contato: item.contato, observacao: item.observacao })))
