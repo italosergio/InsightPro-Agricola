@@ -40,22 +40,35 @@ export async function generatePageReport(
 
     showLoading?.('Gerando análise com IA...')
     
-    // Gera análise de IA se não fornecida
+    // Gera análise de IA se não fornecida (opcional - não bloqueia o relatório)
     let aiAnalysis = data.aiAnalysis
     if (!aiAnalysis) {
-      console.log('[reportService] Chamando IA via serverless function...')
-      const aiResult = await generateAIReport({
-        reportType: 'custom',
-        resumoDados: {
-          pageTitle: data.pageTitle,
-          summary: data.summary,
-        },
-      })
-      
-      // Extrai texto da resposta IA
-      const content = aiResult.data
-      aiAnalysis = content.raw || content.resumo || content.resumo_executivo || 'Análise não disponível'
-      console.log('[reportService] Análise IA recebida:', aiAnalysis.substring(0, 100))
+      try {
+        console.log('[reportService] Chamando IA via serverless function...')
+        const aiResult = await generateAIReport({
+          reportType: 'custom',
+          resumoDados: {
+            pageTitle: data.pageTitle,
+            summary: data.summary,
+          },
+        })
+        
+        // Extrai texto da resposta IA
+        const content = aiResult.data
+        aiAnalysis = content.raw || content.resumo || content.resumo_executivo || ''
+        console.log('[reportService] Análise IA recebida')
+      } catch (error) {
+        console.warn('[reportService] Erro ao gerar análise IA, continuando sem ela:', error)
+        aiAnalysis = '' // Continua sem análise
+      }
+    }
+    
+    // Se não tem análise, gera uma básica com os dados
+    if (!aiAnalysis) {
+      const summaryText = Object.entries(data.summary)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n')
+      aiAnalysis = `Resumo dos dados:\n\n${summaryText}\n\nNota: Análise detalhada com IA temporariamente indisponível.`
     }
 
     showLoading?.('Montando relatório...')
