@@ -88,7 +88,7 @@ export async function generatePageReport(
     const html = buildReportHTML(data, chartImages, aiAnalysis)
 
     const opt = {
-      margin: [15, 10, 15, 10], // top, right, bottom, left (em mm)
+      margin: [0, 0, 0, 0], // Sem margens - vamos controlar via CSS
       filename: `${data.pageTitle.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.97 },
       html2canvas: {
@@ -122,6 +122,10 @@ export async function generatePageReport(
       .then((pdf: any) => {
         const totalPages = pdf.internal.getNumberOfPages()
         const pageHeight = pdf.internal.pageSize.getHeight()
+        
+        // Remove margens da primeira página
+        pdf.setPage(1)
+        // Não há API direta para remover margens, mas podemos sobrescrever o conteúdo
         
         // Adiciona cabeçalho e rodapé em todas as páginas EXCETO a primeira
         for (let i = 2; i <= totalPages; i++) {
@@ -447,6 +451,9 @@ function buildReportHTML(
       ${kpiTableRows}
     </table>
 
+    <!-- Conteúdo com padding para páginas 2+ -->
+    <div style="padding: 15mm 10mm;">
+    
     <!-- ── SECTION 2: Detailed Summary ── -->
     ${sectionHeader('02', 'Resumo Detalhado')}
 
@@ -556,6 +563,8 @@ function buildReportHTML(
         </td>
       </tr>
     </table>
+    
+    </div> <!-- Fecha div de padding -->
   </div>
 
 </div>
