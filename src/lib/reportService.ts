@@ -39,7 +39,8 @@ export async function generatePageReport(
 
     const chartImages: string[] = []
     for (let i = 0; i < data.charts.length; i++) {
-      const base64 = await chartToBase64(data.charts[i].options)
+      // Gráficos menores para caber nas margens do PDF (700x350 ao invés de 800x400)
+      const base64 = await chartToBase64(data.charts[i].options, 700, 350)
       chartImages.push(base64)
     }
 
@@ -275,9 +276,11 @@ function buildReportHTML(
       </div>
       <div style="padding: 20px 24px; background: #ffffff;">
         <img src="${chartImages[i]}" style="
-          width: 100%;
+          width: 90%;
+          max-width: 700px;
           height: auto;
           display: block;
+          margin: 0 auto;
         " />
       </div>
     </div>
